@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser"; 
 import jwt from "jsonwebtoken"; 
 import{user_register_model,config} from '../../index.js'
