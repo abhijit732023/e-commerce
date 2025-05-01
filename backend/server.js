@@ -1,0 +1,53 @@
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { Product_route_2, Product_add_route, config, Register_Login_Router } from "../backend/index.js";
+import path, { join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+// ✅ Serve static images
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// CORS
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://192.168.0.106:5173',
+    ];
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Routes
+app.use('/', Register_Login_Router);
+app.use('/admin', Product_add_route);
+app.use('/add', Product_route_2);
+
+// 404 fallback
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// DB connection
+mongoose.connect(config.mongoURL)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.error("❌ MongoDB Connection Error:", err));
+
+const PORT = config.port || 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

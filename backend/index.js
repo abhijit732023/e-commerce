@@ -1,0 +1,17 @@
+import config from "./config/config.js";
+import user_register_model from "./models/user_model/regster_model.js";
+import Register_Login_Router from "./routes/user_route/user_register_login_route.js";
+import product_add_model from "./models/admin_model/product_add_model.js";
+import Product_add_route from "./routes/admin_route/product_add_route.js";
+import Product_route_2 from "./routes/admin_route/product_2_route.js";
+import Product_model_2 from './models/admin_model/product_model_2.js'
+export{
+    config,
+    user_register_model ,
+    Register_Login_Router,
+    product_add_model,
+    Product_add_route,
+    Product_route_2,
+    Product_model_2
+
+}
