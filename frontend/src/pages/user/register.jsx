@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useAuth, MobileMenu } from "../../FilesPaths/all_path.js";
+import { useAuth, MobileMenu, ENV_File } from "../../FilesPaths/all_path.js";
 
 export default function RegisterForm() {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const response = await axios.post("http://192.168.0.106:3000/register", data);
+      const response = await axios.post(`${ENV_File.backendURL}/register`, data);
       console.log("User registered:", response.data);
       setMessage("User registered successfully!");
       // Handle success (e.g., navigate to login page)

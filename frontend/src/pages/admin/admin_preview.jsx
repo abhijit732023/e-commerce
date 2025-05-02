@@ -11,6 +11,8 @@ const AdminProductDetail = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
+      console.log('details',response.data);
+      
       setProducts(response.data);
     } catch (err) {
       console.error("Error fetching product details:", err);

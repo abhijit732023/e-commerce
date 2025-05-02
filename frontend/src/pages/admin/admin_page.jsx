@@ -8,18 +8,18 @@ export default function ProductForm() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // Add this line
 
   // Fetch all uploaded products
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${ENV_File.backendURL}/add/images`);
-      console.log('response',response);
+      console.log('add',response.data);
       
       setProducts(response.data);
       setError('');
     } catch (err) {
-      console.error('Failed to fetch products:', err);
       setError('Failed to fetch products. Please try again later.');
     } finally {
       setLoading(false);
@@ -41,7 +41,7 @@ export default function ProductForm() {
     }
 
     try {
-      await axios.post(`${ENV_File.backendURL}/add/upload`, formData, {
+      const response = await axios.post(`${ENV_File.backendURL}/add/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -49,9 +49,10 @@ export default function ProductForm() {
       reset();
       fetchProducts();
       setError('');
+      setSuccessMessage(response.data.message || 'Image uploaded successfully'); // Set success message
     } catch (err) {
-      console.error('Upload failed:', err);
       setError('Upload failed. Please check your network or try again.');
+      setSuccessMessage(''); // Clear success message on error
     }
   };
 
@@ -67,6 +68,7 @@ export default function ProductForm() {
         <input
           {...register('name')}
           type="text"
+          defaultValue={'abhijit'}
           placeholder="Product Name"
           required
           className="w-full p-2 border border-gray-300 rounded"
@@ -74,6 +76,7 @@ export default function ProductForm() {
         <input
           {...register('price')}
           type="number"
+          defaultValue={8000}
           placeholder="Price"
           required
           className="w-full p-2 border border-gray-300 rounded"
@@ -82,6 +85,7 @@ export default function ProductForm() {
           {...register('description')}
           placeholder="Description"
           required
+          defaultValue={'high quality'}
           className="w-full p-2 border border-gray-300 rounded"
         />
         <input
@@ -97,6 +101,7 @@ export default function ProductForm() {
           Upload Product
         </button>
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>} {/* Display success message */}
       </form>
 
       {/* Products Section */}
@@ -118,7 +123,6 @@ export default function ProductForm() {
               <p className="font-semibold text-green-600 mb-2">₹{product.price}</p>
               <div className="grid grid-cols-2 gap-2">
                 {product.imageUrls.map((url, index) => (
-                  
                   <img
                     key={index}
                     src={url}

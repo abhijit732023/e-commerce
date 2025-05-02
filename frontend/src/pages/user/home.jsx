@@ -1,23 +1,15 @@
-// Same imports as before
-import React, { useEffect, useRef } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
+import axios from 'axios';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaBars, FaShoppingCart } from 'react-icons/fa';
+import { Header,SliderSection, ENV_File, AppwriteService, SecondSection } from '../../FilesPaths/all_path';
 import { motion } from 'framer-motion';
-import {AppwriteService} from './../../FilesPaths/all_path.js'
-// import bgimage from '../../images/cloth.webp';
-// import bgimage1 from '../../images/blue.webp';
-// import bgimage2 from '../../images/th.webp';
-// import bgimage3 from '../../images/got.webp';
-// import bgimage4 from '../../images/get.webp';
-// import bgimage5 from '../../images/hat.webp';
-// import bgimage6 from '../../images/wah.webp';
-import { Navbar } from '../../FilesPaths/all_path.js'
-
 const Home = () => {
+    const [products, setProducts] = useState([]);
+    const [imagess, setImages] = useState([]);
+    const [initialLoaded, setInitialLoaded] = useState(false);
     const scrollRef = useRef(null);
-    console.log(AppwriteService.getFileViewUrl('6811d24e003cc44b908a'));
-    
+    // console.log(AppwriteService.getFileViewUrl('6811d24e003cc44b908a'));
+
 
     useEffect(() => {
         const scrollToCenter = () => {
@@ -32,162 +24,170 @@ const Home = () => {
         scrollToCenter();
     }, []);
 
+
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
+                console.log(response.data);
+
+                setProducts(response.data);
+
+
+            } catch (error) {
+                console.error("Failed to fetch products:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+
+
+    const heroImages = products
+        .filter((p) => p.images.length > 0)
+        .map((p) => AppwriteService.getFileViewUrl(p.images[0]));
+
+    const secondSectionImages = products
+        .filter((p) => p.images.length > 0)
+        .slice(3, 6)
+        .map((p) => AppwriteService.getFileViewUrl(p.images[0]));
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        const allImageIds = products.flatMap(product => product.images);
+        if (allImageIds) {
+            setImages(allImageIds)
+            console.log(allImageIds);
+
+        }
+
+
+        if (heroImages.length < 2) return;
+        const interval = setInterval(() => {
+            setCurrentImageIndex(prev => (prev + 1) % heroImages.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [products]);
+    const firstImage = heroImages[0];
+
+    // console.log('imagess',imagess);
+
+
+
     return (
-        // <div className="w-full">
-        //     <Navbar />
-        //     {/* HERO SECTION */}
-        //     <section className="relative h-[60vh] md:h-[80vh]">
-        //         <Swiper
-        //             spaceBetween={10}
-        //             slidesPerView={1}
-        //             loop
-        //             autoplay={{ delay: 3000 }}
-        //             className="h-full"
-        //         >
-        //             {[bgimage, bgimage1, bgimage2].map((img, idx) => (
-        //                 <SwiperSlide key={idx}>
-        //                     <div
-        //                         className="h-full w-full bg-cover bg-center flex items-center justify-center"
-        //                         style={{ backgroundImage: `url(${img})` }}
-        //                     >
-        //                         <div className="bg-black/40 p-6 md:p-10 absolute bottom-4 w-[90%] md:w-[60%] mx-auto backdrop-blur-xl rounded">
-        //                             <h1 className="text-white text-3xl md:text-5xl font-bold text-center">Discover the Elegance</h1>
-        //                             <p className="text-white text-base md:text-xl text-center mt-2">Tradition meets modern style</p>
-        //                         </div>
-        //                     </div>
-        //                 </SwiperSlide>
-        //             ))}
-        //         </Swiper>
-        //     </section>
+        <div className="w-full">
+            {/* Menu Bar */}
+             <Header/>
 
-        //     {/* FEATURED COLLECTION */}
-        //     <section className="bg-rose-50/50 py-12 px-4 md:px-16">
-        //         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-700">🌟 Featured Collection</h2>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        //             {[bgimage1, bgimage2].map((img, i) => (
-        //                 <motion.div
-        //                     key={i}
-        //                     whileInView={{ opacity: 1, scale: 1 }}
-        //                     initial={{ opacity: 0, scale: 0.9 }}
-        //                     transition={{ duration: 0.6 }}
-        //                     className="bg-white shadow-lg rounded overflow-hidden hover:scale-105 transition-transform"
-        //                 >
-        //                     <img src={img} alt={`Product ${i}`} className="w-full h-64 md:h-80 object-cover" />
-        //                     <div className="p-6">
-        //                         <h3 className="text-lg font-semibold">Lehenga {i + 1}</h3>
-        //                         <p className="text-red-600 mt-2 text-lg">₹{(i + 1) * 16900}.00</p>
-        //                     </div>
-        //                 </motion.div>
-        //             ))}
-        //         </div>
-        //     </section>
+            {/* Hero Section */}
+            {/* Hero Section */}
+            {/* Hero Section */}
+            <section className="relative w-full h-screen bg-black overflow-hidden">
+                {/* Background Image Slider */}
+                {heroImages.map((img, idx) => (
+                    <img
+                        key={idx}
+                        src={img}
+                        alt={`Slide ${idx}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentImageIndex ? 'opacity-100 z-0' : 'opacity-0 z-0'
+                            }`}
+                        style={{
+                            transitionDelay: idx === 0 ? '0s' : '0.3s',
+                        }}
+                    />
+                ))}
 
-        //     {/* SS SPECIAL */}
-        //     <section className="bg-rose-100/20 border-t-2 border-rose-300/20 py-12 md:h-1/2 px-4 md:px-16">
-        //         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-800">💎 SS Special</h2>
-        //         <div
-        //             ref={scrollRef}
-        //             className="overflow-x-auto flex space-x-2 min-md:space-x-100 snap-x snap-mandatory overflow-y-hidden scroll-smooth"
-        //         >
-        //             {[bgimage2, bgimage5, bgimage6, bgimage1, bgimage3, bgimage4].map((img, i) => (
-        //                 <motion.div
-        //                     key={i}
-        //                     className="bg-contain contain-content  bg-white shadow min-w-[80%] md:min-w-[30%] rounded snap-center overflow-hidden hover:scale-105 transition-transform"
-        //                     initial={{ scale: 0.85 }}
-        //                     whileInView={{ scale: 1.10 }}
-        //                     viewport={{ once: false, amount: 0.7 }}
-        //                     transition={{ type: "spring", stiffness: 100 }}
-        //                 >
-        //                     <img src={img} alt={`SS Special ${i}`} className="w-full h-64 object-cover" />
-        //                     <div className="p-4">
-        //                         <h3 className="text-lg font-semibold">Special {i + 1}</h3>
-        //                         <p className="text-red-600 mt-2">₹{(i + 1) * 50000}.00</p>
-        //                     </div>
-        //                 </motion.div>
-        //             ))}
-        //         </div>
-        //     </section>
+                {/* Overlay Text */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-center items-center text-center px-4 md:px-10 text-white bg-black/30">
+                    <h1 className="text-3xl md:text-6xl font-bold animate-pulse">Welcome to SS Collection</h1>
+                    <p className="mt-4 text-base md:text-xl opacity-90 animate-fade-in">
+                        Discover powerful experiences crafted for you.
+                    </p>
+                </div>
+            </section>
 
-        //     {/* SHOP BY CATEGORY */}
-        //     <section className="bg-rose-200/20 border-t-2 border-rose-400/20 py-12 px-4 md:px-16">
-        //         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-900">🛍️ Shop by Category</h2>
-        //         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        //             {["Sarees", "Lehengas", "Gowns", "Accessories"].map((category, index) => (
-        //                 <motion.div
-        //                     key={index}
-        //                     whileHover={{ scale: 1.1 }}
-        //                     className="bg-white shadow-md rounded-lg p-4 transition-transform text-center"
-        //                 >
-        //                     <img src={bgimage4} alt={category} className="h-24 w-24 object-cover mx-auto rounded-full mb-3" />
-        //                     <h3 className="text-md font-semibold">{category}</h3>
-        //                 </motion.div>
-        //             ))}
-        //         </div>
-        //     </section>
 
-        //     {/* FAMOUS COLLECTION */}
-        //     <section className="bg-rose-300/20 border-t-2 border-t-rose-300/20 py-12 px-4 md:px-16">
-        //         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-950">🔥 Famous Collection</h2>
-        //         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        //             {[bgimage6, bgimage5].map((img, i) => (
-        //                 <motion.div
-        //                     key={i}
-        //                     initial={{ opacity: 0, y: 50 }}
-        //                     whileInView={{ opacity: 1, y: 0 }}
-        //                     viewport={{ once: true }}
-        //                     transition={{ duration: 0.6 }}
-        //                     className="bg-white shadow-lg rounded overflow-hidden hover:scale-105 transition-transform"
-        //                 >
-        //                     <img src={img} alt={`Famous ${i}`} className="w-full h-64 md:h-80 object-cover" />
-        //                     <div className="p-6">
-        //                         <h3 className="text-xl font-semibold">Lehenga {i + 5}</h3>
-        //                         <p className="text-red-600 mt-2 text-lg">₹{(i + 5) * 10000}.00</p>
-        //                     </div>
-        //                 </motion.div>
-        //             ))}
-        //         </div>
-        //     </section>
 
-        //     {/* FOOTER */}
-        //     <motion.footer
-        //         initial={{ opacity: 0, y: 100 }}
-        //         whileInView={{ opacity: 1, y: 0 }}
-        //         transition={{ duration: 0.7 }}
-        //         className="bg-black/80 backdrop-blur-2xl text-white py-12 px-6 md:px-20"
-        //     >
-        //         <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-        //             <div>
-        //                 <h4 className="text-xl font-semibold mb-4">About SS CollectionFashion</h4>
-        //                 <p className="text-sm text-gray-300">
-        //                     Innovative and artistic, SS CollectionFashion celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
-        //                 </p>
-        //             </div>
-        //             <div>
-        //                 <h4 className="text-xl font-semibold mb-4">The Company</h4>
-        //                 <ul className="space-y-2 text-sm text-gray-300">
-        //                     <li>Store Locator</li>
-        //                     <li>Custom Measurement</li>
-        //                     <li>Shipping & Payments Terms</li>
-        //                     <li>Refunds & Returns</li>
-        //                     <li>FAQ</li>
-        //                 </ul>
-        //             </div>
-        //             <div>
-        //                 <h4 className="text-xl font-semibold mb-4">Need Help</h4>
-        //                 <ul className="space-y-2 text-sm text-gray-300">
-        //                     <li className="flex items-center gap-2"><FaPhone /> +91-90000-00000</li>
-        //                     <li className="flex items-center gap-2"><FaEnvelope /> support@sscollection.in</li>
-        //                     <li className="flex items-center gap-2"><FaMapMarkerAlt /> Mumbai, India</li>
-        //                     <li>Privacy Policy</li>
-        //                     <li>Terms & Conditions</li>
-        //                 </ul>
-        //             </div>
-        //         </div>
-        //         <p className="text-center text-xs text-gray-400 mt-8">© 2025 SS CollectionFashion. All rights reserved.</p>
-        //     </motion.footer>
-        // </div>
-        <div>hi</div>
 
+
+            {/* Second Section */}
+            <SecondSection images={secondSectionImages} />
+
+
+            {/* Why Choose Us */}
+            {/* FEATURED COLLECTION */}
+            <section className="bg-rose-50/50 py-12 px-4 md:px-16">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-700">🌟 Featured Collection</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {heroImages.map((img, i) => (
+                        <motion.div
+                            key={i}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.6 }}
+                            className="bg-white shadow-lg rounded overflow-hidden hover:scale-105 transition-transform"
+                        >
+                            <img src={img} alt={`Product ${i}`} className="w-full herh-64 md:h-80 object-cover" />
+                            <div className="p-6">
+                                <h3 className="text-lg font-semibold">Lehenga {i + 1}</h3>
+                                <p className="text-red-600 mt-2 text-lg">₹{(i + 1) * 16900}.00</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+
+            {/* Explore Categories */}
+            {/* <section className="bg-rose-300 py-12 px-4 text-center">
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">Explore Our Categories</h2>
+                <p className="text-white text-sm md:text-base max-w-lg mx-auto">
+                    Sarees, Kurtis, Western Wear, Accessories & More
+                </p>
+            </section> */}
+            {/* <section
+                className="bg-rose-100/20 border-t-2 border-rose-300/20 py-12 md:h-[50vh] px-4 md:px-16"
+                style={{ aspectRatio: '2730 / 4096' }}
+            >
+                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-800">💎 SS Special</h2>
+
+                <div
+                    ref={scrollRef}
+                    className="overflow-x-auto flex space-x-2 snap-x snap-mandatory overflow-y-hidden scroll-smooth h-full"
+                >
+                    {products.map((img, i) => (
+                        <motion.div
+                            key={i}
+                            className="bg-white shadow min-w-[80%] md:min-w-[30%] rounded snap-center overflow-hidden h-full flex items-center"
+                            initial={{ scale: 0.85 }}
+                            whileInView={{ scale: 1.10 }}
+                            viewport={{ once: false, amount: 0.7 }}
+                            transition={{ type: "spring", stiffness: 100 }}
+                        >
+                            <img
+                                src={AppwriteService.getFileViewUrl(img.images[0])}
+                                alt={`SS Special ${i}`}
+                                className="w-full h-full object-cover"
+                            />
+                        </motion.div>
+                    ))}
+                </div>
+            </section> */}
+
+
+<SliderSection products={products}/>
+            {/* Footer */}
+            <footer className="bg-black text-white py-10 px-4 text-center">
+                <h4 className="text-xl font-semibold mb-2">SS Collection</h4>
+                <p className="text-sm text-gray-300 max-w-xl mx-auto">
+                    Innovative and artistic, SS Collection celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
+                </p>
+                <p className="text-xs text-gray-500 mt-6">© 2025 SS Collection. All rights reserved.</p>
+            </footer>
+        </div>
     );
 };
 

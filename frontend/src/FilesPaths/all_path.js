@@ -10,6 +10,13 @@ import AppwriteService from "../../appwrite/appwrite.js";
 import AdminProductDetail from "../pages/admin/admin_preview.jsx";
 import AdminEditForm from "../pages/admin/admin_edit.jsx";
 import Product_2 from '../pages/admin/admin_page.jsx'
+import SecondSection from '../component/second_slider.jsx'
+import SliderSection from "../component/ss_special_slide.jsx";
+import Header from "../component/header.jsx";
+import ProductPage from "../pages/user/product_page.jsx";
+import SwipeImageViewer from "../component/image_swip.jsx";
+
+
 export{
     RegisterForm,
     useAuth,
@@ -22,7 +29,14 @@ export{
     AppwriteService,
     AdminProductDetail,
     AdminEditForm,
-    Product_2
+    Product_2,
+    SecondSection,
+    SliderSection,
+    Header,
+    ProductPage,
+    SwipeImageViewer
+    
+
 
     
 
