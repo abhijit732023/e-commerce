@@ -5,14 +5,18 @@ import { useAuth, ENV_File } from "../../FilesPaths/all_path.js";
 import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 
 export default function LoginForm() {
+  const{user,login}=useAuth()
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [message, setMessage] = useState("");
 
   const onSubmit = async (data) => {
+    
     try {
       const response = await axios.post(`${ENV_File.backendURL}/login`, data);
       console.log("Login successful:", response.data);
       setMessage("Login successful!");
+      login(response.data.user);
+
       // Store token or redirect if needed
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
@@ -48,6 +52,11 @@ export default function LoginForm() {
             <button type="submit" className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-900 transition">
               Login
             </button>
+            <p className="text-sm text-right text-gray-600 hover:underline cursor-pointer"
+              onClick={() => window.location.href = "/forgot-password"}>
+              Forgot Password?
+            </p>
+
           </form>
         </div>
       </main>

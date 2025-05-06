@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser"; 
 import jwt from "jsonwebtoken"; 
+import nodemailer from "nodemailer";
 import{user_register_model,config} from '../../index.js'
 const Register_Login_Router = express.Router();
 
@@ -82,6 +83,80 @@ Register_Login_Router.post("/login", async (req, res) => {
     }
   });
 
+  Register_Login_Router.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    
+  
+    try {
+      const user = await user_register_model.findOne({ email:email });
+      console.log(user);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found with this email" });
+      }
+  
+      // Create a JWT token valid for 1 hour
+      const token = jwt.sign({ userId: user._id }, config.screteCode, { expiresIn: "1h" });
+      console.log(token);
+      
+  
+      const resetLink = `http://localhost:5173/reset-password/${token}`; // Frontend reset-password page
+  
+      // Send email
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: config.email_user, // Gmail address
+          pass: config.email_password, // Gmail app password
+        },
+      });
+  
+      await transporter.sendMail({
+        from: config.email_user,
+        to: email,
+        subject: "Password Reset - SS Collection",
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>Click the link below to reset your password:</p>
+          <a href="${resetLink}">${resetLink}</a>
+          <p>This link is valid for 1 hour.</p>
+        `,
+      });
+  
+      res.status(200).json({ message: "Password reset link sent to your email" });
+    } catch (error) {
+      console.error("Error sending reset link:", error.message);
+      res.status(500).json({ message: "Error sending reset link. Try again." });
+    }
+  });
+  Register_Login_Router.post("/reset-password", async (req, res) => {
+    try {
+      const { token, password } = req.body;
+  
+      const user = await user_register_model.findOne({
+        resetToken: token,
+        tokenExpiry: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired token" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      user.password = hashedPassword;
+      user.resetToken = undefined;
+      user.tokenExpiry = undefined;
+      await user.save();
+  
+      res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+      console.error("Reset Password Error:", error.message);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+  
 
 
 

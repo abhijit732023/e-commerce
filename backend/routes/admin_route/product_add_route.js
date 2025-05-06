@@ -4,7 +4,12 @@ import {product_add_model} from '../../index.js'
 // @desc   Create a new product
 // @route  POST /api/products
 Product_add_route.post('/create', async (req, res) => {
+
+  
+  
   try {
+    console.log(req.body);
+    
     const product = new product_add_model(req.body);
     const saved = await product.save();
     res.status(201).json(saved);
@@ -31,7 +36,7 @@ Product_add_route.get('/product/detail', async (req, res) => {
 
 // @desc   Get a single product by ID
 // @route  GET /api/products/:id
-Product_add_route.get('/product/:id', async (req, res) => {
+Product_add_route.get('/:id', async (req, res) => {
   try {
     const product = await product_add_model.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -43,7 +48,7 @@ Product_add_route.get('/product/:id', async (req, res) => {
 
 // @desc   Update a product by ID
 // @route  PUT /api/products/:id
-Product_add_route.put('/update/:id', async (req, res) => {
+Product_add_route.put('update/:id', async (req, res) => {
   try {
     const updated = await product_add_model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -58,7 +63,7 @@ Product_add_route.put('/update/:id', async (req, res) => {
 
 // @desc   Delete a product by ID
 // @route  DELETE /api/products/:id
-Product_add_route.delete('/delete/:id', async (req, res) => {
+Product_add_route.delete('delete/:id', async (req, res) => {
   try {
     const deleted = await product_add_model.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Product not found' });

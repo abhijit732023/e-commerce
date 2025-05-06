@@ -1,36 +1,39 @@
 import mongoose from "mongoose";
-const productSchema = new mongoose.Schema({
-  header: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, required: true },
-  brand: { type: String },
-  originalPrice: { type: Number, required: true }, // MRP
-  discountedPrice: { type: Number, required: true }, // Selling price
-  discountPercent: {
-    type: Number,
-    default: function () {
-      return Math.round(
-        ((this.originalPrice - this.discountedPrice) / this.originalPrice) * 100
-      );
-    }
-  },
-  size: { type: String },
-  availableSizes: [{
-    type: String,
-    enum: ["XS", "S", "M", "L", "XL", "XXL","custom-size"]
-  }],
-  quantity: { type: Number, required: true },
-  color: { type: String },
-  tags: [String],
-  images: [String],
-  dateToDeliver: { type: Date, required: true },
-  inStock: { type: Boolean, default: true },
-  isFeatured: { type: Boolean, default: false },
-  rating: { type: Number, default: 0 },
-  // sku: { type: String, unique: true, sparse: true },
-}, {
-  timestamps: true
-});
 
-const product_add_model = mongoose.model('Product', productSchema);
-export default product_add_model
+const productSchema = new mongoose.Schema(
+  {
+    header: { type: String, required: true }, // Product title
+    description: { type: String, required: true }, // Description
+    price: { type: Number, required: true }, // Original price (cost to seller)
+    fakePrie: { type: Number, required: true }, // MRP shown to customer
+    discount: {
+      type: Number,
+      default: function () {
+        return Math.round(
+          ((this.fakePrie - this.price) / this.fakePrie) * 100
+        );
+      },
+    }, // Discount percentage
+    inStockStatus: {
+      type: String,
+      enum: ["In Stock", "Out of Stock"],
+      default: "In Stock",
+    }, // InStock/OutStock status
+    wholeSaleQuantity: { type: Number, required: true }, // Whole quantity
+    WholeSalePrice:{type:Number,required:true},
+    category: { type: String,
+       required: true,
+      enum:['Regular','Premium','SSspecial']
+     }, // Category
+    dateToDeliver: { type: Date, required: true }, // Delivery
+    size: { type: String }, // Size for custom items
+    tags: [String], // Tags for the product
+    color: { type: String }, // Product color
+    images: [String], // Product images URLs
+
+  },
+  { timestamps: true }
+);
+
+const product_add_model = mongoose.model("Product", productSchema);
+export default product_add_model;

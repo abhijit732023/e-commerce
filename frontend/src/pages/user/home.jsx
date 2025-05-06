@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaBars, FaShoppingCart } from 'react-icons/fa';
-import { Header,SliderSection, ENV_File, AppwriteService, SecondSection } from '../../FilesPaths/all_path';
+import { Container, BottomMenuBar, SSSpecialCarousel, FeaturedCollection, Header, SliderSection, ENV_File, AppwriteService, SecondSection } from '../../FilesPaths/all_path';
 import { motion } from 'framer-motion';
+import bgimg from '../../images/texture2.webp'
+
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [imagess, setImages] = useState([]);
@@ -60,7 +62,7 @@ const Home = () => {
         const allImageIds = products.flatMap(product => product.images);
         if (allImageIds) {
             setImages(allImageIds)
-            console.log(allImageIds);
+            // console.log(allImageIds);
 
         }
 
@@ -78,15 +80,12 @@ const Home = () => {
 
 
     return (
-        <div className="w-full">
+        <Container>
             {/* Menu Bar */}
-             <Header/>
+            <Header />
 
             {/* Hero Section */}
-            {/* Hero Section */}
-            {/* Hero Section */}
-            <section className="relative w-full h-screen bg-black overflow-hidden">
-                {/* Background Image Slider */}
+            <section className="rounded-md mt-0.5 relative w-full h-screen bg-black/20 backdrop-blur-2xl overflow-hidden ">
                 {heroImages.map((img, idx) => (
                     <img
                         key={idx}
@@ -109,46 +108,22 @@ const Home = () => {
                 </div>
             </section>
 
-
-
-
-
             {/* Second Section */}
             <SecondSection images={secondSectionImages} />
 
-
-            {/* Why Choose Us */}
             {/* FEATURED COLLECTION */}
-            <section className="bg-rose-50/50 py-12 px-4 md:px-16">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-700">🌟 Featured Collection</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {heroImages.map((img, i) => (
-                        <motion.div
-                            key={i}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            transition={{ duration: 0.6 }}
-                            className="bg-white shadow-lg rounded overflow-hidden hover:scale-105 transition-transform"
-                        >
-                            <img src={img} alt={`Product ${i}`} className="w-full herh-64 md:h-80 object-cover" />
-                            <div className="p-6">
-                                <h3 className="text-lg font-semibold">Lehenga {i + 1}</h3>
-                                <p className="text-red-600 mt-2 text-lg">₹{(i + 1) * 16900}.00</p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </section>
+            <FeaturedCollection products={products} />
+
 
 
             {/* Explore Categories */}
-            {/* <section className="bg-rose-300 py-12 px-4 text-center">
+            <section className="bg-rose-300 py-12 px-4 text-center">
                 <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">Explore Our Categories</h2>
                 <p className="text-white text-sm md:text-base max-w-lg mx-auto">
                     Sarees, Kurtis, Western Wear, Accessories & More
                 </p>
-            </section> */}
-            {/* <section
+            </section>
+            <section
                 className="bg-rose-100/20 border-t-2 border-rose-300/20 py-12 md:h-[50vh] px-4 md:px-16"
                 style={{ aspectRatio: '2730 / 4096' }}
             >
@@ -175,19 +150,23 @@ const Home = () => {
                         </motion.div>
                     ))}
                 </div>
-            </section> */}
+            </section>
+            <SSSpecialCarousel products={products} />
 
 
-<SliderSection products={products}/>
+
+
             {/* Footer */}
-            <footer className="bg-black text-white py-10 px-4 text-center">
+            <footer className="rounded-xl mt-1 bg-black text-white py-10 px-4 text-center">
                 <h4 className="text-xl font-semibold mb-2">SS Collection</h4>
                 <p className="text-sm text-gray-300 max-w-xl mx-auto">
                     Innovative and artistic, SS Collection celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
                 </p>
                 <p className="text-xs text-gray-500 mt-6">© 2025 SS Collection. All rights reserved.</p>
             </footer>
-        </div>
+            <BottomMenuBar />
+        </Container>
+
     );
 };
 

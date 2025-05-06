@@ -13,23 +13,28 @@ const SwipeImageViewer = ({ images, name }) => {
 
   return (
     <div className="relative w-full h-50 overflow-hidden rounded" {...handlers}>
-      {/* Main Image */}
+    {/* Main Image */}
+    {images.map((image, index) => (
       <img
-        src={AppwriteService.getFileViewUrl(images[current])}
-        alt={`${name} - ${current + 1}`}
-        className="w-full h-full object-cover transition-all duration-300 ease-in-out"
+        key={index}
+        src={AppwriteService.getFileViewUrl(image)}
+        alt={`${name} - ${index + 1}`}
+        className={`w-full h-full object-cover object-top transition-opacity duration-300 ease-in-out ${index === current ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0`}
       />
-
-      {/* Dots */}
-      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
-        {images.map((_, index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full ${index === current ? 'bg-black' : 'bg-gray-400'} transition-all`}
-          ></div>
-        ))}
-      </div>
+    ))}
+  
+    {/* Dots */}
+    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
+      {images.map((_, index) => (
+        <div
+          key={index}
+          className={`w-2 h-2 rounded-full cursor-pointer ${index === current ? 'bg-black' : 'bg-gray-400'} transition-all`}
+          onClick={() => setCurrent(index)} // Update the current image when dot is clicked
+        ></div>
+      ))}
     </div>
+  </div>
+  
   );
 };
 

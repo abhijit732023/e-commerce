@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { Product_route_2, Product_add_route, config, Register_Login_Router } from "../backend/index.js";
+import { Order_route,Product_route_2, Product_add_route, config, Register_Login_Router } from "../backend/index.js";
 import path, { join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,6 +38,7 @@ app.use(cookieParser());
 app.use('/', Register_Login_Router);
 app.use('/admin', Product_add_route);
 app.use('/add', Product_route_2);
+app.use('/order', Order_route);
 
 // 404 fallback
 app.use((req, res) => {

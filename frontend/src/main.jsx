@@ -1,15 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {ProductPage,Product_2,AdminEditForm,AdminProductDetail,AdminProductForm, Home_page,Login ,RegisterForm} from './FilesPaths/all_path.js';
-import { AuthProvider } from '../context_api/context_api.jsx';
+import {AuthProvider,PaymentPage,OrderConfirmation,ResetPassword,ForgotPassword,ProductDetail,CartPage,ProductPage,Product_2,AdminEditForm,AdminProductDetail,AdminProductForm, Home_page,Login ,RegisterForm} from './FilesPaths/all_path.js';
 import './index.css'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Home_page />
+      <AuthProvider>
+        <Home_page />
+      </AuthProvider>
     ),
   },
   {
@@ -52,6 +53,48 @@ const router = createBrowserRouter([
     path: '/product',
     element: (
       <ProductPage />
+    ),
+  },
+  {
+    path: '/cart/:userid',
+    element: (
+      <CartPage />
+    ),
+  },
+  {
+    path: '/product/:productId',
+    element: (
+      <ProductDetail />
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <ForgotPassword />
+    ),
+  },
+  {
+    path: '/reset-password/:token',
+    element: (
+      <ResetPassword />
+    ),
+  },
+  {
+    path: '/order',
+    element: (
+      <OrderConfirmation />
+    ),
+  },
+  {
+    path: '/payment',
+    element: (
+      <PaymentPage />
+    ),
+  },
+  {
+    path: '/cart',
+    element: (
+      <CartPage />
     ),
   }
 ])
