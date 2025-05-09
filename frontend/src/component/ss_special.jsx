@@ -8,8 +8,11 @@ const SSSpecialCarousel = ({ products }) => {
   const interactionTimeout = useRef(null);
   const autoScrollTimeout = useRef(null);
 
-  const scrollAmount = 273 + 16; // item width + space-x-4 gap (16px)
-  const scrollInterval = 1100; // total time: 0.6s scroll + 0.5s pause
+  const scrollAmount = 273 + 20; // Slight increase for better spacing feedback
+  const scrollInterval = 3000; // More breathing room between scrolls (smooth pacing)
+
+  // Cloning products to create the infinite loop effect
+  const clonedProducts = [...products, ...products]; // Duplicate the product array
 
   const scrollToNext = () => {
     const container = scrollRef.current;
@@ -20,7 +23,12 @@ const SSSpecialCarousel = ({ products }) => {
 
     let targetScroll = currentScroll + scrollAmount;
     if (targetScroll > maxScroll) {
-      targetScroll = 0; // Loop back to start
+      // If we're at the end, reset scroll to the first image but without jump
+      container.scrollTo({
+        left: 0,
+        behavior: 'smooth',
+      });
+      return;
     }
 
     container.scrollTo({
@@ -64,7 +72,7 @@ const SSSpecialCarousel = ({ products }) => {
   }, []);
 
   return (
-    <section className="rounded-xl mt-1 bg-rose-100/20 border-t-2 border-rose-300/20 py-12 px-4 md:px-16">
+    <section className="rounded-xl mt-1   border-t-2 border-rose-300/20 py-12 px-4 md:px-16">
       <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-800">💎 SS Special</h2>
 
       <div
@@ -74,24 +82,24 @@ const SSSpecialCarousel = ({ products }) => {
         onTouchStart={handleInteraction}
         onMouseDown={handleInteraction}
       >
-        {products.map((img, i) => (
+        {clonedProducts.map((img, i) => (
           <motion.div
             key={i}
-            className="bg-white shadow rounded snap-center overflow-hidden flex-shrink-0"
+            className="bg-cream shadow-lg rounded-md snap-center overflow-hidden flex-shrink-0 border border-mocha transition-transform duration-700 ease-in-out"
             style={{
               width: '273px',
               height: '410px',
               scrollSnapAlign: 'center',
             }}
-            initial={{ scale: 0.85 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: false, amount: 0.6 }}
-            transition={{ duration: 0.8, type: 'tween' }}
+            initial={{ opacity: 1, scale: 0.85 }}
+            whileInView={{ opacity: 1, scale: 0.85 }}
+            viewport={{ once: false, amount: 0.4 }}
+            transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }} // cubic bezier for natural motion
           >
             <img
               src={AppwriteService.getFileViewUrl(img.images[0])}
               alt={`SS Special ${i}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-105"
             />
           </motion.div>
         ))}

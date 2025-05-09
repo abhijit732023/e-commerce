@@ -3,37 +3,28 @@ import { FaBars, FaShoppingCart, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../FilesPaths/all_path";
 
-
 const Header = () => {
-  const {user}=useAuth()
-  const[userid,setuserid]=useState('')
-  
+  const { user } = useAuth();  // Assuming `user` comes from your custom `useAuth` hook
+  const [userid, setUserid] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(2); // replace this with actual cart logic
-  useEffect(()=>{
 
-try {
-  if (user) {
-    console.log(user._id);
-    
-    setuserid(user._id)
-    
-  }
-  
-} catch (error) {
-  
-}
-
-  },[user,setuserid])
+  useEffect(() => {
+    if (user) {
+      console.log('user', user);
+      setUserid(user._id);  // Set the user ID if the user is logged in
+    }
+  }, [user]);
 
   return (
     <>
       {/* Header */}
-      <header className="sticky flex justify-between items-center px-6 py-4 rounded-b-xl bg-white shadow  top-0 z-50">
+      <header className="sticky flex justify-between items-center px-6 py-4 rounded-b-xl  shadow top-0 z-50">
         <FaBars className="text-xl cursor-pointer" onClick={() => setMenuOpen(true)} />
         <h1 className="text-xl font-bold text-center">SS Collection</h1>
-        {/* link to cart */}
-        <Link to={`/cart/${userid}`}>
+        
+        {/* Link to cart */}
+        <Link to={user ? `/cart/${user._id}` : '/login'}>
           <div className="relative">
             <FaShoppingCart className="text-xl" />
             {cartCount > 0 && (
@@ -43,7 +34,6 @@ try {
             )}
           </div>
         </Link>
-
       </header>
 
       {/* Overlay */}

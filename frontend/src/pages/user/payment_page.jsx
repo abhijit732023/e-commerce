@@ -1,85 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+import { ENV_File } from "../../FilesPaths/all_path";
 
-const PaymentPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState("upi");
-  const [upiId, setUpiId] = useState("8976350904@fam");
-  const [upiApp, setUpiApp] = useState("gpay");
+export default function PayNow() {
+  const [payment, setPaymentState] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  const { amount, userid } = useParams();
+  const navigate = useNavigate();
 
-  const order = {
-    amount: 100,
-    name: "Abhijit",
-  };
+  useEffect(() => {
+    if (payment) {
+      const countdownInterval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev === 1) {
+            clearInterval(countdownInterval);
+            setTimeout(() => {
+              navigate(`/myorders/${userid}`);
+            }, 0);
+          }
+          return prev - 1;
+        });
+      }, 1000);
 
-  const handlePayNow = () => {
-    if (selectedMethod === "upi") {
-      const upiLink = `upi://pay?pa=8976350904@fam&pn=Abhijit&am=100&cu=INR
-`;
-      window.location.href = upiLink; // This should trigger UPI app like GPay
-    } else {
-      alert("Other payment methods not implemented in demo.");
+      return () => clearInterval(countdownInterval);
+    }
+  }, [payment, navigate, userid]);
+
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
+        amount: amount,
+      });
+
+      const orderData = response.data;
+
+      const options = {
+        key: `${ENV_File.razor_key_id}`,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "E-Shop Checkout",
+        description: `Pay ₹${amount} to complete your purchase`,
+        order_id: orderData.id,
+        handler: async function (response) {
+          try {
+            await axios.post(`${ENV_File.backendURL}/payment/verify`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setPaymentState(true);
+          } catch (error) {
+            console.error("Verification error:", error.response?.data || error.message);
+            alert("Payment verification failed. Please try again.");
+          }
+        },
+        prefill: {
+          name: "User Name",
+          email: "user@example.com",
+          contact: "9876543210",
+        },
+        theme: {
+          color: "#ff6b6b",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-gray-100 min-h-screen">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Choose Payment Method</h2>
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-white to-gray-100">
+      <div className="absolute inset-0 bg-black/10  z-0"></div>
 
-        {/* UPI Option */}
-        <div
-          className={`border p-4 rounded cursor-pointer ${
-            selectedMethod === "upi" ? "border-blue-500 bg-blue-50" : "border-gray-300"
-          }`}
-          onClick={() => setSelectedMethod("upi")}
-        >
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="payment"
-              checked={selectedMethod === "upi"}
-              onChange={() => setSelectedMethod("upi")}
-              className="mr-3"
-            />
-            UPI
-          </label>
+      <div className="relative z-10 flex-grow flex items-center justify-center px-4 py-8">
+        <div className="backdrop-blur-2xl bg-white  shadow-2xl rounded-xl p-8 max-w-md w-full text-center text-gray-800">
+          <div className="text-pink-600 text-4xl mb-4 flex justify-center">
+            <FaShoppingCart />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Complete Your Purchase</h2>
+          <p className="mb-6 text-gray-600">
+            You're one step away from owning your favorite item. Confirm your payment below.
+          </p>
 
-          {selectedMethod === "upi" && (
-            <div className="mt-4 space-y-3">
-              <label className="block text-sm">Enter your UPI ID:</label>
-              <input
-                type="text"
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                className="border p-2 rounded w-full"
-              />
-
-              <label className="block text-sm mt-2">Select UPI App:</label>
-              <select
-                className="border p-2 rounded w-full"
-                value={upiApp}
-                onChange={(e) => setUpiApp(e.target.value)}
-              >
-                <option value="gpay">Google Pay</option>
-                <option value="phonepe">PhonePe</option>
-                <option value="paytm">Paytm</option>
-              </select>
-            </div>
+          {payment ? (
+            <>
+              <p className="text-green-600 font-semibold text-lg mb-4">
+                ✅ Payment successful! Thank you for shopping with us.
+              </p>
+              <p className="text-yellow-600 text-sm">
+                Redirecting to your orders in {countdown} seconds...
+              </p>
+            </>
+          ) : (
+            <button
+              onClick={handlePayment}
+              className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg transition duration-200"
+            >
+              Pay ₹{amount} Now
+            </button>
           )}
-        </div>
 
-        {/* Pay Now Button */}
-        <div className="mt-6 text-right">
-          <p className="text-lg mb-2">Amount: ₹{order.amount}</p>
+          <p className="text-xs text-gray-500 mt-4">
+            You'll be redirected to Razorpay for secure checkout.
+          </p>
+
           <button
-            onClick={handlePayNow}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+            onClick={() => navigate(-1)}
+            className="mt-6 text-pink-600 hover:underline"
           >
-            Pay Now with {upiApp.toUpperCase()}
+            ← Back to Cart
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default PaymentPage;
+}

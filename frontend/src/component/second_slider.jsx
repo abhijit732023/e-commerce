@@ -1,57 +1,57 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Link } from 'react-router-dom';
-import bgimg from '../images/texture2.webp'
 
 const SwipeableSecondSectionSlider = ({ images }) => {
-  const [index, setIndex] = useState(1); // Start from 1 because 0 is the last clone
+  const [index, setIndex] = useState(1);
   const [isInteracting, setIsInteracting] = useState(false);
   const [transitioning, setTransitioning] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+
   const timeoutRef = useRef(null);
   const interactionTimeoutRef = useRef(null);
 
-  const fullImages = [images[images.length - 1], ...images, images[0]]; // Clone last and first
+  const fullImages = [images[images.length - 1], ...images, images[0]];
 
-  // Auto slide
+  // Handle auto-slide
+  useEffect(() => {
+    setLoaded(true); // Prevent flicker on first load
+  }, []);
+
   useEffect(() => {
     if (!isInteracting) {
       timeoutRef.current = setTimeout(() => {
         setIndex((prev) => prev + 1);
-      }, 3500);
+      }, 4000);
     }
     return () => clearTimeout(timeoutRef.current);
   }, [index, isInteracting]);
 
-  // Reset after transition if at edge
+  // Snap logic after cloning
   const handleTransitionEnd = () => {
-    setTransitioning(false);
     if (index === fullImages.length - 1) {
-      setIndex(1); // Loop to first real slide
+      setTransitioning(false);
+      setIndex(1);
     } else if (index === 0) {
-      setIndex(fullImages.length - 2); // Loop to last real slide
+      setTransitioning(false);
+      setIndex(fullImages.length - 2);
     }
   };
 
   useEffect(() => {
     if (!transitioning) {
-      // Temporarily disable transition to snap to the real image
-      setTimeout(() => {
-        setTransitioning(true);
-      }, 50);
+      // Re-enable transition after snapping
+      setTimeout(() => setTransitioning(true), 50);
     }
   }, [transitioning]);
 
-  // Handle swipe & interaction
+  // Swipe handler
   const handleUserInteraction = (action) => {
     clearTimeout(timeoutRef.current);
     clearTimeout(interactionTimeoutRef.current);
     setIsInteracting(true);
-
     action();
-
-    interactionTimeoutRef.current = setTimeout(() => {
-      setIsInteracting(false);
-    }, 3000);
+    interactionTimeoutRef.current = setTimeout(() => setIsInteracting(false), 3000);
   };
 
   const handlers = useSwipeable({
@@ -61,29 +61,21 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   });
 
   return (
-    <section className="rounded-sm mt-0.5 relative w-full pb-6 h-[60vh] flex justify-center items-end overflow-hidden bg-gray-200 backdrop-blur-2xl"
-    style={
-      {
-          backgroundImage:`url(${bgimg}?v=1)`,
-          backgroundSize:"cover",
-          backgroundPosition:'center',
-          backgroundRepeat:'no-repeat'
-      }
-  }
-    >
+    <section className="relative w-full h-[60vh] flex justify-center items-end overflow-hidden  rounded-sm pb-6">
       {/* Heading */}
       <div className="absolute top-10 text-center w-full z-10">
         <h2 className="text-2xl md:text-4xl font-semibold text-rose-900">New Arrivals</h2>
         <p className="text-sm md:text-base text-rose-700 mt-2">Fresh fashion just for you</p>
       </div>
 
-      {/* Image slider */}
-      <Link to={`/product/`}>
+      {/* Image Slider */}
+      <Link to="/product/">
         <div
-          className="flex w-full"
+          className={`flex w-full transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           style={{
             transform: `translateX(-${index * 100}%)`,
-            transition: transitioning ? 'transform 0.5s ease-in-out' : 'none',
+            transition: transitioning ? 'transform 0.6s ease-in-out' : 'none',
+            willChange: 'transform',
           }}
           onTransitionEnd={handleTransitionEnd}
           {...handlers}
@@ -94,19 +86,22 @@ const SwipeableSecondSectionSlider = ({ images }) => {
               src={img}
               alt={`Slide ${i}`}
               className="w-full h-[50vh] object-cover shrink-0"
+              loading="lazy"
             />
           ))}
         </div>
       </Link>
 
       {/* Dots */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
         {images.map((_, i) => (
           <button
             key={i}
-            onClick={() => handleUserInteraction(() => setIndex(i + 1))} // +1 for clone offset
-            className={`w-2 h-2 rounded-full ${i + 1 === index ? 'bg-rose-800' : 'bg-rose-300'}`}
-          ></button>
+            onClick={() => handleUserInteraction(() => setIndex(i + 1))}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              i + 1 === index ? 'bg-rose-800 scale-125 shadow-md' : 'bg-rose-300'
+            }`}
+          />
         ))}
       </div>
     </section>

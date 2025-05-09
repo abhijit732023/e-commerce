@@ -5,16 +5,31 @@ const Order_route = express.Router();
 
 // Create a new order
 Order_route.post("/add", async (req, res) => {
-  const { productId, header, description, images, size, quantity } = req.body;
+  const { userId, productId, header, description, images, size, quantity } = req.body;
   console.log('hello');
-  
 
   try {
-    const newOrder = new Order(req.body);
+    // For wholesale products, always create new order without checking
+    if (req.body.buyingMehtod === 'Wholesale') {
+      const newOrder = new Order(req.body);
+      await newOrder.save();
+      return res.status(201).json({ message: "Order created successfully", order: newOrder });
+    }
 
-    await newOrder.save();
+    // Check if order with same userId, productId and size exists for non-wholesale
+    const existingOrder = await Order.findOne({ userId, productId, size });
 
-    return res.status(201).json({ message: "Order created successfully", order: newOrder });
+    if (existingOrder) {
+      // Update quantity of existing order
+      existingOrder.quantity += quantity;
+      await existingOrder.save();
+      return res.status(200).json({ message: "Order quantity updated", order: existingOrder });
+    } else {
+      // Create new order
+      const newOrder = new Order(req.body);
+      await newOrder.save();
+      return res.status(201).json({ message: "Order created successfully", order: newOrder });
+    }
   } catch (error) {
     console.error("Error creating order:", error);
     return res.status(500).json({ message: "Server error" });
@@ -34,12 +49,25 @@ Order_route.get("/", async (req, res) => {
 
 // Get order by ID
 Order_route.get("/:id", async (req, res) => {
-  console.log(req.params.id);
   const id = req.params.id;
 
   try {
     const order = await Order.find({userId:id});
-    console.log(order);
+    
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+Order_route.get("/single-item/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const order = await Order.find({_id:id});
     
     if (!order) {
       return res.status(404).json({ message: "Order not found" });

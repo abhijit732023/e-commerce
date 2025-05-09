@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {AuthProvider,PaymentPage,OrderConfirmation,ResetPassword,ForgotPassword,ProductDetail,CartPage,ProductPage,Product_2,AdminEditForm,AdminProductDetail,AdminProductForm, Home_page,Login ,RegisterForm} from './FilesPaths/all_path.js';
+import {AccountPage,AddressForm,Wish_List,AuthProvider,PayNow,OrderConfirmation,ProductDetail,CartPage,ProductPage,Product_2,AdminEditForm,AdminProductDetail,AdminProductForm, Home_page,Login ,RegisterForm, Logout} from './FilesPaths/all_path.js';
 import './index.css'
 
 const router = createBrowserRouter([
@@ -68,33 +68,45 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/forgot-password',
-    element: (
-      <ForgotPassword />
-    ),
-  },
-  {
-    path: '/reset-password/:token',
-    element: (
-      <ResetPassword />
-    ),
-  },
-  {
     path: '/order',
     element: (
       <OrderConfirmation />
     ),
   },
   {
-    path: '/payment',
+    path: '/cart/:userid/:amount',
     element: (
-      <PaymentPage />
+      <PayNow />
     ),
   },
   {
     path: '/cart',
     element: (
       <CartPage />
+    ),
+  },
+  {
+    path: '/wishlist',
+    element: (
+      <Wish_List />
+    ),
+  },
+  {
+    path: '/logout',
+    element: (
+      <Logout />
+    ),
+  },
+  {
+    path: '/address',
+    element: (
+      <AddressForm />
+    ),
+  },
+  {
+    path: '/account',
+    element: (
+      <AccountPage />
     ),
   }
 ])
