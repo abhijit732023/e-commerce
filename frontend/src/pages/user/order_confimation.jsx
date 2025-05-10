@@ -1,80 +1,111 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
+import { FaBoxOpen, FaRupeeSign, FaCheckCircle, FaStar } from "react-icons/fa";
 
-const PaymentPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState("upi");
+const OrderPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [ratings, setRatings] = useState({}); // store ratings locally
 
-  const order = {
-    total: 816,
-    address: {
-      name: "Abhijit",
-      line: "Room No 7, Sion Dharavi, 400017",
-      phone: "1234567890",
-    },
-  };
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${ENV_File.backendURL}/order`);
+        const filtered = response.data.filter(order => order.paymentStatus === "paid");
+        setOrders(filtered);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    fetchOrders();
+  }, []);
 
-  const handlePayment = () => {
-    alert(`Proceeding with ${selectedMethod.toUpperCase()} payment...`);
-    // Integrate Razorpay or your chosen gateway here
+  const handleRating = (orderId, value) => {
+    setRatings(prev => ({ ...prev, [orderId]: value }));
+
+    // Optional: Send rating to backend
+    // axios.post(`${ENV_File.backendURL}/order/rate`, { orderId, rating: value });
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Select Payment Method</h2>
+    <Container>
+      <div className="max-w-2xl mx-auto p-4 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">🛒 Your Orders</h1>
 
-        {/* Address */}
-        <div className="border p-4 rounded mb-6">
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold">Deliver To</h3>
-            <button className="text-blue-600 text-sm hover:underline">Change</button>
-          </div>
-          <p className="text-gray-700 mt-1">
-            {order.address.name}, {order.address.line}, {order.address.phone}
-          </p>
-        </div>
-
-        {/* Payment Methods */}
-        <div className="space-y-4">
-          {[
-            { id: "upi", label: "UPI" },
-            { id: "card", label: "Credit / Debit Card" },
-            { id: "wallet", label: "Wallets" },
-            { id: "cod", label: "Cash on Delivery" },
-          ].map((method) => (
-            <div
-              key={method.id}
-              className={`border p-4 rounded cursor-pointer ${
-                selectedMethod === method.id ? "border-blue-500 bg-blue-50" : "border-gray-300"
-              }`}
-              onClick={() => setSelectedMethod(method.id)}
-            >
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={selectedMethod === method.id}
-                  onChange={() => setSelectedMethod(method.id)}
-                  className="mr-3"
-                />
-                {method.label}
-              </label>
-            </div>
-          ))}
-        </div>
-
-        {/* Summary */}
-        <div className="mt-6 border-t pt-4 text-right">
-          <p className="text-lg font-semibold mb-2">Total Payable: ₹{order.total}</p>
-          <button
-            onClick={handlePayment}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+      {orders.length === 0 ? (
+        <div className="text-center text-gray-600 mt-10">No paid orders found.</div>
+      ) : (
+        orders.map((order, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-xl shadow hover:shadow-md transition duration-300 p-4 mb-6 border border-gray-200"
           >
-            Pay Now
-          </button>
-        </div>
-      </div>
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-30 bg-cover bg-no-repeat flex-shrink-0 rounded-lg bg-gray-100 overflow-hidden">
+                {order.images && order.images.length > 0 ? (
+                  <img
+                    src={AppwriteService.getFileViewUrl(order.images[0])}
+                    alt={order.header}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400 text-xs">
+                    No Image
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1">
+                <div className="text-sm text-gray-500">Order ID: {order._id}</div>
+                <h2 className="text-lg font-semibold text-gray-800 mt-1">{order.header}</h2>
+                <p className="text-sm text-gray-600 mb-2">{order.description}</p>
+
+                <div className="grid grid-cols-2 text-sm gap-y-1 text-gray-700">
+                  <div className="flex items-center gap-1">
+                    <FaRupeeSign className="text-green-600" />
+                    <span>Price: ₹{order.price.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaBoxOpen className="text-blue-600" />
+                    <span>Quantity: {order.quantity}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Size:</span>
+                    <span>{order.size}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Method:</span>
+                    <span>{order.buyingMehtod}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex justify-between items-center px-2">
+              <span className="text-green-600 text-sm flex items-center gap-1 font-medium">
+                <FaCheckCircle />
+                Payment: Paid
+              </span>
+
+              {/* ⭐ Star Rating UI */}
+              <div className="flex gap-1 items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    onClick={() => handleRating(order._id, star)}
+                    className={`cursor-pointer ${
+                      ratings[order._id] >= star ? "text-yellow-400" : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      )}
     </div>
+    </Container>
   );
 };
 
-export default PaymentPage;
+export default OrderPage;

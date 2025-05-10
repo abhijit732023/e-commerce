@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../FilesPaths/allpath';
+import { useAuth } from '../FilesPaths/all_path';
 import { motion } from 'framer-motion';
 
 const AuthGuard = ({ children }) => {

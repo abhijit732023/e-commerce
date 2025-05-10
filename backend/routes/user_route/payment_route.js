@@ -1,59 +1,86 @@
-import express from 'express';
-import Razorpay from 'razorpay';
-import crypto from 'crypto';
-import config from '../../config/config.js';
+import express from "express";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+import { config ,Order} from '../../index.js';
 
-const Payment_route = express.Router();
+const PaymentRouter = express.Router();
 
 const razorpay = new Razorpay({
   key_id: config.payment_key_id,
   key_secret: config.payment_key_secret,
 });
 
-// 🔹 Create Razorpay Order
-Payment_route.post("/create-order", async (req, res) => {
+// Payment request route
+PaymentRouter.post("/request", async (req, res) => {
+  const { amount } = req.body;
   try {
-    const { amount } = req.body;
+    const order = await razorpay.orders.create({
+      amount: amount * 100, // Convert ₹ to paise
+      currency: "INR",
+      payment_capture: 1
+    });
+    console.log("Order Created:", order);
+    
+    res.json(order);
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    if (!amount || isNaN(amount)) {
-      return res.status(400).json({ message: "Amount is required and must be a number" });
+// Payment verification route
+PaymentRouter.post("/verify", async (req, res) => {
+  try {
+    console.log("Request Body:", req.body);
+
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, userid, orderId } = req.body;
+
+    // Verify Razorpay payment signature
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", config.payment_key_secret)
+      .update(body.toString())
+      .digest("hex");
+
+    console.log("Expected Signature:", expectedSignature);
+    console.log("Received Signature:", razorpay_signature);
+
+    if (expectedSignature !== razorpay_signature) {
+      console.log("Invalid signature. Payment verification failed.");
+      return res.status(400).json({ success: false, message: "Invalid signature" });
     }
 
-    const options = {
-      amount: amount * 100,
-      currency: "INR",
-      receipt: `receipt_order_${Date.now()}`,
-      payment_capture: 1,
-    };
+    console.log("Payment verified successfully:", razorpay_payment_id);
 
-    const order = await razorpay.orders.create(options);
-    res.status(201).json({ order });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to create Razorpay order" });
+    // Find the order(s) by orderId(s)
+    if (Array.isArray(orderId)) {
+      // Update multiple orders
+      const result = await Order.updateMany(
+        { _id: { $in: orderId } },
+        { $set: { paymentStatus: "paid" } }
+      );
+      console.log("Orders updated:", result);
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ success: false, message: "Orders not found" });
+      }
+    } else {
+      // Update single order
+      const order = await Order.findById(orderId);
+      console.log("Order:", order);
+
+      if (!order) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+      }
+      order.paymentStatus = "paid";
+      await order.save();
+    }
+
+    return res.json({ success: true, message: "Payment verified, status updated!" });
+  } catch (error) {
+    console.error("Payment verification error:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
 
-// 🔹 Razorpay Webhook Verification
-Payment_route.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  const secret = config.payment_key_secret;
-
-  const signature = req.headers["x-razorpay-signature"];
-  const body = req.body;
-
-  const generatedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(JSON.stringify(body))
-    .digest("hex");
-
-  if (signature === generatedSignature) {
-    console.log("✅ Signature verified successfully");
-    // Save to DB here if needed
-    return res.status(200).json({ status: "ok" });
-  } else {
-    console.warn("❌ Signature verification failed");
-    return res.status(400).json({ status: "invalid signature" });
-  }
-});
-
-export default Payment_route;
+export default PaymentRouter;

@@ -1,8 +1,10 @@
 import React from "react";
-const Container = ({ children, className = "h-screen w-full border-gray-100 overflow-y-scroll", style = {} }) => {
+import { BottomMenuBar} from "../FilesPaths/all_path";
+const Container = ({ children, className = "h-screen w-full border-gray-100 bg-gray-400/20 overflow-y-scroll", style = {} }) => {
     return (
-      <div className={`relative ${className}`} style={style}>
+      <div className={`relative ${className} pb-10`} style={style}>
       {children}
+      <BottomMenuBar/>
     </div>
     );
   };

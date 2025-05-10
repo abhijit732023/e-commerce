@@ -26,9 +26,9 @@ Address_route.get('/user/:userId', async (req, res) => {
 });
 
 // Get a single address by ID
-Address_route.get('/:id', async (req, res) => {
+Address_route.get('/:userid', async (req, res) => {
   try {
-    const address = await Address_model.findById(req.params.id);
+    const address = await Address_model.find({userid:req.params.userid});
     if (!address) {
       return res.status(404).json({ success: false, message: 'Address not found' });
     }

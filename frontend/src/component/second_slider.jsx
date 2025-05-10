@@ -61,12 +61,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   });
 
   return (
-    <section className="relative w-full h-[60vh] flex justify-center items-end overflow-hidden  rounded-sm pb-6">
-      {/* Heading */}
-      <div className="absolute top-10 text-center w-full z-10">
-        <h2 className="text-2xl md:text-4xl font-semibold text-rose-900">New Arrivals</h2>
-        <p className="text-sm md:text-base text-rose-700 mt-2">Fresh fashion just for you</p>
-      </div>
+    <section className="relative w-full h-[56vh] bg-white flex justify-center items-end overflow-hidden  rounded-md pb-6">
 
       {/* Image Slider */}
       <Link to="/product/">
@@ -80,7 +75,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
           onTransitionEnd={handleTransitionEnd}
           {...handlers}
         >
-          {fullImages.map((img, i) => (
+          {images.map((img, i) => (
             <img
               key={i}
               src={img}
@@ -98,8 +93,8 @@ const SwipeableSecondSectionSlider = ({ images }) => {
           <button
             key={i}
             onClick={() => handleUserInteraction(() => setIndex(i + 1))}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              i + 1 === index ? 'bg-rose-800 scale-125 shadow-md' : 'bg-rose-300'
+            className={`w-[2px] h-[2px] rounded-full transition-all duration-300 ${
+              i + 1 === index ? 'bg-rose-800 scale-225 shadow-md' : 'bg-rose-300'
             }`}
           />
         ))}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth, SwipeImageViewer, AppwriteService, ENV_File, } from "../../FilesPaths/all_path";
+import { useAuth, SwipeImageViewer, AppwriteService, ENV_File, Container, } from "../../FilesPaths/all_path";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -44,7 +44,8 @@ const ProductPage = () => {
 
 
     return (
-        <div className="p-2 md:p-4">
+        <Container>
+            <div className="p-2 md:p-4 pb-20">
             <h2 className="text-lg font-bold mb-3 md:text-2xl">Shop Bridal Collection</h2>
 
             {/* Product Grid - Compact */}
@@ -83,6 +84,7 @@ const ProductPage = () => {
 
 
         </div>
+        </Container>
     );
 };
 

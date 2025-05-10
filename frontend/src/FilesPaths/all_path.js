@@ -28,7 +28,8 @@ import Wish_List from '../pages/user/wishlist.jsx'
 import Logout from "../pages/user/logout.jsx";
 import AddressForm from "../pages/user/address_form.jsx";
 import AccountPage from "../pages/user/account.jsx";
-
+import AuthGuard from "../component/auth_check.jsx";
+import OrderPage from "../pages/user/order_confimation.jsx";
 
 export{
     RegisterForm,
@@ -62,6 +63,8 @@ export{
     Logout,
     AddressForm,
     AccountPage,
+    AuthGuard,
+    OrderPage,
     
     
 

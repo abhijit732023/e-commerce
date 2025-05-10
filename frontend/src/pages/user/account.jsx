@@ -1,7 +1,7 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { useAuth } from "../../FilesPaths/all_path";
+import { useAuth,Container } from "../../FilesPaths/all_path";
 
 const menuItems = [
     { title: "Orders" },
@@ -26,8 +26,10 @@ const menuItems = [
 
 const AccountPage = () => {
 
-    const { user,logout } = useAuth();
+    const { user, logout } = useAuth();
     const [users, setUser] = useState('');
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
     useEffect(() => {
         if (user) {
             console.log('user', user);
@@ -37,9 +39,10 @@ const AccountPage = () => {
 
 
     return (
-        <div className="bg-gray-50 min-h-screen p-4 pb-24">
+        <Container>
+            <div className="bg-gray-50 min-h-screen p-4 pb-24">
             <motion.h1
-                className="text-xl font-semibold mb-4"
+                className="text-xl font-semibold mt-2 mb-4"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
@@ -86,14 +89,47 @@ const AccountPage = () => {
                 ))}
             </div>
 
+
             {/* Logout Button */}
             <div className="mt-6 flex flex-col items-center">
-                <button onClick={logout} className="border px-6 py-2 rounded-full text-red-500 font-medium hover:bg-red-50 transition">
+                <button
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="border px-6 py-2 rounded-full text-red-500 font-medium hover:bg-red-50 transition"
+                >
                     Logout
                 </button>
                 <p className="text-xs text-gray-400 mt-2">Version 9.21.0 Build 3457</p>
             </div>
+
+            {/* Logout Confirmation Popup */}
+            {showLogoutConfirm && (
+                <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-85 shadow-lg text-center">
+                        <h3 className="text-lg font-semibold mb-4">Are you sure you want to logout ?</h3>
+                        <div className="flex justify-around border-t-2 border-gray-200 pt-4">
+                            <div className="border-r-1 border-gray-300  w-1/2">
+                                <button
+                                    onClick={() => { logout(); setShowLogoutConfirm(false); }}
+                                    className="bg-red-500 text-white px-8 py-2 rounded-md border border-red-700 hover:bg-red-600 transition"
+                                >
+                                    Yes
+                                </button>
+                            </div>
+                            <div className="border-l-1 border-gray-300  w-1/2">
+                                <button
+                                    onClick={() => setShowLogoutConfirm(false)}
+                                    className="bg-gray-300 px-8 py-2 rounded-md border border-gray-500 hover:bg-gray-400 transition"
+                                >
+                                    No
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
+        </Container>
     );
 };
 

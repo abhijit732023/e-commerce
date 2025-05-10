@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth,AppwriteService, Button, ENV_File } from '../../FilesPaths/all_path.js';
+import { useAuth,AppwriteService, Button, ENV_File, Container } from '../../FilesPaths/all_path.js';
 import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -104,7 +104,8 @@ const ProductDetail = () => {
     if (!product) return <div className="text-center mt-10">Loading...</div>;
 
     return (
-        <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+       <Container>
+         <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10 pb-20">
             {/* Swiper (unchanged) */}
             <div className="w-full h-[500px]">
                 <Swiper
@@ -247,6 +248,7 @@ const ProductDetail = () => {
                 </div>
             </div>
         </div>
+       </Container>
     );
 };
 
