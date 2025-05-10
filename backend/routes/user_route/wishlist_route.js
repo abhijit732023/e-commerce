@@ -1,5 +1,5 @@
 import express from "express";
-import {Wishlist_model} from "../../index.js";
+import {Wishlist_model,Order} from "../../index.js";
 import mongoose from "mongoose";
 
 
@@ -24,15 +24,15 @@ Wishlist_route.post("/add", async (req, res) => {
 });
 
 // Get all orders
-// Wishlist_route.get("/", async (req, res) => {
-//   try {
-//     const orders = await Order.find();
-//     return res.status(200).json(orders);
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//     return res.status(500).json({ message: "Server error" });
-//   }
-// });
+Wishlist_route.get("/", async (req, res) => {
+  try {
+    const orders = await Order.find();
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
 
 // Get order by ID
 Wishlist_route.get("/:id", async (req, res) => {

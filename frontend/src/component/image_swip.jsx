@@ -28,7 +28,7 @@ const SwipeImageViewer = ({ images, name }) => {
       {images.map((_, index) => (
         <div
           key={index}
-          className={`w-2 h-2 rounded-full cursor-pointer ${index === current ? 'bg-black' : 'bg-gray-400'} transition-all`}
+          className={`w-2 h-2 rounded-full cursor-pointer ${index === current ? 'bg-red-500' : 'bg-gray-400'} transition-all`}
           onClick={() => setCurrent(index)} // Update the current image when dot is clicked
         ></div>
       ))}

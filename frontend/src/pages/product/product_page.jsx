@@ -1,91 +1,99 @@
 import React, { useEffect, useState } from "react";
-import { useAuth, SwipeImageViewer, AppwriteService, ENV_File, Container, } from "../../FilesPaths/all_path";
+import {
+  useAuth,
+  SwipeImageViewer,
+  AppwriteService,
+  ENV_File,
+  Container,
+} from "../../FilesPaths/all_path";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
-
-
+import { FaHeart } from "react-icons/fa";
 
 const ProductPage = () => {
+  const [products, setProducts] = useState([]);
+  const [likedProducts, setLikedProducts] = useState({});
 
-    const [image1, setimage1] = useState([])
-    const [image2, setimage2] = useState([])
-    const [products, setProducts] = useState([])
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-    useEffect(() => {
-        const fetchimages = async () => {
+  const toggleLike = (productId) => {
+    setLikedProducts((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
 
-            try {
-                const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-                setProducts(response.data)
+  return (
+    <Container>
+      <div className="p-4 md:p-6 pb-24 bg-white/80 min-h-screen">
+        <h2 className="text-xl  md:text-3xl font-bold mb-6 tracking-wide text-gray-800">
+          💍 Shop Bridal Collection
+        </h2>
 
-            } catch (error) {
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {products.map((product) => {
+            const discount = Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100);
+            const isLiked = likedProducts[product._id];
 
-            }
-        }
-        fetchimages()
+            return (
+              <div
+                key={product._id}
+                className="bg-white border border-gray-400 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative"
+              >
+                <Link to={`${product._id}`} className="block h-full">
+                  <div className="relative p-1">
+                    <SwipeImageViewer images={product.images} name={product.name} />
 
-    }, [])
+                    {/* Heart Icon */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleLike(product._id);
+                      }}
+                      className="absolute top-2 right-2 text-xl bg-white rounded-full p-1 shadow-sm"
+                    >
+                      <FaHeart
+                        className={`transition-colors duration-200 ${
+                          isLiked ? "text-red-500" : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  </div>
 
-    useEffect(() => {
+                  <div className="p-3">
+                    <h4 className="font-semibold text-sm md:text-base text-gray-800 truncate">
+                      {product.header}
+                    </h4>
+                    <p className="text-xs text-gray-500 truncate mt-1">
+                      {product.description}
+                    </p>
 
-        try {
-            const filter = products.flatMap((p) => { p.images })
-            if (filter) {
-
-                setimage1(filter)
-
-            }
-        } catch (error) {
-            console.log(error);
-
-        }
-    }, [products])
-
-
-    return (
-        <Container>
-            <div className="p-2 md:p-4 pb-20">
-            <h2 className="text-lg font-bold mb-3 md:text-2xl">Shop Bridal Collection</h2>
-
-            {/* Product Grid - Compact */}
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
-                {products.map((product, i) => {
-                    const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
-                    return (
-                        <div
-                            key={product._id}
-                            className="border rounded-md overflow-hidden shadow-sm hover:shadow-md transition text-sm"
-                        >
-                            <Link to={`${product._id}`}>
-                                <div className="flex flex-col">
-                                    <div className="flex overflow-x-auto gap-2 mb-2">
-                                        <SwipeImageViewer images={product.images} name={product.name} />
-                                    </div>
-
-                                    <div className="p-2">
-                                        <div>{product.images}</div>
-                                        <h4 className="font-semibold truncate">{product.brand}</h4>
-                                        <p className="text-xs truncate">{product.name}</p>
-                                        <div className="flex items-center space-x-1 mt-1">
-                                            <span className="font-bold text-sm">₹{product.price}</span>
-                                            <span className="line-through text-gray-500 text-xs">₹{product.mrp}</span>
-                                            <span className="text-green-600 text-xs">{discount}% OFF</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </Link>
-                        </div>
-                    );
-                })}
-            </div>
-
-
+                    <div className="flex items-center space-x-1 mt-2">
+                      <span className="font-bold text-sm md:text-base text-gray-800">
+                        ₹{product.price}
+                      </span>
+                      <span className="line-through text-gray-400 text-xs">₹{product.fakePrie}</span>
+                      <span className="text-green-600 text-xs font-medium">{discount}% OFF</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
         </div>
-        </Container>
-    );
+      </div>
+    </Container>
+  );
 };
 
 export default ProductPage;
