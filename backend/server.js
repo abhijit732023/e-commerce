@@ -20,6 +20,7 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:5173',
       'http://192.168.0.106:5173',
+      'https://e-commerce-lake-gamma-54.vercel.app/',
     ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
