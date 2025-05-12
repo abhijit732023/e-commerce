@@ -15,6 +15,8 @@ const ProductDetail = () => {
     console.log(user);
 
     const { productId } = useParams();
+
+    const [useid, setuserid] = useState(null);
     const [product, setProduct] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -37,6 +39,9 @@ const ProductDetail = () => {
             }
         };
         fetchProduct();
+        if (user) {
+            setuserid(user._id);
+        }
     }, [productId]);
 
     const handleSizeSelect = (size) => {
@@ -79,7 +84,7 @@ const ProductDetail = () => {
 
         const cartData = {
             userId: user._id,
-            productId: product._id,
+            productId: productId,
             header: product.header,
             description: product.description,
             images: product.images,
