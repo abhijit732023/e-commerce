@@ -3,14 +3,14 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useAuth, ENV_File } from "../../FilesPaths/all_path.js";
 import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function LoginForm() {
-  const{user,login}=useAuth()
+  const { user, login } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [message, setMessage] = useState("");
 
   const onSubmit = async (data) => {
-    
     try {
       const response = await axios.post(`${ENV_File.backendURL}/login`, data);
       console.log("Login successful:", response.data);
@@ -56,12 +56,17 @@ export default function LoginForm() {
               onClick={() => window.location.href = "/forgot-password"}>
               Forgot Password?
             </p>
-
           </form>
+          <p className="text-sm text-center text-gray-600 mt-4">
+            Don't have an account?{" "}
+            <Link to={'/register'} className="text-blue-600 hover:underline">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </main>
 
-      <footer className="bg-black/90 text-white   mt-15">
+      <footer className="bg-black/90 text-white mt-15">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h4 className="text-xl font-semibold mb-4">About SS Collection</h4>
