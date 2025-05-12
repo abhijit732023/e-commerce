@@ -48,7 +48,7 @@ const ProductPage = () => {
   return (
     <Container>
       <div className="p-4 md:p-6 pb-24 bg-white/80 min-h-screen">
-<Link
+{/* <Link
   to={-1}
   className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
 >
@@ -67,7 +67,7 @@ const ProductPage = () => {
     />
   </svg>
   Back
-</Link>
+</Link> */}
         <h2 className="text-xl md:text-3xl font-bold mb-6 tracking-wide text-gray-800">
 
           Shop Bridal Collection

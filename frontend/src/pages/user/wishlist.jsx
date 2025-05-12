@@ -55,7 +55,7 @@ const WishlistPage = () => {
 
   return (
     <Container>
-<Link
+{/* <Link
   to={-1}
   className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
 >
@@ -74,7 +74,7 @@ const WishlistPage = () => {
     />
   </svg>
   Back
-</Link>
+</Link> */}
       <div className="bg-gray-100 min-h-screen px-4 py-6 text-sm">
         <h2 className="font-semibold text-2xl py-4">Wishlist</h2>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaHome, FaShoppingCart, FaHeart, FaUser, FaStore } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { ENV_File, useAuth } from '../FilesPaths/all_path';
@@ -10,20 +10,21 @@ const fetcher = url => axios.get(url).then(res => res.data);
 const BottomMenuBar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [activeMenu, setActiveMenu] = useState(null); // State to track the active menu item
 
   const userid = user?._id || '';
 
-const { data: orders, error: orderError } = useSWR(
-  user ? `${ENV_File.backendURL}/order` : null,
-  async (url) => {
-    const response = await axios.get(url);
-    // Filter orders with paymentStatus === "pending"
-    return response.data.filter((order) => order.paymentStatus === "pending");
-  },
-  { refreshInterval: 5000 }
-);
+  const { data: orders } = useSWR(
+    user ? `${ENV_File.backendURL}/order` : null,
+    async (url) => {
+      const response = await axios.get(url);
+      // Filter orders with paymentStatus === "pending"
+      return response.data.filter((order) => order.paymentStatus === "pending");
+    },
+    { refreshInterval: 5000 }
+  );
 
-  const { data: wishlist, error: wishlistError } = useSWR(
+  const { data: wishlist } = useSWR(
     user ? `${ENV_File.backendURL}/wishlist` : null,
     fetcher,
     { refreshInterval: 5000 }
@@ -46,8 +47,13 @@ const { data: orders, error: orderError } = useSWR(
         {menuItems.map((item, index) => (
           <button
             key={index}
-            onClick={() => navigate(item.path)}
-            className="relative flex flex-col items-center hover:text-rose-600 transition"
+            onClick={() => {
+              setActiveMenu(index); // Set the active menu item
+              navigate(item.path);
+            }}
+            className={`relative flex flex-col items-center transition ${
+              activeMenu === index ? 'text-rose-600' : 'text-gray-600'
+            }`}
           >
             <div className="text-xl mb-1">{item.icon}</div>
             {item.count > 0 && (

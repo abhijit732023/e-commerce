@@ -37,7 +37,11 @@ const CartPage = () => {
     const fetchOrder = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order/${userid}`);
+        console.log("Fetched order response:", response.data);
+        
         const orderData = response.data.filter((item) => item.paymentStatus === "pending");
+        console.log("Fetched order data:", orderData);
+        
         setOrder(orderData);
 
         // Set initial quantities for each item
@@ -57,7 +61,7 @@ const CartPage = () => {
       }
     };
     fetchOrder();
-  }, [userid]);
+  }, []);
 
   const handlewish = async () => {
     console.log('selected', selectedItemId);
@@ -214,7 +218,7 @@ const CartPage = () => {
 
   return (
     <Container>
-<Link
+{/* <Link
   to={-1}
   className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
 >
@@ -233,7 +237,7 @@ const CartPage = () => {
     />
   </svg>
   Back
-</Link>
+</Link> */}
       <div className="max-w-4xl h-screen max-h-screen mx-auto p-4 bg-white text-sm font-sans overflow-scroll pb-10">
         <div className="border-b pb-2 mb-4 flex justify-between items-center">
           <p className="font-semibold">Abhijit | Room no 7, Sion Dharavi... 400017</p>

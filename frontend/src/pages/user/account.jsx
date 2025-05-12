@@ -39,7 +39,7 @@ const AccountPage = () => {
 
     return (
         <Container>
-            <Link
+            {/* <Link
   to={-1}
   className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
 >
@@ -58,7 +58,7 @@ const AccountPage = () => {
     />
   </svg>
   Back
-</Link>
+</Link> */}
             <div className="bg-gray-50 min-h-screen p-4 pb-24">
                 <motion.h1
                     className="text-xl font-semibold mt-2 mb-4"

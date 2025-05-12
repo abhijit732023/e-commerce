@@ -30,7 +30,7 @@ const OrderPage = () => {
 
   return (
     <Container>
-<Link
+{/* <Link
   to={-1}
   className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
 >
@@ -49,7 +49,7 @@ const OrderPage = () => {
     />
   </svg>
   Back
-</Link>
+</Link> */}
       <div className="max-w-2xl mx-auto p-4 bg-gray-100 min-h-screen">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">🛒 Your Orders</h1>
 

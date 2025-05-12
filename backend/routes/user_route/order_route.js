@@ -6,7 +6,7 @@ const Order_route = express.Router();
 // Create a new order
 Order_route.post("/add", async (req, res) => {
   const { userId, productId, header, description, images, size, quantity } = req.body;
-  console.log('hello');
+  console.log(req.body);
 
   try {
     // For wholesale products, always create new order without checking

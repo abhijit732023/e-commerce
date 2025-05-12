@@ -61,7 +61,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   });
 
   return (
-    <section className="relative w-full h-[56vh] bg-white flex justify-center items-end overflow-hidden  rounded-md pb-6">
+    <section className="relative w-full  bg-white flex justify-center items-end overflow-hidden  rounded-md pb-6">
 
       {/* Image Slider */}
       <Link to="/product/">
@@ -80,7 +80,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
               key={i}
               src={img}
               alt={`Slide ${i}`}
-              className="w-full h-[50vh] object-cover shrink-0"
+              className="w-full rounded-md shadow-gray-300  object-contain shrink-0"
               loading="lazy"
             />
           ))}
