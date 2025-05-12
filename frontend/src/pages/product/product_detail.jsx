@@ -16,7 +16,7 @@ const ProductDetail = () => {
 
     const { productId } = useParams();
 
-    const [useid, setuserid] = useState(null);
+    const [userid, setuserid] = useState(null);
     const [product, setProduct] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -83,7 +83,7 @@ const ProductDetail = () => {
         }
 
         const cartData = {
-            userId: user._id,
+            userId: userid,
             productId: productId,
             header: product.header,
             description: product.description,
