@@ -3,10 +3,12 @@ import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { AddressForm, AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path.js";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 
 const CartPage = () => {
   const { userid } = useParams();
+  const navigate = useNavigate();
   const [localQuantities, setLocalQuantities] = useState({});
   const [order, setOrder] = useState([]);
   const [initialQuantities, setInitialQuantities] = useState({});
@@ -179,6 +181,15 @@ const CartPage = () => {
               orderId: order.map((item) => item._id), // Send order IDs
             });
             console.log("Payment Verification Response:", resp.data);
+            if (resp.data.success) {
+              setTimeout(() => {
+                alert("Redirecting to order page...");
+                navigate(`/order/${userid}`);
+                
+              }, 3000);
+              // Optionally, redirect to a success page or update the UI
+              
+            }
           } catch (error) {
             console.error("Verification error:", error.response?.data || error.message);
             alert("Payment verification failed. Please try again.");
@@ -203,8 +214,26 @@ const CartPage = () => {
 
   return (
     <Container>
-
-
+<Link
+  to={-1}
+  className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    stroke="currentColor"
+    className="w-5 h-5"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15.75 19.5L8.25 12l7.5-7.5"
+    />
+  </svg>
+  Back
+</Link>
       <div className="max-w-4xl h-screen max-h-screen mx-auto p-4 bg-white text-sm font-sans overflow-scroll pb-10">
         <div className="border-b pb-2 mb-4 flex justify-between items-center">
           <p className="font-semibold">Abhijit | Room no 7, Sion Dharavi... 400017</p>

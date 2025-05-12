@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import { FaStar } from "react-icons/fa";
 import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
+import { Link } from "react-router-dom";
 
 const fetcher = url => axios.get(url).then(res => res.data);
 
 const WishlistPage = () => {
-  const[productid,setProductid]=useState('');
+  const [productid, setProductid] = useState('');
 
 
 
@@ -17,7 +18,7 @@ const WishlistPage = () => {
   });
   console.log("Wishlist data:", wishlist);
 
-  
+
 
   const [ratings, setRatings] = useState({}); // State to track ratings for each item
 
@@ -26,9 +27,9 @@ const WishlistPage = () => {
   }
 
   const handleAddToCart = async (item) => {
-    const{_id,_v,createdAt,updateAt,...orderitem}=item
+    const { _id, _v, createdAt, updateAt, ...orderitem } = item
     try {
-     const respose= await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
+      const respose = await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
       console.log("Added to cart:", respose.data);
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -54,6 +55,26 @@ const WishlistPage = () => {
 
   return (
     <Container>
+<Link
+  to={-1}
+  className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    stroke="currentColor"
+    className="w-5 h-5"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15.75 19.5L8.25 12l7.5-7.5"
+    />
+  </svg>
+  Back
+</Link>
       <div className="bg-gray-100 min-h-screen px-4 py-6 text-sm">
         <h2 className="font-semibold text-2xl py-4">Wishlist</h2>
 
