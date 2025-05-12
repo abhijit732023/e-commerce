@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const CartPage = () => {
   const { userid } = useParams();
+  const [localQuantities, setLocalQuantities] = useState({});
   const [order, setOrder] = useState([]);
   const [initialQuantities, setInitialQuantities] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -34,22 +35,27 @@ const CartPage = () => {
     const fetchOrder = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order/${userid}`);
-        console.log('order', response.data);
+        const orderData = response.data.filter((item) => item.paymentStatus === "pending");
+        setOrder(orderData);
 
-        setOrder(response.data);
         // Set initial quantities for each item
         const quantities = {};
-        response.data.forEach(item => {
-          quantities[item._id] = item.quantity;
+        response.data.forEach((item) => {
+          quantities[item._id] = item.quantity; // Store the initial quantity
         });
+
+        // Check if there are saved quantities in localStorage
+        const savedQuantities = JSON.parse(localStorage.getItem("localQuantities")) || {};
+        const mergedQuantities = { ...quantities, ...savedQuantities };
+
         setInitialQuantities(quantities);
+        setLocalQuantities(mergedQuantities); // Initialize local quantities with saved values
       } catch (error) {
         console.error("Error fetching order:", error);
       }
     };
     fetchOrder();
   }, [userid]);
-  useEffect(() => { }, [])
 
   const handlewish = async () => {
     console.log('selected', selectedItemId);
@@ -84,40 +90,29 @@ const CartPage = () => {
 
   // Extract the order ID to send during payment verification
   const order_id = order.map((item) => item._id);
-  console.log('order_id', order_id);
+  // console.log('order_id', order_id);
 
 
 
 
-  const updateQuantity = async (id, change) => {
-    try {
-      console.log(id);
+  const updateQuantity = (id, change) => {
+    setLocalQuantities((prev) => {
+      const currentQuantity = prev[id] || 1;
+      const minQuantity = initialQuantities[id] || 1;
 
-      const item = order.find((item) => item._id === id);
-      if (!item) return;
+      // Calculate the new quantity, ensuring it doesn't go below the minimum
+      const newQuantity = Math.max(minQuantity, currentQuantity + change);
 
-      const newQuantity = Math.max(1, item.quantity + change);
+      const updatedQuantities = {
+        ...prev,
+        [id]: newQuantity,
+      };
 
-      // Update quantity in backend database
-      await axios.put(`${ENV_File.backendURL}/order/${id}`, { quantity: newQuantity });
+      // Save updated quantities to localStorage
+      localStorage.setItem("localQuantities", JSON.stringify(updatedQuantities));
 
-      // Update quantity in local state
-      setOrder((prev) =>
-        prev.map((item) =>
-          item._id === id
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-
-      // Do not update initialQuantities here to keep the original initial quantity
-      // setInitialQuantities((prev) => ({
-      //   ...prev,
-      //   [id]: newQuantity,
-      // }));
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-    }
+      return updatedQuantities;
+    });
   };
 
   const total = order.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -149,6 +144,16 @@ const CartPage = () => {
     }
 
     try {
+      // Update quantities in the backend before initiating payment
+      // const updates = Object.keys(localQuantities).map((id) => {
+      //   return axios.put(`${ENV_File.backendURL}/order/${id}`, {
+      //     quantity: localQuantities[id],
+      //   });
+      // });
+
+      // await Promise.all(updates);
+
+      // Proceed with payment request
       const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
         amount: amountPayable,
       });
@@ -160,8 +165,8 @@ const CartPage = () => {
         key: ENV_File.razor_key_id,
         amount: orderData.amount,
         currency: "INR",
-        name: "Tournament Entry",
-        description: `Pay ₹${amountPayable} to join the tournament`,
+        name: "E-Commerce Payment",
+        description: `Pay ₹${amountPayable} for your order`,
         order_id: orderData.id,
         handler: async function (response) {
           console.log("Payment Response:", response);
@@ -171,7 +176,7 @@ const CartPage = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
               userid: userid,
-              orderId: order_id,
+              orderId: order.map((item) => item._id), // Send order IDs
             });
             console.log("Payment Verification Response:", resp.data);
           } catch (error) {
@@ -232,7 +237,8 @@ const CartPage = () => {
             </div>
           ) : (
             order.map((item) => (
-              <div key={item._id} className="flex border border-gray-200 rounded-md p-3 shadow-sm">
+              item.paymentStatus==="pending" && (
+                <div key={item._id} className="flex border border-gray-200 rounded-md p-3 shadow-sm">
                 <img
                   src={AppwriteService.getFileViewUrl(item.images[0])}
                   alt="product"
@@ -249,11 +255,11 @@ const CartPage = () => {
                     <button
                       className="border px-2 py-1 text-sm rounded hover:bg-gray-200"
                       onClick={() => updateQuantity(item._id, -1)}
-                      disabled={item.quantity <= (initialQuantities[item._id] || 1)}
+                      disabled={localQuantities[item._id] <= (initialQuantities[item._id] || 1)}
                     >
                       -
                     </button>
-                    <span className="px-2">{item.quantity}</span>
+                    <span className="px-2">{localQuantities[item._id]}</span>
                     <button
                       className="border px-2 py-1 text-sm rounded hover:bg-gray-200"
                       onClick={() => updateQuantity(item._id, 1)}
@@ -280,6 +286,7 @@ const CartPage = () => {
                   </div>
                 </div>
               </div>
+              )
             ))
           )}
         </div>

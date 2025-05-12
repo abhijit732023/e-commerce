@@ -20,13 +20,18 @@ const productSchema = new mongoose.Schema(
       default: "In Stock",
     }, // InStock/OutStock status
     wholeSaleQuantity: { type: Number, required: true }, // Whole quantity
-    WholeSalePrice:{type:Number,required:true},
-    category: { type: String,
-       required: true,
-      enum:['Regular','Premium','SSspecial']
-     }, // Category
+    WholeSalePrice: { type: Number, required: true },
+    category: {
+      type: String,
+      required: true,
+      enum: ['Regular', 'Premium', 'SSspecial']
+    }, // Category
     dateToDeliver: { type: Date, required: true }, // Delivery
-    size: { type: String }, // Size for custom items
+    size: {
+      type: [String], // Change to an array of strings
+      required: true,
+      enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL',"CUSTOM-SIZE"]
+    }, // Sizes for the product // Size for custom items
     tags: [String], // Tags for the product
     color: { type: String }, // Product color
     images: [String], // Product images URLs

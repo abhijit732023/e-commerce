@@ -19,6 +19,7 @@ const ProductDetail = () => {
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [pricingMode, setPricingMode] = useState("retail");
+    
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -195,7 +196,7 @@ const ProductDetail = () => {
                     <p className="text-sm text-gray-500">Available Sizes</p>
                     <div className="flex gap-2 flex-wrap">
                         {["XS", "S", "M", "L", "XL", "XXL", "CUSTOM-SIZE"].map((size) => {
-                            const isAvailable = product.sizes?.includes(size);
+                            const isAvailable = product.size?.includes(size);
                             return (
                                 <span
                                     key={size}

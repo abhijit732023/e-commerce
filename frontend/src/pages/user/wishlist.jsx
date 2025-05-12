@@ -1,88 +1,140 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import useSWR from "swr";
 import { FaStar } from "react-icons/fa";
 import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
 
+const fetcher = url => axios.get(url).then(res => res.data);
+
 const WishlistPage = () => {
-  const [wishlist, setWishlist] = useState([]);
+  const[productid,setProductid]=useState('');
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const res = await axios.get(`${ENV_File.backendURL}/wishlist`);
-        console.log(res.data);
 
-        if (res.data) {
-          setWishlist(res.data);
-        }
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-      }
-    };
-    fetchWishlist();
-  }, []);
+
+  const { data: wishlist, error, mutate } = useSWR(`${ENV_File.backendURL}/wishlist`, fetcher, {
+    refreshInterval: 5000, // Poll every 5 seconds
+    revalidateOnFocus: true, // Refetch on window focus
+  });
+  console.log("Wishlist data:", wishlist);
+
+  
+
+  const [ratings, setRatings] = useState({}); // State to track ratings for each item
+
+  if (error) {
+    console.error("Error fetching wishlist:", error);
+  }
+
+  const handleAddToCart = async (item) => {
+    const{_id,_v,createdAt,updateAt,...orderitem}=item
+    try {
+     const respose= await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
+      console.log("Added to cart:", respose.data);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+
+  const handleRemoveFromWishlist = async (item) => {
+    try {
+      await axios.delete(`${ENV_File.backendURL}/wishlist/${item._id}`);
+      console.log("Removed from wishlist:", item.productId);
+      mutate(); // Refresh the wishlist data
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+    }
+  };
+
+  const handleRating = (productId, rating) => {
+    setRatings((prev) => ({
+      ...prev,
+      [productId]: rating, // Update the rating for the specific product
+    }));
+  };
 
   return (
     <Container>
-      <div className="bg-gray-100 min-h-screen px-4 py-2 text-sm">
-      <h2 className="font-semibold text-lg py-2">Wishlist</h2>
+      <div className="bg-gray-100 min-h-screen px-4 py-6 text-sm">
+        <h2 className="font-semibold text-2xl py-4">Wishlist</h2>
 
-      <div className="bg-yellow-100 text-yellow-800 text-xs p-2 rounded mb-4">
-        ⚠️ Hey! Please note that this is your saved Wishlist.
-      </div>
+        <div className="bg-yellow-100 text-yellow-800 text-sm p-3 rounded mb-6">
+          ⚠️ Hey! Please note that this is your saved Wishlist.
+        </div>
 
-      <div className="text-xs text-gray-500 mb-1">Last 6 months</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(wishlist || []).map((item, index) => (
+            <div key={index} className="bg-white rounded-xl shadow-md p-4 flex flex-col">
+              <div className="text-xs text-gray-400 mb-2">Wish ID: {item.productId}</div>
 
-      {wishlist.map((item, index) => (
-        <div key={index} className="bg-white rounded-xl shadow-sm mb-4 p-3">
-          <div className="text-[11px] text-gray-400 mb-1">Wish ID : {item.productId}</div>
+              <div className="flex items-start gap-4">
+                <img
+                  src={AppwriteService.getFileViewUrl(item.images[0])}
+                  alt={item.header}
+                  className="w-32 h-42 object-cover rounded"
+                />
 
-          <div className="flex items-center gap-3">
-            <img
-              src={AppwriteService.getFileViewUrl(item.images[0])} // Assuming the first image is used as the preview
-              alt={item.header}
-              className="w-20 h-30 object-cover rounded"
-            />
+                <div className="flex-1">
+                  <div className="font-semibold text-lg text-gray-800 mb-2">
+                    {item.header}
+                  </div>
 
-            <div className="flex-1">
-              <div className="font-semibold text-[13px] text-gray-800 mb-[2px]">
-                {item.header}
+                  <div className="text-gray-700 text-sm mb-2">
+                    {item.description}
+                  </div>
+
+                  <div className="text-gray-500 text-sm">
+                    Quantity: {item.quantity}
+                  </div>
+
+                  <div className="text-gray-500 text-sm">
+                    Size: {item.size}
+                  </div>
+
+                  <div className="text-gray-500 text-sm">
+                    Price: ${item.price}
+                  </div>
+
+                  <div className="text-gray-500 text-sm">
+                    Payment Status: {item.paymentStatus}
+                  </div>
+                </div>
               </div>
 
-              <div className="text-gray-700 text-[13px] font-medium">
-                {item.description}
-              </div>
-
-              <div className="text-gray-500 text-[12px]">
-                Quantity: {item.quantity}
-              </div>
-
-              <div className="text-gray-500 text-[12px]">
-                Size: {item.size}
-              </div>
-
-              <div className="text-gray-500 text-[12px]">
-                Price: ${item.price}
-              </div>
-
-              <div className="text-gray-500 text-[12px]">
-                Payment Status: {item.paymentStatus}
-              </div>
-
-              <div className="flex items-center gap-[2px] mt-1 text-yellow-400 text-xs">
+              {/* Clickable Stars for Rating */}
+              <div className="flex items-center gap-1 mt-4 text-yellow-400 text-sm">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <FaStar
                     key={i}
-                    className={i < (item.rating || 0) ? "text-yellow-400" : "text-gray-300"}
+                    onClick={() => handleRating(item.productId, i + 1)} // Set rating on click
+                    className={
+                      i < (ratings[item.productId] || 0)
+                        ? "text-yellow-400 cursor-pointer"
+                        : "text-gray-300 cursor-pointer"
+                    }
                   />
                 ))}
-                <span className="ml-1 text-gray-500 text-[11px]">You rated</span>
+                <span className="ml-2 text-gray-500 text-xs">Rate this item</span>
+              </div>
+
+              {/* Add to Cart and Remove Buttons */}
+              <div className="flex gap-0.5 mt-4 ">
+                <button
+                  onClick={() => handleAddToCart(item)}
+                  className="bg-blue-500 text-white text-sm px-2 py-1.5 rounded hover:bg-blue-600 flex-1"
+                >
+                  Add to Cart
+                </button>
+                <button
+                  onClick={() => handleRemoveFromWishlist(item)}
+                  className="bg-red-500 text-white text-sm px-2 py-1.5 rounded hover:bg-red-600 flex-1"
+                >
+                  Remove
+                </button>
               </div>
             </div>
-          </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
     </Container>
   );
 };

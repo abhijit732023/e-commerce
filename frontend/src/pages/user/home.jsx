@@ -68,9 +68,8 @@ const Home = () => {
 
   return (
     <Container>
-      <Header />
 
-      <section className="relative bg-white w-full h-screen overflow-hidden">
+      <section className="relative bg-white w-full rounded-lg h-screen overflow-hidden">
         {imageURLs.map((img, idx) => (
           <img
             key={idx}
@@ -89,7 +88,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="bg-white mt-2 py-10">
+      <section className="bg-white mt-1 py-10">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">New Arrivals</h2>
         <SecondSection images={secondSectionImages} />
       </section>
@@ -114,7 +113,7 @@ const Home = () => {
       </section>
 
       <section className="py-10 bg-white">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">SS Special Picks</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800 ">SS Special Picks</h2>
         <SSSpecialCarousel products={products} />
       </section>
 

@@ -72,8 +72,7 @@ const SSSpecialCarousel = ({ products }) => {
   }, []);
 
   return (
-    <section className="rounded-sm bg-white  border-rose-300/20 py-12 px-4 md:px-16">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-rose-800">SS Special</h2>
+    <section className="rounded-sm bg-white  border-rose-300/20 px-4 md:px-16">
 
       <div
         ref={scrollRef}

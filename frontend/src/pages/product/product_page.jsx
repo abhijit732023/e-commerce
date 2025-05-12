@@ -13,12 +13,15 @@ import { FaHeart } from "react-icons/fa";
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState({});
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
         setProducts(response.data);
+        setFilteredProducts(response.data); // Initialize filtered products
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -33,15 +36,42 @@ const ProductPage = () => {
     }));
   };
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    if (category === "All") {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter((product) => product.category === category));
+    }
+  };
+
   return (
     <Container>
       <div className="p-4 md:p-6 pb-24 bg-white/80 min-h-screen">
-        <h2 className="text-xl  md:text-3xl font-bold mb-6 tracking-wide text-gray-800">
-          💍 Shop Bridal Collection
+        <h2 className="text-xl md:text-3xl font-bold mb-6 tracking-wide text-gray-800">
+         Shop Bridal Collection
         </h2>
 
+        {/* Filter Options */}
+        <div className="mb-6 flex space-x-4">
+          {["All", "Regular", "Premium", "SSspecial"].map((category) => (
+            <button
+              key={category}
+              onClick={() => handleCategoryChange(category)}
+              className={`px-4 py-2 rounded-md font-medium ${
+                selectedCategory === category
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              } hover:bg-blue-400 hover:text-white transition-colors`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Product Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {products.map((product) => {
+          {filteredProducts.map((product) => {
             const discount = Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100);
             const isLiked = likedProducts[product._id];
 
