@@ -49,7 +49,7 @@ const CartPage = () => {
         // Check if there are saved quantities in localStorage
         const savedQuantities = JSON.parse(localStorage.getItem("localQuantities")) || {};
         const mergedQuantities = { ...quantities, ...savedQuantities };
-
+        
         setInitialQuantities(quantities);
         setLocalQuantities(mergedQuantities); // Initialize local quantities with saved values
       } catch (error) {

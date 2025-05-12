@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams,Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useAuth, AppwriteService, Button, ENV_File, Container } from '../../FilesPaths/all_path.js';
 import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,12 +8,8 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-// ...imports (unchanged)
-
 const ProductDetail = () => {
     const { user } = useAuth();
-    console.log(user);
-
     const { productId } = useParams();
 
     const [userid, setuserid] = useState(null);
@@ -22,15 +18,19 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [pricingMode, setPricingMode] = useState("retail");
 
+    useEffect(() => {
+        if (user) {
+            setuserid(user._id);
+        }
+    }, [user]);
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const res = await axios.get(`${ENV_File.backendURL}/admin/${productId}`);
-                console.log(res.data);
-
                 setProduct(res.data);
-                // If wholesale mode is default or set later, ensure quantity meets the minimum
+
+                // Ensure quantity meets wholesale minimum if wholesale mode is selected
                 if (pricingMode === "wholesale" && res.data.wholeSaleQuantity) {
                     setQuantity(res.data.wholeSaleQuantity);
                 }
@@ -39,9 +39,6 @@ const ProductDetail = () => {
             }
         };
         fetchProduct();
-        if (user) {
-            setuserid(user._id);
-        }
     }, [productId]);
 
     const handleSizeSelect = (size) => {
@@ -77,6 +74,11 @@ const ProductDetail = () => {
     };
 
     const addToCart = async () => {
+        if (!userid) {
+            alert("User ID is not available. Please log in.");
+            return;
+        }
+
         if (!selectedSize) {
             alert("Please select a size.");
             return;
@@ -92,11 +94,7 @@ const ProductDetail = () => {
             size: selectedSize,
             price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
             quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
-
-
         };
-        console.log(cartData);
-
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
@@ -111,28 +109,28 @@ const ProductDetail = () => {
 
     return (
         <Container>
-<Link
-  to={-1}
-  className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className="w-5 h-5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.75 19.5L8.25 12l7.5-7.5"
-    />
-  </svg>
-  Back
-</Link>
+            <Link
+                to={-1}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-400/20 text-gray-700 rounded-md transition-all duration-200"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 19.5L8.25 12l7.5-7.5"
+                    />
+                </svg>
+                Back
+            </Link>
             <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10 pb-20">
-                {/* Swiper (unchanged) */}
+                {/* Swiper */}
                 <div className="w-full h-[500px]">
                     <Swiper
                         modules={[Navigation, Pagination]}
