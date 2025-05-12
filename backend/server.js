@@ -21,6 +21,8 @@ app.use(cors({
       'http://localhost:5173',
       'http://192.168.0.106:5173',
       'https://e-commerce-lake-gamma-54.vercel.app/',
+      'https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app/',
+      'https://e-commerce-git-main-abhijit732023s-projects.vercel.app/'
     ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
