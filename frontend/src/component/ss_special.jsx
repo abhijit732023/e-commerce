@@ -38,11 +38,11 @@ const SSSpecialCarousel = ({ products }) => {
   };
 
   const startAutoScroll = () => {
+    stopAutoScroll(); // Clear any existing timeouts
     autoScrollTimeout.current = setTimeout(function loop() {
       if (!isInteracting) {
         scrollToNext();
       }
-
       autoScrollTimeout.current = setTimeout(loop, scrollInterval);
     }, scrollInterval);
   };
@@ -53,17 +53,21 @@ const SSSpecialCarousel = ({ products }) => {
 
   const handleInteraction = () => {
     setIsInteracting(true);
-    stopAutoScroll();
+    stopAutoScroll(); // Stop auto-scroll during interaction
 
-    clearTimeout(interactionTimeout.current);
+    clearTimeout(interactionTimeout.current); // Clear any existing interaction timeout
     interactionTimeout.current = setTimeout(() => {
-      setIsInteracting(false);
-      startAutoScroll();
-    }, 3000); // Resume after 3s of no interaction
+      setIsInteracting(false); // Reset interaction state
+      startAutoScroll(); // Resume auto-scroll after 3 seconds
+    }, 3000); // Resume after 3 seconds of no interaction
   };
 
   useEffect(() => {
-    startAutoScroll();
+    // Start auto-scroll after 3 seconds of no interaction on mount
+    interactionTimeout.current = setTimeout(() => {
+      setIsInteracting(false);
+      startAutoScroll();
+    }, 3000);
 
     return () => {
       stopAutoScroll();
@@ -72,8 +76,7 @@ const SSSpecialCarousel = ({ products }) => {
   }, []);
 
   return (
-    <section className="rounded-sm bg-white  border-rose-300/20 px-4 md:px-16">
-
+    <section className="rounded-sm bg-white border-rose-300/20 px-4 md:px-16">
       <div
         ref={scrollRef}
         className="overflow-x-auto flex space-x-4 overflow-y-hidden h-full scroll-smooth snap-x snap-mandatory"
