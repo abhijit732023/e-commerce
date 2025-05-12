@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useAuth, MobileMenu, ENV_File } from "../../FilesPaths/all_path.js";
+import { Link } from "react-router-dom";
 
 export default function RegisterForm() {
   const { user } = useAuth();
@@ -85,7 +86,7 @@ export default function RegisterForm() {
 
         <div className="text-center mt-6">
           <p className="text-sm text-gray-500">
-            Already have an account? <a href="#" className="text-indigo-600 hover:underline">Sign In</a>
+            Already have an account? <Link to={'/login'} className="text-indigo-600 hover:underline">Sign In</Link>
           </p>
         </div>
       </div>
