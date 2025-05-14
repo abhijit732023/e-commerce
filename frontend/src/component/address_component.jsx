@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { ENV_File } from "../FilesPaths/all_path";
+import { Container, ENV_File } from "../FilesPaths/all_path";
 
 const AddressCard = ({ userid,addressid }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -104,7 +104,8 @@ const AddressCard = ({ userid,addressid }) => {
   };
 
   return (
-    <div className="p-4 h-screen relative">
+    <Container>
+          <div className="p-4  min-w-full min-h-screen relative">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800">Your Addresses</h2>
@@ -115,7 +116,7 @@ const AddressCard = ({ userid,addressid }) => {
             setEditAddressId(null);
             reset();
           }}
-          className="text-blue-600 font-medium hover:underline"
+          className="text-blue-600 mt-10 font-medium hover:underline"
         >
           + Add Address
         </button>
@@ -282,6 +283,8 @@ const AddressCard = ({ userid,addressid }) => {
         </div>
       )}
     </div>
+    </Container>
+
   );
 };
 

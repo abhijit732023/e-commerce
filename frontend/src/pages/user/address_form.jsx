@@ -16,7 +16,7 @@ const AddressPage = ({address_id}) => {
  }
 
   return (
-    <div className="p-4  max-w-xl mx-auto  space-y-6">
+    <div className="  max-w-xl mx-auto  space-y-6">
 
 
       <AddressCard
