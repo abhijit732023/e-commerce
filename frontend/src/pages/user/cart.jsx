@@ -271,7 +271,7 @@ const CartPage = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center  z-50">
             <div className="bg-white  rounded-md shadow-lg max-w-lg w-full relative ">
               <button
-                className="absolute z-50 top-2 right-2 text-gray-600 hover:text-gray-900 pt-18 pr-6 font-bold text-4xl"
+                className="absolute z-50 top-2 right-2 text-gray-600 hover:text-gray-900 mt-18 pr-6 font-bold text-4xl"
                 onClick={() => setShowAddressForm(false)}
                 aria-label="Close Address Form"
               >

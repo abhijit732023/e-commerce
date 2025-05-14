@@ -11,7 +11,7 @@ const AccountPage = () => {
     const [users, setUser] = useState('');
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const menuItems = [
-    { title: "Orders", Link: `/order/${user._id}` },
+    { title: "Orders", Link: `/order/${user}` },
     { title: "Customer Care", Link: "/customer-care" },
     { title: "Invite Friends & Earn", description: "You get ₹100 SuperCash for every friend", Link: "/invite-friends" },
     { title: "AJIO Wallet", description: "Add Gift Card | Manage rewards and refunds", Link: "/wallet" },
@@ -34,7 +34,7 @@ const AccountPage = () => {
     useEffect(() => {
         if (user) {
             console.log('user', user);
-            setUser(user);  // Set the user ID if the user is logged in
+            setUser(user._id);  // Set the user ID if the user is logged in
         }
     }, [user]);
 
