@@ -16,21 +16,26 @@ Address_route.post('/', async (req, res) => {
 });
 
 // Get all addresses for a user
-Address_route.get('/user/:userId', async (req, res) => {
+Address_route.get('/', async (req, res) => {
   try {
-    const addresses = await Address_model.find({ userid: req.params.userId });
-    res.status(200).json({ success: true, data: addresses });
+    const addresses = await Address_model.find();
+    res.status(200).json({ message: 'successfully retrived', data: addresses });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Get a single address by ID
+// Get a single address by userId
 Address_route.get('/:userid', async (req, res) => {
+  const userid = req.params.userid;
+  console.log("User ID:", userid);
   try {
-    const address = await Address_model.find({userid:req.params.userid});
-    if (!address) {
-      return res.status(404).json({ success: false, message: 'Address not found' });
+    const address = await Address_model.findOne({ userid: userid });
+    console.log("Address:", address);
+
+    if (!address || address.length === 0 || address === null) {
+      // Send suitable data when no address is found
+      return res.status(200).json({ success: true, data: null, message: 'No address found for this user' });
     }
     res.status(200).json({ success: true, data: address });
   } catch (err) {

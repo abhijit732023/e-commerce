@@ -4,8 +4,14 @@ import { ChevronRight } from "lucide-react";
 import { useAuth, Container } from "../../FilesPaths/all_path";
 import { Link } from "react-router-dom";
 
-const menuItems = [
-    { title: "Orders", Link: "/order" },
+
+
+const AccountPage = () => {
+    const { user, logout } = useAuth();
+    const [users, setUser] = useState('');
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    const menuItems = [
+    { title: "Orders", Link: `/order/${user._id}` },
     { title: "Customer Care", Link: "/customer-care" },
     { title: "Invite Friends & Earn", description: "You get ₹100 SuperCash for every friend", Link: "/invite-friends" },
     { title: "AJIO Wallet", description: "Add Gift Card | Manage rewards and refunds", Link: "/wallet" },
@@ -24,11 +30,6 @@ const menuItems = [
     { title: "Who We Are", Link: "/about-us" },
     { title: "Join Our Team", Link: "/careers" },
 ];
-
-const AccountPage = () => {
-    const { user, logout } = useAuth();
-    const [users, setUser] = useState('');
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     useEffect(() => {
         if (user) {

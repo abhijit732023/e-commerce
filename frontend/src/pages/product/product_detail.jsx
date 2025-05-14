@@ -94,6 +94,7 @@ const ProductDetail = () => {
             size: selectedSize,
             price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
             quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
+            addressId: null,
         };
 
         try {

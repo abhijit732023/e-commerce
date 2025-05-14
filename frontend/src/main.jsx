@@ -8,9 +8,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <AuthGuard>
         <Home_page />
-      </AuthGuard>
     ),
   },
   {
@@ -109,7 +107,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/wishlist',
+    path: '/wishlist/:userid',
     element: (
       <AuthGuard>
         <Wish_List />
@@ -126,7 +124,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/account',
+    path: '/account/:userid',
     element: (
       <AuthGuard>
         <AccountPage />
@@ -135,7 +133,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/order',
+    path: '/order/:userid',
     element: (
       <AuthGuard>
         <OrderPage />

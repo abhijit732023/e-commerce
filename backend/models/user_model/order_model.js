@@ -47,6 +47,10 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       default: 'pending',
     },
+    addressId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+    }
   },
   { timestamps: true }
 );

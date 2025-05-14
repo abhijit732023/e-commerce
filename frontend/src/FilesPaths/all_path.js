@@ -30,6 +30,8 @@ import AddressForm from "../pages/user/address_form.jsx";
 import AccountPage from "../pages/user/account.jsx";
 import AuthGuard from "../component/auth_check.jsx";
 import OrderPage from "../pages/user/order_confimation.jsx";
+import AddressCard from "../component/address_component.jsx";
+import Address_form from "../component/address_form_component.jsx";
 
 export{
     RegisterForm,
@@ -65,6 +67,8 @@ export{
     AccountPage,
     AuthGuard,
     OrderPage,
+    AddressCard,
+    Address_form,
     
     
 

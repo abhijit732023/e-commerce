@@ -33,7 +33,10 @@ PaymentRouter.post("/verify", async (req, res) => {
   try {
     console.log("Request Body:", req.body);
 
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, userid, orderId } = req.body;
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, userid, orderId, addressId } = req.body;
+
+    // Log the received addressId
+    console.log("Received addressId:", addressId);
 
     // Verify Razorpay payment signature
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
@@ -58,7 +61,7 @@ PaymentRouter.post("/verify", async (req, res) => {
       // Update multiple orders
       const result = await Order.updateMany(
         { _id: { $in: orderId } },
-        { $set: { paymentStatus: "paid" } }
+        { $set: { paymentStatus: "paid", addressId: addressId } }
       );
       console.log("Orders updated:", result);
       if (result.matchedCount === 0) {
@@ -67,13 +70,21 @@ PaymentRouter.post("/verify", async (req, res) => {
     } else {
       // Update single order
       const order = await Order.findById(orderId);
-      console.log("Order:", order);
+      console.log("Order before update:", order);
 
       if (!order) {
         return res.status(404).json({ success: false, message: "Order not found" });
       }
       order.paymentStatus = "paid";
-      await order.save();
+      order.addressId = addressId;
+
+      try {
+        await order.save();
+        console.log("Order updated successfully with addressId:", addressId);
+      } catch (error) {
+        console.error("Error saving order:", error);
+        return res.status(500).json({ success: false, message: "Failed to update order" });
+      }
     }
 
     return res.json({ success: true, message: "Payment verified, status updated!" });
