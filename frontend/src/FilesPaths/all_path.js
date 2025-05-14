@@ -32,6 +32,8 @@ import AuthGuard from "../component/auth_check.jsx";
 import OrderPage from "../pages/user/order_confimation.jsx";
 import AddressCard from "../component/address_component.jsx";
 import Address_form from "../component/address_form_component.jsx";
+import ForgotPassword from "../pages/user/ForgotPassword.jsx";
+import ResetPassword from "../pages/user/ResetPassword.jsx";
 
 export{
     RegisterForm,
@@ -69,6 +71,8 @@ export{
     OrderPage,
     AddressCard,
     Address_form,
+    ForgotPassword,
+    ResetPassword,
     
     
 

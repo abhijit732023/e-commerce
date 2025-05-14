@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { OrderPage,AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout } from './FilesPaths/all_path.js';
+import { ResetPassword,ForgotPassword,OrderPage,AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout } from './FilesPaths/all_path.js';
 import './index.css'
 
 const router = createBrowserRouter([
@@ -139,6 +139,20 @@ const router = createBrowserRouter([
         <OrderPage />
 
       </AuthGuard>
+    ),
+  },
+  {
+    path: '/reset-password/:token',
+    element: (
+        <ResetPassword />
+
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+        <ForgotPassword />
+
     ),
   }
 ])

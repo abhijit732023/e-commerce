@@ -11,7 +11,7 @@ Register_Login_Router.use(cookieParser());
 
 Register_Login_Router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password,mobileNumber } = req.body;
     console.log("Received registration data:", req.body); // Log the received data
 
     // Check if username already exists
@@ -34,6 +34,7 @@ Register_Login_Router.post("/register", async (req, res) => {
     const user = await user_register_model.create({
       username, // Ensure username is included
       email,
+      mobileNumber,
       password: hashedPassword, // Store the hashed password
     });
 

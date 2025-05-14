@@ -24,6 +24,16 @@ Address_route.get('/', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+Address_route.get('/:id', async (req, res) => {
+  const id = req.params.id;
+  console.log("ID:", id);
+  try {
+    const addresses = await Address_model.findById(id);
+    res.status(200).json({ message: 'successfully retrived', data: addresses });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // Get a single address by userId
 Address_route.get('/:userid', async (req, res) => {

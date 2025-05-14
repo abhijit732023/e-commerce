@@ -16,7 +16,7 @@ const AddressPage = ({address_id}) => {
  }
 
   return (
-    <Container>
+    // <Container>
       
     <div className="  max-w-xl mx-auto  space-y-6">
 
@@ -27,7 +27,7 @@ const AddressPage = ({address_id}) => {
       />
     </div>
   
-    </Container>
+    // </Container>
     );
 };
 

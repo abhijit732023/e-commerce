@@ -9,32 +9,25 @@ import { Link } from "react-router-dom";
 const AccountPage = () => {
     const { user, logout } = useAuth();
     const [users, setUser] = useState('');
+    const [userdata, setUserData] = useState('');
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const menuItems = [
     { title: "Orders", Link: `/order/${user}` },
     { title: "Customer Care", Link: "/customer-care" },
-    { title: "Invite Friends & Earn", description: "You get ₹100 SuperCash for every friend", Link: "/invite-friends" },
-    { title: "AJIO Wallet", description: "Add Gift Card | Manage rewards and refunds", Link: "/wallet" },
-    { title: "Saved Cards", Link: "/saved-cards" },
-    { title: "My Rewards", Link: "/rewards" },
     { title: "Address", Link: "/address" },
     { title: "Notifications", Link: "/notifications" },
-    { title: "Return Creation Demo", Link: "/return-demo" },
     { title: "How To Return", Link: "/how-to-return" },
-    { title: "How Do I Redeem My Coupon?", Link: "/redeem-coupon" },
     { title: "Terms & Conditions", Link: "/terms" },
-    { title: "Promotions Terms & Conditions", Link: "/promotions-terms" },
     { title: "Returns & Refunds Policy", Link: "/returns-policy" },
     { title: "We Respect Your Privacy", Link: "/privacy-policy" },
-    { title: "Fees & Payments", Link: "/fees-payments" },
     { title: "Who We Are", Link: "/about-us" },
-    { title: "Join Our Team", Link: "/careers" },
 ];
 
     useEffect(() => {
         if (user) {
             console.log('user', user);
-            setUser(user._id);  // Set the user ID if the user is logged in
+            setUser(user._id);
+            setUserData(user)  // Set the user ID if the user is logged in
         }
     }, [user]);
 
@@ -60,7 +53,7 @@ const AccountPage = () => {
   </svg>
   Back
 </Link> */}
-            <div className="bg-gray-50 min-h-screen p-4 pb-24">
+            <div className="bg-gray-50 min-h-full p-4 overflow-y-hidden ">
                 <motion.h1
                     className="text-xl font-semibold mt-2 mb-4"
                     initial={{ opacity: 0, y: -20 }}
@@ -77,12 +70,12 @@ const AccountPage = () => {
                 >
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold text-lg">
-                            {users.username ? users.username.charAt(0).toUpperCase() : 'U'}
+                            {userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U'}
                         </div>
                         <div>
-                            <h2 className="font-medium">{users.username}</h2>
-                            <p className="text-sm text-gray-600">{users.email}</p>
-                            <p className="text-sm text-gray-600">8976350904</p>
+                            <h2 className="font-medium">{userdata.username}</h2>
+                            <p className="text-sm text-gray-600">{userdata.email}</p>
+                            <p className="text-sm text-gray-600">number</p>
                         </div>
                     </div>
                     <button className="text-blue-500 text-sm font-medium">Edit</button>

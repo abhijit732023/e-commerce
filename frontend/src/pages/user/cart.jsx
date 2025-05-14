@@ -5,7 +5,6 @@ import { AddressForm, AppwriteService, Container, ENV_File } from "../../FilesPa
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-
 const CartPage = () => {
   const { userid } = useParams();
   const navigate = useNavigate();
@@ -22,33 +21,12 @@ const CartPage = () => {
   const openRemoveConfirm = (id) => {
     setSelectedItemId(id);
     setShowConfirmModal(true);
-
-
   };
 
-
-  const getaddress=(addressid)=>{
-    console.log("address iddddd",addressid);
+  const getaddress = (addressid) => {
+    console.log("address iddddd", addressid);
     setAddressId(addressid);
-  }
-  // useEffect(()=>{
-  //     const fetchAddress = async () => {
-  //       try {
-  //         const response = await axios.get(`${ENV_File.backendURL}/address`);
-  //         console.log("Fetched address response:", response.data);
-  //         const addressfirstId= response.data[0
-         
-  //       } catch (error) {
-  //         console.error("Error fetching address:", error);
-  //       }
-  //     };
-  //     fetchAddress();
-
-
-  // },[])
-
-  
-
+  };
 
   const handleRemove = async (id) => {
     try {
@@ -66,11 +44,11 @@ const CartPage = () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order/${userid}`);
         console.log("Fetched order response:", response.data);
-        
+
         const orderData = response.data.filter((item) => item.paymentStatus === "pending");
         console.log("Fetched order data:", orderData);
         const filteredOrder = orderData.filter((item) => item.userId === userid);
-        
+
         setOrder(filteredOrder);
 
         // Set initial quantities for each item
@@ -82,7 +60,7 @@ const CartPage = () => {
         // Check if there are saved quantities in localStorage
         const savedQuantities = JSON.parse(localStorage.getItem("localQuantities")) || {};
         const mergedQuantities = { ...quantities, ...savedQuantities };
-        
+
         setInitialQuantities(quantities);
         setLocalQuantities(mergedQuantities); // Initialize local quantities with saved values
       } catch (error) {
@@ -91,46 +69,6 @@ const CartPage = () => {
     };
     fetchOrder();
   }, []);
-
-  
-
-  const handlewish = async () => {
-    console.log('selected', selectedItemId);
-    try {
-      const response = await axios.get(`${ENV_File.backendURL}/order/single-item/${selectedItemId}`);
-      const itemToSend = response.data[0];
-      if (itemToSend) {
-        console.log('single', itemToSend);
-        // Remove _id and __v fields before sending to wishlist
-        const { _id, __v, ...wishlistItem } = itemToSend;
-        const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wishlistItem);
-        console.log('wishlist add response:', res);
-
-        if (res) {
-          await axios.delete(`${ENV_File.backendURL}/order/${userid}`);
-          setOrder((prev) => prev.filter((item) => item._id !== selectedItemId));
-          setShowConfirmModal(false);
-          setSelectedItemId(null);
-
-
-
-
-        }
-
-
-
-      }
-    } catch (error) {
-      console.error('Error in handlewish:', error);
-    }
-  }
-
-  // Extract the order ID to send during payment verification
-  const order_id = order.map((item) => item._id);
-  // console.log('order_id', order_id);
-
-
-
 
   const updateQuantity = (id, change) => {
     setLocalQuantities((prev) => {
@@ -152,11 +90,13 @@ const CartPage = () => {
     });
   };
 
-  const total = order.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = order.reduce((sum, item) => {
+    const quantity = localQuantities[item._id] || item.quantity || 1;
+    return sum + item.price * quantity;
+  }, 0);
   const savings = order.reduce((sum) => sum + 1499, 0);
   const deliveryFee = 29;
   const amountPayable = total + deliveryFee;
-
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -172,104 +112,100 @@ const CartPage = () => {
     });
   };
 
- const payment = async () => {
-  if (!AddressId) {
-    alert("Please select an address before proceeding to payment.");
-    return; // Stop the payment process if no address is selected
-  }
+  const payment = async () => {
+    if (!AddressId) {
+      alert("Please select an address before proceeding to payment.");
+      return; // Stop the payment process if no address is selected
+    }
 
-  const res = await loadRazorpayScript();
+    const res = await loadRazorpayScript();
 
-  if (!res) {
-    alert("Razorpay SDK failed to load. Are you online?");
-    return;
-  }
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
 
-  try {
-    const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
-      amount: amountPayable,
-    });
-    console.log("Payment Order Response:", response.data);
+    try {
+      const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
+        amount: amountPayable,
+      });
+      console.log("Payment Order Response:", response.data);
 
-    const orderData = response.data;
+      const orderData = response.data;
 
-    const options = {
-      key: ENV_File.razor_key_id,
-      amount: orderData.amount,
-      currency: "INR",
-      name: "E-Commerce Payment",
-      description: `Pay ₹${amountPayable} for your order`,
-      order_id: orderData.id,
-      handler: async function (response) {
-        console.log("Payment Response:", response);
-        try {
-          const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            userid: userid,
-            addressId:AddressId,
-            orderId: order.map((item) => item._id), // Send order IDs
-          });
-          console.log("Payment Verification Response:", resp.data);
-          if (resp.data.success) {
-            setTimeout(() => {
-              alert("Redirecting to order page...");
-              navigate(`/order/${userid}`);
-            }, 3000);
+      const options = {
+        key: ENV_File.razor_key_id,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "E-Commerce Payment",
+        description: `Pay ₹${amountPayable} for your order`,
+        order_id: orderData.id,
+        handler: async function (response) {
+          console.log("Payment Response:", response);
+          try {
+            const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              userid: userid,
+              addressId: AddressId,
+              orderId: order.map((item) => item._id), // Send order IDs
+            });
+            console.log("Payment Verification Response:", resp.data);
+            if (resp.data.success) {
+              setTimeout(() => {
+                alert("Redirecting to order page...");
+                navigate(`/order/${userid}`);
+              }, 3000);
+            }
+          } catch (error) {
+            console.error("Verification error:", error.response?.data || error.message);
+            alert("Payment verification failed. Please try again.");
           }
-        } catch (error) {
-          console.error("Verification error:", error.response?.data || error.message);
-          alert("Payment verification failed. Please try again.");
-        }
-      },
-      prefill: {
-        name: "User Name",
-        email: "user@example.com",
-        contact: "9876543210",
-      },
-      theme: {
-        color: "#3399cc",
-      },
-    };
+        },
+        prefill: {
+          name: "User Name",
+          email: "user@example.com",
+          contact: "9876543210",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-  } catch (error) {
-    console.error("Error initiating payment:", error);
-  }
-};
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+    }
+  };
+
   return (
-    <Container>
-{/* <Link
-  to={-1}
-  className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className="w-5 h-5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.75 19.5L8.25 12l7.5-7.5"
-    />
-  </svg>
-  Back
-</Link> */}
-      <div className="max-w-4xl h-screen max-h-screen mx-auto p-4 bg-white text-sm font-sans overflow-scroll pb-10">
-        <div className="border-b pb-2 mb-4 flex justify-between items-center">
-          <p className="font-semibold">Abhijit | Room no 7, Sion Dharavi... 400017</p>
-          <button className="text-blue-600 font-medium" onClick={() => setShowAddressForm(true)}>Change</button>
-        </div>
-
-        {showAddressForm && (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }} // Initial state for animation
+      animate={{ opacity: 1, y: 0 }} // Final state for animation
+      exit={{ opacity: 0, y: 50 }} // Exit state for animation
+      transition={{ duration: 0.5, ease: "easeOut" }} // Animation duration and easing
+    >
+      <Container>
+        <div className="max-w-4xl h-screen max-h-screen mx-auto p-4 bg-white text-sm font-sans overflow-scroll pb-10">
+          {/* Page Content */}
+          <div className="border-b pb-2 mb-4 flex justify-between items-center">
+            <p className="font-semibold">Abhijit | Room no 7, Sion Dharavi... 400017</p>
+            <button className="text-blue-600 font-medium" onClick={() => setShowAddressForm(true)}>
+              Change
+            </button>
+          </div>
+          {showAddressForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center  z-50">
             <div className="bg-white  rounded-md shadow-lg max-w-lg w-full relative ">
+              <button
+                className="absolute z-50 top-2 left-2 text-blue-500 font-semibold hover:text-gray-900 pt-8 text-xl"
+                onClick={() => setShowAddressForm(false)}
+                aria-label="Back to Cart"
+              >
+                Back to cart
+              </button>
               <AddressForm address_id={getaddress} />
             </div>
           </div>
@@ -449,8 +385,10 @@ const CartPage = () => {
           )}
         </AnimatePresence>
 
-      </div>
-    </Container>
+          {/* Rest of the content */}
+        </div>
+      </Container>
+    </motion.div>
   );
 };
 

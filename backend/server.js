@@ -11,6 +11,8 @@ import {
   Product_add_route,
   config,
   Register_Login_Router,
+  forgotPassword,
+  resetPassword,
 } from "../backend/index.js";
 import path, { join } from "path";
 import { fileURLToPath } from "url";
@@ -56,6 +58,8 @@ app.use("/order", Order_route);
 app.use("/payment", Payment_route);
 app.use("/wishlist", Wishlist_route);
 app.use("/address", Address_route);
+app.use("/reset-password/:token", resetPassword);
+app.use("/forgot-password", forgotPassword);
 
 // 404 fallback
 app.use((req, res) => {

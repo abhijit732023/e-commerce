@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Container, ENV_File } from "../FilesPaths/all_path";
 
-const AddressCard = ({ userid,addressid }) => {
+const AddressCard = ({ userid, addressid }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formdata, setFormData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -36,7 +36,8 @@ const AddressCard = ({ userid,addressid }) => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/address`);
         if (response.data && response.data.data.length > 0) {
-          setFormData(response.data.data);
+         const userbasedAddress = response.data.data.filter((address) => address.userid === userid);
+          setFormData(userbasedAddress);
         }
       } catch (error) {
         console.error("Error fetching address:", error);
@@ -104,7 +105,7 @@ const AddressCard = ({ userid,addressid }) => {
   };
 
   return (
-          <div className="p-4  min-w-full min-h-screen relative">
+    <div className="p-4 pt-20  min-w-full min-h-screen relative">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800">Your Addresses</h2>
@@ -115,7 +116,7 @@ const AddressCard = ({ userid,addressid }) => {
             setEditAddressId(null);
             reset();
           }}
-          className="text-blue-600 mt-10 font-medium hover:underline"
+          className="text-blue-600  font-medium hover:underline"
         >
           + Add Address
         </button>
@@ -126,10 +127,7 @@ const AddressCard = ({ userid,addressid }) => {
         {formdata.map((address) => (
           <div key={address._id} className="bg-white p-4 rounded-lg shadow border">
 
-            <div className="flex items-center justify-end gap-2 mb-2 w-full bg-red-300">
-              <button  className="" onClick={()=>addressid(address._id)}>use</button>
-              
-            </div>
+
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-md">
                 {address.addressType.toUpperCase()}
@@ -147,19 +145,23 @@ const AddressCard = ({ userid,addressid }) => {
               Phone: <span className="font-semibold">{address.phoneNumber}</span>
             </p>
 
-            <div className="mt-4 border-t pt-3 flex gap-6 text-sm">
-              <button
+            <div className="flex justify-between mt-4 border-t pt-3  gap-6 text-sm">
+              <div className="flex gap-6"> <button
                 onClick={() => handleDelete(address._id)}
                 className="text-red-600 font-medium hover:underline"
               >
                 Delete
               </button>
-              <button
-                onClick={() => handleEdit(address)}
-                className="text-blue-600 font-medium hover:underline"
-              >
-                Edit
-              </button>
+                <button
+                  onClick={() => handleEdit(address)}
+                  className="text-blue-600 font-medium hover:underline"
+                >
+                  Edit
+                </button></div>
+              <div className="flex items-center pr-1 justify-end  w-full rounded-3xl ">
+                <button className="text-blue-700 text-lg rounded-lg " onClick={() => addressid(address._id)}>use address</button>
+
+              </div>
             </div>
           </div>
         ))}

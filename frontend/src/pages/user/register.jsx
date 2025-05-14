@@ -67,6 +67,22 @@ export default function RegisterForm() {
                 />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
               </div>
+              <div>
+                <input
+                  type="tel"
+                  placeholder="Mobile Number"
+                  {...register("mobileNumber", {
+                    required: "Mobile number is required",
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: "Mobile number must be 10 digits"
+                    }
+                  })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+                {errors.mobileNumber && <p className="text-red-500 text-sm">{errors.mobileNumber.message}</p>}
+              </div>
+
 
               <div>
                 <input
