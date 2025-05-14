@@ -104,7 +104,6 @@ const AddressCard = ({ userid,addressid }) => {
   };
 
   return (
-    <Container>
           <div className="p-4  min-w-full min-h-screen relative">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -283,7 +282,6 @@ const AddressCard = ({ userid,addressid }) => {
         </div>
       )}
     </div>
-    </Container>
 
   );
 };

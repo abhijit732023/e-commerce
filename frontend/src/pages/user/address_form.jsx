@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {AddressCard,Address_form} from '../../FilesPaths/all_path';
+import {AddressCard,Address_form, Container} from '../../FilesPaths/all_path';
 import { useParams } from "react-router-dom";
 
 const AddressPage = ({address_id}) => {
@@ -16,6 +16,8 @@ const AddressPage = ({address_id}) => {
  }
 
   return (
+    <Container>
+      
     <div className="  max-w-xl mx-auto  space-y-6">
 
 
@@ -24,7 +26,9 @@ const AddressPage = ({address_id}) => {
         userid={userid}
       />
     </div>
-  );
+  
+    </Container>
+    );
 };
 
 export default AddressPage;
