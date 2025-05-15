@@ -95,7 +95,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
       </Link>
 
       {/* Dots */}
-      <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-3">
         {images.map((_, i) => (
           <button
             key={i}
@@ -113,14 +113,14 @@ const SwipeableSecondSectionSlider = ({ images }) => {
       {/* Left/Right Arrows */}
       <button
         onClick={() => handleUserInteraction(() => setIndex(index - 1))}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2 z-10 transition-all duration-200"
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2  transition-all duration-200"
         aria-label="Previous Slide"
       >
         <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
       </button>
       <button
         onClick={() => handleUserInteraction(() => setIndex(index + 1))}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2 z-10 transition-all duration-200"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2  transition-all duration-200"
         aria-label="Next Slide"
       >
         <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>

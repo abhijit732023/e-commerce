@@ -9,5 +9,6 @@ const config = {
     email_user: process.env.VITE_EMAIL_USER_ID,
     email_password: process.env.VITE_EMAIL_PASSWORD,
     port: process.env.VITE_PORT || 3000,
+    frontendURL:process.env.VITE_FRONTEND_URL,
 };
 export default config;

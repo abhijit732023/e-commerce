@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars, FaShoppingCart, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth, ENV_File } from "../FilesPaths/all_path";
@@ -61,24 +61,39 @@ const ToggleMenu = ({ title, links }) => {
 const Header = () => {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userdata,setuserdata]=useState('')
+  const [userid,setuserid]=useState('')
+useEffect(() => {
+  if (user) {
+    // console.log(user);
+    
+    setuserid(user._id);
+    setuserdata(user);
+  }
+}, [setuserid,setuserdata]);
 
   // Use SWR to fetch cart data
-  const { data: orders } = useSWR(
-    user ? `${ENV_File.backendURL}/order` : null,
-    async (url) => {
-      const response = await axios.get(url);
-      return response.data.filter((order) => order.paymentStatus === "pending");
-    },
-    { refreshInterval: 5000 }
-  );
-
+const { data: orders } = useSWR(
+  user ? `${ENV_File.backendURL}/order` : null,
+  async (url) => {
+    const response = await axios.get(url);
+    return response.data.filter(
+      (order) =>
+        order.paymentStatus === "pending" &&
+        order.userId === userid // or user._id
+    );
+  },
+  { refreshInterval: 5000 }
+);
   // Calculate cart count
-  const cartCount = orders?.length || 0;
+  console.log(orders);
+  
+  const cartCount = orders?.length || 0
 
   return (
     <>
       {/* Header */}
-      <header className="bg-white sticky flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0  border-b border-rose-100">
+      <header className="bg-white h-[8vh] sticky flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0  border-b border-rose-100 z-10">
         {/* Menu Icon */}
         <motion.button
           whileTap={{ scale: 0.85 }}
@@ -92,7 +107,7 @@ const Header = () => {
         </Link>
 
         {/* Link to cart */}
-        <Link to={user ? `/cart/${user}` : "/login"}>
+        <Link to={userdata ? `/cart/${userid}` : "/login"}>
           <div className="relative">
             <FaShoppingCart className="text-2xl text-rose-700 hover:text-rose-900 transition" />
             {cartCount > 0 && (

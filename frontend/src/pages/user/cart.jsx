@@ -193,16 +193,17 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
+      className="h-[95vh] overflow-y-scroll" // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-10">
+        <div className="max-w-4xl min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
               Abhijit | Room no 7, Sion Dharavi... 400017
             </p>
-            <button className="text-blue-600 font-medium hover:underline" onClick={() => setShowAddressForm(true)}>
-              Change
+            <button className="text-blue-600 font-medium hover:underline">
+              <Link to={`/address/${userid}`}>Change</Link>
             </button>
           </div>
           {showAddressForm && (
@@ -221,7 +222,7 @@ const CartPage = () => {
                 >
                   Back to cart
                 </button>
-                <AddressForm address_id={getaddress} />
+                <AddressForm addressid={getaddress} />
               </motion.div>
             </div>
           )}
@@ -326,7 +327,7 @@ const CartPage = () => {
               </div>
 
               {/* Order Details */}
-              <div className="border-t mt-6 pt-4 pb-15">
+              <div className="border-t mt-6 pt-4 pb-20">
                 <h3 className="font-semibold text-sm mb-3">Order Details</h3>
                 <div className="text-sm space-y-2">
                   <div className="flex justify-between">
@@ -345,11 +346,7 @@ const CartPage = () => {
                     <span>Amount Payable</span>
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
-                </div>
-              </div>
-
-              {/* Bottom Bar */}
-              <div className="fixed bottom-18 pb-6 left-0 right-0 bg-white p-4 border-t  flex justify-between items-center z-30 max-w-4xl mx-auto ">
+                  <div className=" fixed bottom-17 left-0 right-0 bg-white p-4 border-t  flex justify-between items-center  max-w-4xl mx-auto ">
                 <div>
                   <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
                   <p className="text-lg font-bold text-rose-700">₹{amountPayable.toFixed(2)}</p>
@@ -361,6 +358,11 @@ const CartPage = () => {
                   Proceed to Payment
                 </button>
               </div>
+                </div>
+              </div>
+
+              {/* Bottom Bar */}
+              
             </>
           )}
 

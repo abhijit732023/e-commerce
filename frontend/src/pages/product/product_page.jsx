@@ -83,7 +83,7 @@ const ProductPage = () => {
   return (
     <Container>
       <motion.div
-        className="p-2 md:p-4 pb-24 bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen rounded-2xl shadow-xl"
+        className="p-2 h-[96vh] overflow-y-scroll md:p-4 pb-24 bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen rounded-2xl shadow-xl"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}

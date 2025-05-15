@@ -14,7 +14,7 @@ export const forgotPassword = async (req, res) => {
       expiresIn: "15m",
     });
 
-    const link = `${config.backendURl}/reset-password/${token}`;
+    const link = `${config.frontendURL}/reset-password/${token}`;
     console.log('my_email',config.email_user);
     console.log('my_pass',config.email_password);
     

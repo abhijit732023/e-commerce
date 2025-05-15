@@ -11,5 +11,5 @@ const ENV_File = {
     appwriteBucketId:String(import.meta.env.VITE_API_BUCKET_ID),
 
 };
-console.log(ENV_File); // Debugging: Check if variables are loaded
+// console.log(ENV_File); // Debugging: Check if variables are loaded
 export default ENV_File;

@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
+  AddressPage,
   FAQ,
   TermsConditions,
   RefundReturn,
@@ -193,6 +194,13 @@ const router = createBrowserRouter([
     path: '/contact-us',
     element: (
       <ContactUs />
+
+    ),
+  },
+  {
+    path: '/address/:userid',
+    element: (
+      < AddressPage/>
 
     ),
   }

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Container, ENV_File } from "../FilesPaths/all_path";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const AddressCard = ({ userid, addressid }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -109,7 +110,8 @@ const AddressCard = ({ userid, addressid }) => {
   };
 
   return (
-    <div className="pt-20 min-w-full min-h-screen relative">
+    <Container>
+    <div className=" relative h-full overflow-y-scroll  p-4 min-w-full ">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-rose-700 tracking-wide">Your Addresses</h2>
@@ -186,7 +188,10 @@ const AddressCard = ({ userid, addressid }) => {
                   Use Address
                 </button>
               </div>
+              
             </div>
+            <Link to={-1} className="absolute z-50">back</Link>
+            
           </motion.div>
         ))}
       </div>
@@ -201,7 +206,7 @@ const AddressCard = ({ userid, addressid }) => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white w-full max-w-lg p-8 rounded-2xl shadow-2xl min-h-[70vh] border border-gray-200 relative"
+              className="bg-white w-full max-w-lg  rounded-md shadow-2xl min-h-[70vh] border border-gray-200 relative"
               initial={{ scale: 0.8, opacity: 0, y: 100 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 100 }}
@@ -223,7 +228,7 @@ const AddressCard = ({ userid, addressid }) => {
               <h2 className="text-2xl font-bold mb-6 text-rose-700 text-center tracking-wide">
                 {isEdit ? "Edit Address" : "Add New Address"}
               </h2>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 h-[78vh] overflow-y-scroll p-4">
                 {[
                   { label: "Full Name", name: "name", placeholder: "Ex: John Doe" },
                   {
@@ -339,6 +344,7 @@ const AddressCard = ({ userid, addressid }) => {
         )}
       </AnimatePresence>
     </div>
+    </Container>
   );
 };
 

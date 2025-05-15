@@ -128,7 +128,6 @@ const ProductDetail = () => {
             size: selectedSize,
             price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
             quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
-            addressId: null,
         };
 
         try {
@@ -143,7 +142,7 @@ const ProductDetail = () => {
     if (!product) return <div className="text-center mt-10">Loading...</div>;
     return (
         <Container>
-            <div className="max-w-6xl mx-auto p-2 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 pb-20 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl">
+            <div className="max-w-6xl z-0 h-[94.2vh] overflow-scroll pb-10 mx-auto p-2 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -319,18 +318,25 @@ const ProductDetail = () => {
                         </p>
                     </div>
                     {/* Add to Cart */}
-                    <div className="pt-4">
+                    <div className="pt-4 flex gap-1">
                         <motion.div
                             whileTap={{ scale: 0.97 }}
                             whileHover={{ scale: 1.03 }}
-                            className="w-full flex gap-1"
+                            className="w-1/2 flex gap-1"
                         >
-                            <Button onClick={addToCart} className="w-[50%] py-3 text-lg bg-rose-500 border-2 border-red-800 hover:bg-rose-700 text-white rounded-xl shadow-lg transition-all duration-200">
-                                Add to Cart
-                            </Button>
-                            <Button onClick={addTowishlist} className="w-[50%] py-3 text-lg bg-blue-500/90 border-2 border-blue-700 hover:bg-rose-700 text-white rounded-xl shadow-lg transition-all duration-200">
+                            <Button onClick={addTowishlist} className="w-full py-3 text-lg bg-blue-500/90 border-2 border-blue-700 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
                                 Wishlist
                             </Button>
+                        </motion.div>
+                        <motion.div
+                            whileTap={{ scale: 0.97 }}
+                            whileHover={{ scale: 1.03 }}
+                            className=" flex gap-1 w-1/2"
+                        >
+                            <Button onClick={addToCart} className="w-full py-3 text-lg bg-rose-500 border-2 border-red-800 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
+                                Add to Cart
+                            </Button>
+                            
                         </motion.div>
                     </div>
                 </motion.div>

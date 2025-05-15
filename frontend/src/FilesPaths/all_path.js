@@ -39,6 +39,7 @@ import TermsConditions from "../pages/user/terms_condition.jsx";
 import RefundReturn from "../pages/user/refund_return.jsx";
 import AboutUs from "../pages/user/About_company.jsx";
 import ContactUs from '../pages/user/Contact_us.jsx'
+import AddressPage from "../pages/user/address_form.jsx";
 
 
 export{
@@ -83,7 +84,8 @@ export{
     TermsConditions,
     RefundReturn,
     AboutUs,
-    ContactUs
+    ContactUs,
+    AddressPage
     
 
     
