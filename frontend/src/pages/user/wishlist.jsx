@@ -1,105 +1,118 @@
 import axios from "axios";
 import React, { useState } from "react";
 import useSWR from "swr";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaHeart, FaShoppingCart,FaTrash } from "react-icons/fa";
 import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
 import { Link, useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const WishlistPage = () => {
-  const { userid } = useParams(); // Get userId from URL
-  const [ratings, setRatings] = useState({}); // State to track ratings for each item
+  const { userid } = useParams();
+  const [ratings, setRatings] = useState({});
+  const [loadingCart, setLoadingCart] = useState(null);
+  const [removing, setRemoving] = useState(null);
 
   // Fetch wishlist data and filter by userId
-  const { data: wishlist, error, mutate } = useSWR(`${ENV_File.backendURL}/wishlist`, async (url) => {
-    const response = await axios.get(url);
-    // Filter wishlist items based on userId
-    return response.data;
-  }, {
-    refreshInterval: 5000, // Poll every 5 seconds
-    revalidateOnFocus: true, // Refetch on window focus
-  });
+  const { data: wishlist, error, mutate } = useSWR(
+    `${ENV_File.backendURL}/wishlist`,
+    async (url) => {
+      const response = await axios.get(url);
+      return response.data;
+    },
+    {
+      refreshInterval: 5000,
+      revalidateOnFocus: true,
+    }
+  );
 
-  console.log("Filtered Wishlist data:", wishlist);
-  const Filtered = wishlist?.filter(item => item.userId === userid);
-  console.log("Filtered Wishlist:", Filtered);
+  const Filtered = wishlist?.filter((item) => item.userId === userid);
 
   if (error) {
     console.error("Error fetching wishlist:", error);
   }
 
   const handleAddToCart = async (item) => {
+    setLoadingCart(item._id);
     const { _id, _v, createdAt, updateAt, ...orderitem } = item;
     try {
-      const response = await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
-      console.log("Added to cart:", response.data);
+      await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
+      mutate();
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
+    setLoadingCart(null);
   };
 
   const handleRemoveFromWishlist = async (item) => {
+    setRemoving(item._id);
     try {
       await axios.delete(`${ENV_File.backendURL}/wishlist/${item._id}`);
-      console.log("Removed from wishlist:", item.productId);
-      mutate(); // Refresh the wishlist data
+      mutate();
     } catch (error) {
       console.error("Error removing from wishlist:", error);
     }
+    setRemoving(null);
   };
 
   const handleRating = (productId, rating) => {
     setRatings((prev) => ({
       ...prev,
-      [productId]: rating, // Update the rating for the specific product
+      [productId]: rating,
     }));
   };
 
   return (
     <Container>
-      <div className="bg-gray-100 min-h-screen px-4 py-6 text-sm">
-        <h2 className="font-semibold text-2xl py-4">Wishlist</h2>
-
-        <div className="bg-yellow-100 text-yellow-800 text-sm p-3 rounded mb-6">
-          ⚠️ Hey! Please note that this is your saved Wishlist.
+      <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen px-4 py-6 text-sm rounded-2xl shadow-xl">
+        <div className="flex items-center gap-3 pb-4">
+          <FaHeart className="text-2xl text-rose-600 drop-shadow" />
+          <h2 className="font-semibold text-2xl text-rose-700">Your Wishlist</h2>
         </div>
 
-        {/* Check if Filtered array is empty */}
-        {Filtered && Filtered.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Filtered.map((item, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-md p-4 flex flex-col">
-                <div className="text-xs text-gray-400 mb-2">Wish ID: {item.productId}</div>
+        <div className="bg-yellow-100 text-yellow-800 text-sm p-3 rounded mb-6 shadow flex items-center gap-2">
+          <FaStar className="text-yellow-400" />
+          <span>
+            Hey! This is your saved Wishlist. Add your favorites to cart anytime.
+          </span>
+        </div>
 
+        {Filtered && Filtered.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {Filtered.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.07 }}
+                className="bg-white rounded-2xl shadow-lg p-4 flex flex-col border border-rose-100 hover:shadow-2xl transition-all duration-300 relative group"
+              >
+                <div className="absolute top-3 right-3">
+                  <FaHeart className="text-rose-500 drop-shadow" />
+                </div>
+                <div className="text-xs text-gray-400 mb-2">Wish ID: {item.productId}</div>
                 <div className="flex items-start gap-4">
                   <img
                     src={AppwriteService.getFileViewUrl(item.images[0])}
                     alt={item.header}
-                    className="w-32 h-42 object-cover rounded"
+                    className="w-28 h-36 object-cover rounded-lg border border-rose-100 shadow"
                   />
-
                   <div className="flex-1">
-                    <div className="font-semibold text-lg text-gray-800 mb-2">
+                    <div className="font-semibold text-lg text-gray-800 mb-1 truncate">
                       {item.header}
                     </div>
-
-                    <div className="text-gray-700 text-sm mb-2">
+                    <div className="text-gray-700 text-xs mb-2 line-clamp-3">
                       {item.description}
                     </div>
-
-                    <div className="text-gray-500 text-sm">
-                      Quantity: {item.quantity}
+                    <div className="flex flex-wrap gap-2 text-xs mb-2">
+                      <span className="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-semibold">
+                        Size: {item.size}
+                      </span>
+                      <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                        ₹{item.price}
+                      </span>
                     </div>
-
-                    <div className="text-gray-500 text-sm">
-                      Size: {item.size}
-                    </div>
-
-                    <div className="text-gray-500 text-sm">
-                      Price: ${item.price}
-                    </div>
-
-                    <div className="text-gray-500 text-sm">
-                      Payment Status: {item.paymentStatus}
+                    <div className="text-gray-500 text-xs">
+                      Payment: <span className="font-semibold">{item.paymentStatus || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -109,7 +122,7 @@ const WishlistPage = () => {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <FaStar
                       key={i}
-                      onClick={() => handleRating(item.productId, i + 1)} // Set rating on click
+                      onClick={() => handleRating(item.productId, i + 1)}
                       className={
                         i < (ratings[item.productId] || 0)
                           ? "text-yellow-400 cursor-pointer"
@@ -121,28 +134,51 @@ const WishlistPage = () => {
                 </div>
 
                 {/* Add to Cart and Remove Buttons */}
-                <div className="flex gap-0.5 mt-4 ">
-                  <button
+                <div className="flex gap-2 mt-5">
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    disabled={loadingCart === item._id}
                     onClick={() => handleAddToCart(item)}
-                    className="bg-blue-500 text-white text-sm px-2 py-1.5 rounded hover:bg-blue-600 flex-1"
+                    className={`flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-blue-600 transition-all duration-200 font-semibold ${
+                      loadingCart === item._id ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
                   >
-                    Add to Cart
-                  </button>
-                  <button
+                    <FaShoppingCart />
+                    {loadingCart === item._id ? "Adding..." : "Add to Cart"}
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    disabled={removing === item._id}
                     onClick={() => handleRemoveFromWishlist(item)}
-                    className="bg-red-500 text-white text-sm px-2 py-1.5 rounded hover:bg-red-600 flex-1"
+                    className={`flex-1 flex items-center justify-center gap-2 bg-rose-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-rose-600 transition-all duration-200 font-semibold ${
+                      removing === item._id ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
                   >
-                    Remove
-                  </button>
+                    <FaTrash />
+                    {removing === item._id ? "Removing..." : "Remove"}
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         ) : (
-          // Show message when no products are in the wishlist
-          <div className="text-center text-gray-500 text-lg mt-10">
-            No products added to wishlist.
-          </div>
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              className="text-center text-gray-500 text-lg mt-16 flex flex-col items-center"
+            >
+              <FaHeart className="text-5xl text-rose-200 mb-4 animate-bounce" />
+              <div>No products added to wishlist.</div>
+              <Link
+                to="/product"
+                className="mt-6 inline-block bg-rose-600 text-white px-6 py-2 rounded-full shadow hover:bg-rose-700 transition-all duration-200 font-semibold"
+              >
+                Start Shopping
+              </Link>
+            </motion.div>
+          </AnimatePresence>
         )}
       </div>
     </Container>

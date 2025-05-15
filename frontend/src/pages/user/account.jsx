@@ -1,61 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useAuth, Container } from "../../FilesPaths/all_path";
 import { Link } from "react-router-dom";
-
-
 
 const AccountPage = () => {
     const { user, logout } = useAuth();
     const [users, setUser] = useState('');
     const [userdata, setUserData] = useState('');
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
     const menuItems = [
-    { title: "Orders", Link: `/order/${user}` },
-    { title: "Customer Care", Link: "/customer-care" },
-    { title: "Address", Link: "/address" },
-    { title: "Notifications", Link: "/notifications" },
-    { title: "How To Return", Link: "/how-to-return" },
-    { title: "Terms & Conditions", Link: "/terms" },
-    { title: "Returns & Refunds Policy", Link: "/returns-policy" },
-    { title: "We Respect Your Privacy", Link: "/privacy-policy" },
-    { title: "Who We Are", Link: "/about-us" },
-];
+        { title: "Orders", Link: `/order/${user}` },
+        { title: "Customer Care", Link: "/customer-care" },
+        { title: "Address", Link: "/address" },
+        { title: "Notifications", Link: "/notifications" },
+        { title: "How To Return", Link: "/how-to-return" },
+        { title: "Terms & Conditions", Link: "/terms" },
+        { title: "Returns & Refunds Policy", Link: "/returns-policy" },
+        { title: "We Respect Your Privacy", Link: "/privacy-policy" },
+        { title: "Who We Are", Link: "/about-us" },
+    ];
 
     useEffect(() => {
         if (user) {
-            console.log('user', user);
             setUser(user._id);
-            setUserData(user)  // Set the user ID if the user is logged in
+            setUserData(user);
         }
     }, [user]);
 
     return (
         <Container>
-            {/* <Link
-  to={-1}
-  className="flex items-center gap-2 px-4 py-2  bg-gray-400/20 text-gray-700 rounded-md  transition-all duration-200"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className="w-5 h-5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.75 19.5L8.25 12l7.5-7.5"
-    />
-  </svg>
-  Back
-</Link> */}
-            <div className="bg-gray-50 min-h-full p-4 overflow-y-hidden ">
+            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen p-4 rounded-2xl shadow-xl">
                 <motion.h1
-                    className="text-xl font-semibold mt-2 mb-4"
+                    className="text-2xl font-bold mt-2 mb-6 text-rose-700 tracking-wide flex items-center gap-2"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
@@ -64,51 +42,51 @@ const AccountPage = () => {
 
                 {/* Profile Section */}
                 <motion.div
-                    className="bg-white p-4 rounded-xl flex items-center justify-between mb-4 shadow"
+                    className="bg-white p-6 rounded-2xl flex items-center justify-between mb-6 shadow-lg border border-rose-100"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                 >
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold text-lg">
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 via-amber-300 to-rose-300 text-white flex items-center justify-center font-bold text-2xl shadow">
                             {userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U'}
                         </div>
                         <div>
-                            <h2 className="font-medium">{userdata.username}</h2>
+                            <h2 className="font-semibold text-lg text-gray-800">{userdata.username}</h2>
                             <p className="text-sm text-gray-600">{userdata.email}</p>
-                            <p className="text-sm text-gray-600">number</p>
+                            <p className="text-sm text-gray-600">{userdata.phoneNumber || "Phone number"}</p>
                         </div>
                     </div>
-                    <button className="text-blue-500 text-sm font-medium">Edit</button>
+                    <button className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition">Edit</button>
                 </motion.div>
 
                 {/* Menu Items */}
-                <div className="bg-white rounded-xl shadow divide-y">
+                <div className="bg-white rounded-2xl shadow-lg divide-y border border-rose-100">
                     {menuItems.map((item, index) => (
                         <motion.div
                             key={index}
-                            className="p-4 flex items-center justify-between hover:bg-gray-50 transition"
+                            className="p-4 flex items-center justify-between hover:bg-rose-50 transition group"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.02 * index }}
                         >
                             <Link to={item.Link} className="flex justify-between items-center w-full">
                                 <div>
-                                    <p className="font-medium">{item.title}</p>
+                                    <p className="font-medium text-gray-800 group-hover:text-rose-700 transition">{item.title}</p>
                                     {item.description && (
                                         <p className="text-xs text-gray-500">{item.description}</p>
                                     )}
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-rose-600 transition" />
                             </Link>
                         </motion.div>
                     ))}
                 </div>
 
                 {/* Logout Button */}
-                <div className="mt-6 flex flex-col items-center">
+                <div className="mt-8 flex flex-col items-center">
                     <button
                         onClick={() => setShowLogoutConfirm(true)}
-                        className="border px-6 py-2 rounded-full text-red-500 font-medium hover:bg-red-50 transition"
+                        className="border px-8 py-2 rounded-full text-red-500 font-semibold hover:bg-rose-50 hover:text-red-700 transition shadow"
                     >
                         Logout
                     </button>
@@ -116,31 +94,40 @@ const AccountPage = () => {
                 </div>
 
                 {/* Logout Confirmation Popup */}
-                {showLogoutConfirm && (
-                    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex justify-center items-center z-50">
-                        <div className="bg-white rounded-lg p-6 w-85 shadow-lg text-center">
-                            <h3 className="text-lg font-semibold mb-4">Are you sure you want to logout?</h3>
-                            <div className="flex justify-around border-t-2 border-gray-200 pt-4">
-                                <div className="border-r-1 border-gray-300 w-1/2">
+                <AnimatePresence>
+                    {showLogoutConfirm && (
+                        <motion.div
+                            className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <motion.div
+                                className="bg-white rounded-2xl p-8 w-full max-w-xs shadow-2xl text-center border border-rose-200"
+                                initial={{ scale: 0.8, opacity: 0, y: 40 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.8, opacity: 0, y: 40 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            >
+                                <h3 className="text-lg font-bold mb-4 text-rose-700">Are you sure you want to logout?</h3>
+                                <div className="flex justify-center gap-4 mt-4">
                                     <button
                                         onClick={() => { logout(); setShowLogoutConfirm(false); }}
-                                        className="bg-red-500 text-white px-8 py-2 rounded-md border border-red-700 hover:bg-red-600 transition"
+                                        className="bg-rose-600 text-white px-6 py-2 rounded-lg border border-rose-700 hover:bg-rose-700 transition font-semibold shadow"
                                     >
                                         Yes
                                     </button>
-                                </div>
-                                <div className="border-l-1 border-gray-300 w-1/2">
                                     <button
                                         onClick={() => setShowLogoutConfirm(false)}
-                                        className="bg-gray-300 px-8 py-2 rounded-md border border-gray-500 hover:bg-gray-400 transition"
+                                        className="bg-gray-200 px-6 py-2 rounded-lg border border-gray-400 hover:bg-gray-300 transition font-semibold shadow"
                                     >
                                         No
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </Container>
     );

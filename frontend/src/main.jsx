@@ -1,20 +1,26 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ResetPassword,ForgotPassword,OrderPage,AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout } from './FilesPaths/all_path.js';
+import {
+  FAQ,
+  TermsConditions,
+  RefundReturn,
+  AboutUs,
+  ContactUs, ResetPassword, ForgotPassword, OrderPage, AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout
+} from './FilesPaths/all_path.js';
 import './index.css'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-        <Home_page />
+      <Home_page />
     ),
   },
   {
     path: '/register',
     element: (
-        <RegisterForm />
+      <RegisterForm />
 
     ),
   },
@@ -27,64 +33,64 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: (
-<AuthGuard>     
-   <AdminProductForm />
-</AuthGuard>      
+      <AuthGuard>
+        <AdminProductForm />
+      </AuthGuard>
     ),
   },
   {
     path: '/admin/preview',
     element: (
-<AuthGuard>
-<AdminProductDetail />
+      <AuthGuard>
+        <AdminProductDetail />
 
-</AuthGuard>      
+      </AuthGuard>
     ),
   },
   {
     path: '/admin/edit/:productId',
     element: (
-<AuthGuard>
+      <AuthGuard>
         <AdminEditForm />
-</AuthGuard>      
+      </AuthGuard>
     ),
   },
   {
     path: '/admin/add',
     element: (
-<AuthGuard>      
-  <Product_2 />
-</AuthGuard>      
+      <AuthGuard>
+        <Product_2 />
+      </AuthGuard>
     ),
   },
   {
     path: '/product',
     element: (
-<AuthGuard>      
-  <ProductPage />
-</AuthGuard>      
+      <AuthGuard>
+        <ProductPage />
+      </AuthGuard>
     ),
   },
   {
     path: '/cart/:userid',
     element: (
-<AuthGuard>      
-  <CartPage />
-</AuthGuard>      
+      <AuthGuard>
+        <CartPage />
+      </AuthGuard>
     ),
   },
   {
     path: '/product/:productId',
     element: (
-<AuthGuard>      
-  <ProductDetail />
-</AuthGuard>      
+      <AuthGuard>
+        <ProductDetail />
+      </AuthGuard>
     ),
   },
   {
     path: '/order',
     element: (
-      <AuthGuard>      
+      <AuthGuard>
         <OrderConfirmation />
       </AuthGuard>
     ),
@@ -144,14 +150,49 @@ const router = createBrowserRouter([
   {
     path: '/reset-password/:token',
     element: (
-        <ResetPassword />
+      <ResetPassword />
 
     ),
   },
   {
     path: '/forgot-password',
     element: (
-        <ForgotPassword />
+      <ForgotPassword />
+
+    ),
+  },
+  {
+    path: '/terms-and-conditions',
+    element: (
+      <TermsConditions />
+
+    ),
+  },
+  {
+    path: '/about-company',
+    element: (
+      <AboutUs />
+
+    ),
+  },
+  {
+    path: '/faq',
+    element: (
+      <FAQ />
+
+    ),
+  },
+  {
+    path: '/refund-and-returns',
+    element: (
+      <RefundReturn />
+
+    ),
+  },
+  {
+    path: '/contact-us',
+    element: (
+      <ContactUs />
 
     ),
   }

@@ -5,15 +5,25 @@ const Order_route = express.Router();
 
 // Create a new order
 Order_route.post("/add", async (req, res) => {
-  const { userId, productId, header, description, images, size, quantity } = req.body;
+  const { userId, productId, header, description, images, size, quantity, buyingMehtod } = req.body;
   console.log(req.body);
 
   try {
-    // For wholesale products, always create new order without checking
-    if (req.body.buyingMehtod === 'Wholesale') {
-      const newOrder = new Order(req.body);
-      await newOrder.save();
-      return res.status(201).json({ message: "Order created successfully", order: newOrder });
+    if (buyingMehtod === 'Wholesale') {
+      // Check if a wholesale order with the same size exists
+      const existingWholesaleOrder = await Order.findOne({ userId, productId, size, buyingMehtod: 'Wholesale' });
+
+      if (existingWholesaleOrder) {
+        // Update quantity of existing wholesale order
+        existingWholesaleOrder.quantity += quantity;
+        await existingWholesaleOrder.save();
+        return res.status(200).json({ message: "Wholesale order quantity updated", order: existingWholesaleOrder });
+      } else {
+        // Create new wholesale order
+        const newOrder = new Order(req.body);
+        await newOrder.save();
+        return res.status(201).json({ message: "Wholesale order created successfully", order: newOrder });
+      }
     }
 
     // Check if order with same userId, productId and size exists for non-wholesale

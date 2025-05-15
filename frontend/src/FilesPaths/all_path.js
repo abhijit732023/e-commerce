@@ -34,6 +34,12 @@ import AddressCard from "../component/address_component.jsx";
 import Address_form from "../component/address_form_component.jsx";
 import ForgotPassword from "../pages/user/ForgotPassword.jsx";
 import ResetPassword from "../pages/user/ResetPassword.jsx";
+import FAQ from "../pages/user/faq.jsx";
+import TermsConditions from "../pages/user/terms_condition.jsx";
+import RefundReturn from "../pages/user/refund_return.jsx";
+import AboutUs from "../pages/user/About_company.jsx";
+import ContactUs from '../pages/user/Contact_us.jsx'
+
 
 export{
     RegisterForm,
@@ -73,6 +79,13 @@ export{
     Address_form,
     ForgotPassword,
     ResetPassword,
+    FAQ,
+    TermsConditions,
+    RefundReturn,
+    AboutUs,
+    ContactUs
+    
+
     
     
 

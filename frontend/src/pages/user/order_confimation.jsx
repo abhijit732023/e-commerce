@@ -21,15 +21,12 @@ const OrderPage = () => {
         // Fetch all addresses in parallel
         const addressRequests = uniqueAddressIds.map(id =>
           axios.get(`${ENV_File.backendURL}/address/${id}`).then(res => ({
-            
             id,
             data: res.data
           }))
         );
 
         const addressResults = await Promise.all(addressRequests);
-        console.log("Address Results:", addressResults);
-        
 
         // Map addressId to address object
         const addressMapTemp = {};
@@ -45,7 +42,6 @@ const OrderPage = () => {
 
     fetchOrdersAndAddresses();
   }, []);
-console.log('hooho',addressMap);
 
   const handleRating = (orderId, value) => {
     setRatings(prev => ({ ...prev, [orderId]: value }));
@@ -54,11 +50,16 @@ console.log('hooho',addressMap);
 
   return (
     <Container>
-      <div className="max-w-2xl mx-auto p-4 bg-gray-100 min-h-screen">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">🛒 Your Orders</h1>
+      <div className="max-w-2xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen rounded-2xl shadow-xl">
+        <h1 className="text-3xl font-extrabold mb-8 text-center text-rose-700 tracking-wide flex items-center justify-center gap-2">
+          <FaBoxOpen className="text-rose-500" /> Your Orders
+        </h1>
 
         {orders.length === 0 ? (
-          <div className="text-center text-gray-600 mt-10">No paid orders found.</div>
+          <div className="text-center text-gray-500 mt-16 text-lg">
+            <FaBoxOpen className="text-5xl text-rose-200 mb-4 mx-auto animate-bounce" />
+            No paid orders found.
+          </div>
         ) : (
           orders.map((order, index) => {
             const address = addressMap[order.addressId];
@@ -66,10 +67,10 @@ console.log('hooho',addressMap);
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow hover:shadow-md transition duration-300 p-4 mb-6 border border-gray-200"
+                className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition duration-300 p-5 mb-8 border border-rose-100"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-30 bg-cover bg-no-repeat flex-shrink-0 rounded-lg bg-gray-100 overflow-hidden">
+                <div className="flex items-center gap-5">
+                  <div className="w-30 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-md bg-gray-100 overflow-hidden border border-rose-100 shadow">
                     {order.images && order.images.length > 0 ? (
                       <img
                         src={AppwriteService.getFileViewUrl(order.images[0])}
@@ -84,18 +85,18 @@ console.log('hooho',addressMap);
                   </div>
 
                   <div className="flex-1">
-                    <div className="text-sm text-gray-500">Order ID: {order._id}</div>
-                    <h2 className="text-lg font-semibold text-gray-800 mt-1">{order.header}</h2>
+                    <div className="text-xs text-gray-400 mb-1">Order ID: <span className="font-semibold">{order._id}</span></div>
+                    <h2 className="text-xl font-bold text-rose-700 mt-1 mb-1">{order.header}</h2>
                     <p className="text-sm text-gray-600 mb-2">{order.description}</p>
 
-                    <div className="grid grid-cols-2 text-sm gap-y-1 text-gray-700">
+                    <div className="grid grid-cols-2 text-sm gap-y-1 text-gray-700 mb-2">
                       <div className="flex items-center gap-1">
                         <FaRupeeSign className="text-green-600" />
-                        <span>Price: ₹{order.price.toFixed(2)}</span>
+                        <span>Price: <span className="font-semibold">₹{order.price.toFixed(2)}</span></span>
                       </div>
                       <div className="flex items-center gap-1">
                         <FaBoxOpen className="text-blue-600" />
-                        <span>Quantity: {order.quantity}</span>
+                        <span>Quantity: <span className="font-semibold">{order.quantity}</span></span>
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="font-medium">Size:</span>
@@ -111,33 +112,37 @@ console.log('hooho',addressMap);
 
                 {/* Address Display */}
                 {address ? (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700 border border-gray-200">
+                  <div className="mt-4 p-4 bg-gradient-to-r from-rose-50 via-amber-50 to-white rounded-xl text-sm text-gray-700 border border-rose-100 shadow">
                     <div className="flex items-center gap-2 text-gray-600 mb-1">
                       <FaMapMarkerAlt className="text-red-500" />
                       <span className="font-semibold">Delivery Address</span>
                     </div>
-                    <p>{address.data.name}</p>
-                    <p>{address.data.street}, {address.data.areaStreet},{address.data.city}, {address.data.state} - {address.data.pincode}</p>
-                    <p>Phone: {address.data.phoneNumber}</p>
+                    <div className="font-semibold text-gray-800">{address.data.name}</div>
+                    <div className="text-gray-700">
+                      {address.data.street}, {address.data.areaStreet}, {address.data.city}, {address.data.state} - {address.data.pincode}
+                    </div>
+                    <div className="text-gray-700">Phone: {address.data.phoneNumber}</div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 mt-2">Loading address.data...</p>
+                  <p className="text-sm text-gray-400 mt-2">Loading address...</p>
                 )}
 
-                <div className="mt-3 flex justify-between items-center px-2">
-                  <span className="text-green-600 text-sm flex items-center gap-1 font-medium">
+                <div className="mt-4 flex justify-between items-center px-2">
+                  <span className="text-green-600 text-sm flex items-center gap-1 font-semibold">
                     <FaCheckCircle />
                     Payment: Paid
                   </span>
 
                   {/* ⭐ Star Rating UI */}
                   <div className="flex gap-1 items-center">
+                    <span className="ml-2 text-xs text-gray-500">Rate</span>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <FaStar
                         key={star}
                         onClick={() => handleRating(order._id, star)}
-                        className={`cursor-pointer ${ratings[order._id] >= star ? "text-yellow-400" : "text-gray-300"
-                          }`}
+                        className={`cursor-pointer transition-all duration-150 ${
+                          ratings[order._id] >= star ? "text-yellow-400 scale-110" : "text-gray-300"
+                        }`}
                       />
                     ))}
                   </div>

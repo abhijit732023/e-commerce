@@ -18,13 +18,16 @@ const CartPage = () => {
   const [AddressId, setAddressId] = useState(null);
   const [AddressArray, setAddressArray] = useState([]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const openRemoveConfirm = (id) => {
     setSelectedItemId(id);
     setShowConfirmModal(true);
   };
 
   const getaddress = (addressid) => {
-    console.log("address iddddd", addressid);
     setAddressId(addressid);
   };
 
@@ -43,26 +46,20 @@ const CartPage = () => {
     const fetchOrder = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order/${userid}`);
-        console.log("Fetched order response:", response.data);
-
         const orderData = response.data.filter((item) => item.paymentStatus === "pending");
-        console.log("Fetched order data:", orderData);
         const filteredOrder = orderData.filter((item) => item.userId === userid);
-
         setOrder(filteredOrder);
 
-        // Set initial quantities for each item
         const quantities = {};
         response.data.forEach((item) => {
-          quantities[item._id] = item.quantity; // Store the initial quantity
+          quantities[item._id] = item.quantity;
         });
 
-        // Check if there are saved quantities in localStorage
         const savedQuantities = JSON.parse(localStorage.getItem("localQuantities")) || {};
         const mergedQuantities = { ...quantities, ...savedQuantities };
 
         setInitialQuantities(quantities);
-        setLocalQuantities(mergedQuantities); // Initialize local quantities with saved values
+        setLocalQuantities(mergedQuantities);
       } catch (error) {
         console.error("Error fetching order:", error);
       }
@@ -70,22 +67,35 @@ const CartPage = () => {
     fetchOrder();
   }, []);
 
+  const handlewish = async () => {
+    try {
+      const response = await axios.get(`${ENV_File.backendURL}/order/single-item/${selectedItemId}`);
+      const itemToSend = response.data[0];
+      if (itemToSend) {
+        const { _id, __v, ...wishlistItem } = itemToSend;
+        const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wishlistItem);
+        if (res) {
+          await axios.delete(`${ENV_File.backendURL}/order/${userid}`);
+          setOrder((prev) => prev.filter((item) => item._id !== selectedItemId));
+          setShowConfirmModal(false);
+          setSelectedItemId(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error in handlewish:', error);
+    }
+  };
+
   const updateQuantity = (id, change) => {
     setLocalQuantities((prev) => {
       const currentQuantity = prev[id] || 1;
       const minQuantity = initialQuantities[id] || 1;
-
-      // Calculate the new quantity, ensuring it doesn't go below the minimum
       const newQuantity = Math.max(minQuantity, currentQuantity + change);
-
       const updatedQuantities = {
         ...prev,
         [id]: newQuantity,
       };
-
-      // Save updated quantities to localStorage
       localStorage.setItem("localQuantities", JSON.stringify(updatedQuantities));
-
       return updatedQuantities;
     });
   };
@@ -115,7 +125,7 @@ const CartPage = () => {
   const payment = async () => {
     if (!AddressId) {
       alert("Please select an address before proceeding to payment.");
-      return; // Stop the payment process if no address is selected
+      return;
     }
 
     const res = await loadRazorpayScript();
@@ -129,7 +139,6 @@ const CartPage = () => {
       const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
         amount: amountPayable,
       });
-      console.log("Payment Order Response:", response.data);
 
       const orderData = response.data;
 
@@ -141,7 +150,6 @@ const CartPage = () => {
         description: `Pay ₹${amountPayable} for your order`,
         order_id: orderData.id,
         handler: async function (response) {
-          console.log("Payment Response:", response);
           try {
             const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
               razorpay_payment_id: response.razorpay_payment_id,
@@ -149,9 +157,8 @@ const CartPage = () => {
               razorpay_signature: response.razorpay_signature,
               userid: userid,
               addressId: AddressId,
-              orderId: order.map((item) => item._id), // Send order IDs
+              orderId: order.map((item) => item._id),
             });
-            console.log("Payment Verification Response:", resp.data);
             if (resp.data.success) {
               setTimeout(() => {
                 alert("Redirecting to order page...");
@@ -159,7 +166,6 @@ const CartPage = () => {
               }, 3000);
             }
           } catch (error) {
-            console.error("Verification error:", error.response?.data || error.message);
             alert("Payment verification failed. Please try again.");
           }
         },
@@ -169,7 +175,7 @@ const CartPage = () => {
           contact: "9876543210",
         },
         theme: {
-          color: "#3399cc",
+          color: "#e11d48",
         },
       };
 
@@ -181,214 +187,234 @@ const CartPage = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }} // Initial state for animation
-      animate={{ opacity: 1, y: 0 }} // Final state for animation
-      exit={{ opacity: 0, y: 50 }} // Exit state for animation
-      transition={{ duration: 0.5, ease: "easeOut" }} // Animation duration and easing
-    >
-      <Container>
-        <div className="max-w-4xl h-screen max-h-screen mx-auto p-4 bg-white text-sm font-sans overflow-scroll pb-10">
-          {/* Page Content */}
+    <Container>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.7, ease: "easeInOut" }}
+      >
+        <div className="max-w-4xl min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-10">
+          {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
-            <p className="font-semibold">Abhijit | Room no 7, Sion Dharavi... 400017</p>
-            <button className="text-blue-600 font-medium" onClick={() => setShowAddressForm(true)}>
+            <p className="font-semibold text-rose-700 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
+              Abhijit | Room no 7, Sion Dharavi... 400017
+            </p>
+            <button className="text-blue-600 font-medium hover:underline" onClick={() => setShowAddressForm(true)}>
               Change
             </button>
           </div>
           {showAddressForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center  z-50">
-            <div className="bg-white  rounded-md shadow-lg max-w-lg w-full relative ">
-              <button
-                className="absolute z-50 top-2 left-2 text-blue-500 font-semibold hover:text-gray-900 pt-8 text-xl"
-                onClick={() => setShowAddressForm(false)}
-                aria-label="Back to Cart"
-              >
-                Back to cart
-              </button>
-              <AddressForm address_id={getaddress} />
-            </div>
-          </div>
-        )}
-
-        <div className="bg-blue-100 border border-blue-300 text-blue-700 p-3 rounded-md mb-4 text-center text-xs font-medium">
-          🎉 YAY! REDEEM 100% OF YOUR EARNED CASHBACK. KEEP SHOPPING, KEEP EARNING 15% CASHBACK!
-        </div>
-
-        <div className="space-y-6">
-          {order.length === 0 ? (
-            <div className="text-center py-20 text-gray-500 text-base font-medium">
-              🛒 No products added to cart yet.
-            </div>
-          ) : (
-            order.map((item) => (
-              item.paymentStatus==="pending" && (
-                <div key={item._id} className="flex border border-gray-200 rounded-md p-3 shadow-sm">
-                <img
-                  src={AppwriteService.getFileViewUrl(item.images[0])}
-                  alt="product"
-                  className="w-24 h-38 object-cover rounded"
-                />
-                <div className="ml-4 flex-1">
-                  <h2 className="font-semibold text-sm">{item.header}</h2>
-                  <p className="text-gray-500 text-xs mb-1">{item.description}</p>
-                  <div className="text-xs mb-2">
-                    <span className="font-medium text-gray-700">Size:</span> {item.size}
-                  </div>
-                  <div className="text-xs mb-2 flex items-center gap-2">
-                    <span className="font-medium text-gray-700">Qty:</span>
-                    <button
-                      className="border px-2 py-1 text-sm rounded hover:bg-gray-200"
-                      onClick={() => updateQuantity(item._id, -1)}
-                      disabled={localQuantities[item._id] <= (initialQuantities[item._id] || 1)}
-                    >
-                      -
-                    </button>
-                    <span className="px-2">{localQuantities[item._id]}</span>
-                    <button
-                      className="border px-2 py-1 text-sm rounded hover:bg-gray-200"
-                      onClick={() => updateQuantity(item._id, 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-green-700 font-bold text-sm">
-                        ₹{item.price}{" "}
-                        <span className="line-through text-gray-400 ml-1">₹1999</span>
-                      </p>
-                      <p className="text-xs text-green-700">You save ₹1,560</p>
-                      <p className="text-xs text-gray-500 mt-1">Delivery by 12 May</p>
-                    </div>
-                    <button
-                      className="text-red-500 text-sm border mt-4 px-2 py-2 rounded hover:bg-red-50"
-                      onClick={() => openRemoveConfirm(item._id)}
-                    >
-                      🗑️ Remove
-                    </button>
-                  </div>
-                </div>
-              </div>
-              )
-            ))
-          )}
-        </div>
-
-        {order.length > 0 && (
-          <>
-            <div className="border-t  mt-6 pt-4 flex items-center justify-between">
-              <p className="text-sm font-medium">Apply coupon</p>
-              <button className="text-blue-600 text-sm font-semibold">Select</button>
-            </div>
-
-            <div className="text-xs text-green-700 bg-green-50 p-2 mt-2 rounded">
-              🎁 You are earning ₹122 SuperCash! Will be credited 15 days after delivery.
-            </div>
-
-            <div className="border-t mt-4 pt-4">
-              <h3 className="font-semibold mb-2 text-sm">Redemption Options</h3>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <input type="radio" disabled />
-                  <span>You have no Loyalty Points at the moment</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input type="radio" />
-                  <span>You are eligible to use ₹75.20 of ₹75.20</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t mt-6 pt-4 pb-15">
-              <h3 className="font-semibold text-sm mb-3">Order Details</h3>
-              <div className="text-sm space-y-2">
-                <div className="flex justify-between">
-                  <span>Bag Total</span>
-                  <span>₹{total.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-green-700">
-                  <span>Bag Savings</span>
-                  <span>-₹{savings.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Delivery Fee</span>
-                  <span>₹{deliveryFee}</span>
-                </div>
-                <div className="flex justify-between font-bold border-t pt-2">
-                  <span>Amount Payable</span>
-                  <span>₹{amountPayable.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className=" bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md flex justify-between items-center z-50 max-w-4xl mx-auto">
-              <div>
-                <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
-                <p className="text-lg font-bold">₹{amountPayable.toFixed(2)}</p>
-              </div>
-              <button onClick={payment} className="bg-black text-white px-6 py-2 rounded-md font-semibold">
-                Proceed to Payment
-              </button>
-
-            </div>
-          </>
-        )}
-
-        {/* 🧾 Custom Remove Confirmation Modal */}
-        <AnimatePresence>
-          {showConfirmModal && (
-            <motion.div
-              className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+            <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
               <motion.div
-                className="bg-white rounded-md p-6 w-96 shadow-lg text-center border border-gray-300"
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 50, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="bg-white rounded-xl shadow-2xl max-w-lg w-full relative p-6"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
               >
-                <h2 className="text-lg font-semibold mb-4 text-red-600">Remove item from cart?</h2>
-                <p className="text-gray-700 text-sm mb-6">
-                  Are you sure you want to remove this item?
-                </p>
-                <div className="flex justify-center gap-4">
-                  <button
-                    className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 shadow-sm"
-                    onClick={() => setShowConfirmModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-blue-100 text-blue-700 px-4 py-2 rounded hover:bg-blue-200 shadow-sm"
-                    onClick={() => {
-                      handlewish()
-                      alert("Successfully Added To Wishlist");
-                      setShowConfirmModal(false);
-                    }}
-                  >
-                    Wishlist
-                  </button>
-                  <button
-                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 shadow-md"
-                    onClick={() => handleRemove(selectedItemId)}
-                  >
-                    Remove
-                  </button>
-                </div>
+                <button
+                  className="absolute z-50 top-2 left-2 text-blue-500 font-semibold hover:text-gray-900 pt-8 text-xl"
+                  onClick={() => setShowAddressForm(false)}
+                  aria-label="Back to Cart"
+                >
+                  Back to cart
+                </button>
+                <AddressForm address_id={getaddress} />
               </motion.div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
 
-          {/* Rest of the content */}
+          {/* Cashback Banner */}
+          <div className="bg-gradient-to-r from-rose-100 via-amber-100 to-white border border-rose-200 text-rose-700 p-3 rounded-lg mb-4 text-center text-xs font-semibold shadow-sm">
+            🎉 REDEEM 100% OF YOUR EARNED CASHBACK. KEEP SHOPPING, KEEP EARNING 15% CASHBACK!
+          </div>
+
+          {/* Cart Items */}
+          <div className="space-y-6">
+            {order.length === 0 ? (
+              <div className="text-center py-20 text-gray-400 text-base font-medium">
+                🛒 No products added to cart yet.
+              </div>
+            ) : (
+              order.map((item) => (
+                item.paymentStatus === "pending" && (
+                  <motion.div
+                    key={item._id}
+                    className="flex border border-rose-100 rounded-xl p-3 shadow-md bg-white/90 hover:shadow-lg transition-all duration-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  >
+                    <img
+                      src={AppwriteService.getFileViewUrl(item.images[0])}
+                      alt="product"
+                      className="w-24 h-32 object-cover rounded-lg border border-rose-100"
+                    />
+                    <div className="ml-4 flex-1">
+                      <h2 className="font-semibold text-base text-rose-700">{item.header}</h2>
+                      <p className="text-gray-500 text-xs mb-1">{item.description}</p>
+                      <div className="text-xs mb-2">
+                        <span className="font-medium text-gray-700">Size:</span> {item.size}
+                      </div>
+                      <div className="text-xs mb-2 flex items-center gap-2">
+                        <span className="font-medium text-gray-700">Qty:</span>
+                        <button
+                          className="border px-2 py-1 text-sm rounded hover:bg-rose-100"
+                          onClick={() => updateQuantity(item._id, -1)}
+                          disabled={localQuantities[item._id] <= (initialQuantities[item._id] || 1)}
+                        >
+                          -
+                        </button>
+                        <span className="px-2">{localQuantities[item._id]}</span>
+                        <button
+                          className="border px-2 py-1 text-sm rounded hover:bg-rose-100"
+                          onClick={() => updateQuantity(item._id, 1)}
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-2">
+                        <div>
+                          <p className="text-green-700 font-bold text-sm">
+                            ₹{item.price} <span className="line-through text-gray-400 ml-1">₹1999</span>
+                          </p>
+                          <p className="text-xs text-green-700">You save ₹1,560</p>
+                          <p className="text-xs text-gray-500 mt-1">Delivery by {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                        </div>
+                        <button
+                          className="text-red-500 text-sm border mt-4 px-2 py-2 rounded hover:bg-red-50"
+                          onClick={() => openRemoveConfirm(item._id)}
+                        >
+                          🗑️ Remove
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              ))
+            )}
+          </div>
+
+          {/* Coupon and Savings */}
+          {order.length > 0 && (
+            <>
+              <div className="border-t mt-6 pt-4 flex items-center justify-between">
+                <p className="text-sm font-medium">Apply coupon</p>
+                <button className="text-blue-600 text-sm font-semibold hover:underline">Select</button>
+              </div>
+
+              <div className="text-xs text-green-700 bg-green-50 p-2 mt-2 rounded">
+                🎁 You are earning ₹122 SuperCash! Will be credited 15 days after delivery.
+              </div>
+
+              <div className="border-t mt-4 pt-4">
+                <h3 className="font-semibold mb-2 text-sm">Redemption Options</h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <input type="radio" disabled />
+                    <span>You have no Loyalty Points at the moment</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input type="radio" />
+                    <span>You are eligible to use ₹75.20 of ₹75.20</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Details */}
+              <div className="border-t mt-6 pt-4 pb-15">
+                <h3 className="font-semibold text-sm mb-3">Order Details</h3>
+                <div className="text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span>Bag Total</span>
+                    <span>₹{total.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-green-700">
+                    <span>Bag Savings</span>
+                    <span>-₹{savings.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Delivery Fee</span>
+                    <span>₹{deliveryFee}</span>
+                  </div>
+                  <div className="flex justify-between font-bold border-t pt-2">
+                    <span>Amount Payable</span>
+                    <span>₹{amountPayable.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Bar */}
+              <div className="fixed bottom-18 pb-6 left-0 right-0 bg-white p-4 border-t  flex justify-between items-center z-30 max-w-4xl mx-auto ">
+                <div>
+                  <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-rose-700">₹{amountPayable.toFixed(2)}</p>
+                </div>
+                <button
+                  onClick={payment}
+                  className="bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-6 py-2 rounded-xl font-semibold shadow hover:scale-105 transition-all duration-200"
+                >
+                  Proceed to Payment
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Remove Confirmation Modal */}
+          <AnimatePresence>
+            {showConfirmModal && (
+              <motion.div
+                className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.div
+                  className="bg-white rounded-xl p-8 w-96 shadow-2xl text-center border border-rose-200"
+                  initial={{ y: -50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 50, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  <h2 className="text-lg font-bold mb-4 text-rose-700">Remove item from cart?</h2>
+                  <p className="text-gray-700 text-sm mb-6">
+                    Are you sure you want to remove this item?
+                  </p>
+                  <div className="flex justify-center gap-4">
+                    <button
+                      className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 shadow-sm"
+                      onClick={() => setShowConfirmModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-blue-100 text-blue-700 px-4 py-2 rounded hover:bg-blue-200 shadow-sm"
+                      onClick={() => {
+                        handlewish();
+                        alert("Successfully Added To Wishlist");
+                        setShowConfirmModal(false);
+                      }}
+                    >
+                      Wishlist
+                    </button>
+                    <button
+                      className="bg-rose-600 text-white px-4 py-2 rounded hover:bg-rose-700 shadow-md"
+                      onClick={() => handleRemove(selectedItemId)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </Container>
-    </motion.div>
+      </motion.div>
+    </Container>
   );
 };
 

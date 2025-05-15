@@ -8,11 +8,11 @@ const SSSpecialCarousel = ({ products }) => {
   const interactionTimeout = useRef(null);
   const autoScrollTimeout = useRef(null);
 
-  const scrollAmount = 273 + 20; // Slight increase for better spacing feedback
-  const scrollInterval = 3000; // More breathing room between scrolls (smooth pacing)
+  const scrollAmount = 293; // 273 + 20 for spacing
+  const scrollInterval = 3000;
 
-  // Cloning products to create the infinite loop effect
-  const clonedProducts = [...products, ...products]; // Duplicate the product array
+  // Clone products for infinite loop effect
+  const clonedProducts = [...products, ...products];
 
   const scrollToNext = () => {
     const container = scrollRef.current;
@@ -23,7 +23,6 @@ const SSSpecialCarousel = ({ products }) => {
 
     let targetScroll = currentScroll + scrollAmount;
     if (targetScroll > maxScroll) {
-      // If we're at the end, reset scroll to the first image but without jump
       container.scrollTo({
         left: 0,
         behavior: 'smooth',
@@ -38,7 +37,7 @@ const SSSpecialCarousel = ({ products }) => {
   };
 
   const startAutoScroll = () => {
-    stopAutoScroll(); // Clear any existing timeouts
+    stopAutoScroll();
     autoScrollTimeout.current = setTimeout(function loop() {
       if (!isInteracting) {
         scrollToNext();
@@ -53,17 +52,16 @@ const SSSpecialCarousel = ({ products }) => {
 
   const handleInteraction = () => {
     setIsInteracting(true);
-    stopAutoScroll(); // Stop auto-scroll during interaction
+    stopAutoScroll();
 
-    clearTimeout(interactionTimeout.current); // Clear any existing interaction timeout
+    clearTimeout(interactionTimeout.current);
     interactionTimeout.current = setTimeout(() => {
-      setIsInteracting(false); // Reset interaction state
-      startAutoScroll(); // Resume auto-scroll after 3 seconds
-    }, 3000); // Resume after 3 seconds of no interaction
+      setIsInteracting(false);
+      startAutoScroll();
+    }, 3000);
   };
 
   useEffect(() => {
-    // Start auto-scroll after 3 seconds of no interaction on mount
     interactionTimeout.current = setTimeout(() => {
       setIsInteracting(false);
       startAutoScroll();
@@ -76,36 +74,70 @@ const SSSpecialCarousel = ({ products }) => {
   }, []);
 
   return (
-    <section className="rounded-sm bg-white border-rose-300/20 px-4 md:px-16">
+    <section className="rounded-xl bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-2 md:px-10 py-8 shadow-lg ">
+      <div className="flex items-center justify-between mb-4 px-2">
+        <h2 className="text-2xl md:text-3xl font-bold text-rose-700  tracking-tight drop-shadow-sm">
+          SS Special Picks
+        </h2>
+        <span className="text-sm text-amber-600 font-medium bg-amber-100 px-3 py-1 rounded-full shadow-sm hidden md:inline">
+          Curated for You
+        </span>
+      </div>
       <div
         ref={scrollRef}
-        className="overflow-x-auto flex space-x-4 overflow-y-hidden h-full scroll-smooth snap-x snap-mandatory"
+        className="overflow-x-auto flex space-x-6 overflow-y-hidden h-full scroll-smooth snap-x snap-mandatory pb-4"
         onWheel={handleInteraction}
         onTouchStart={handleInteraction}
         onMouseDown={handleInteraction}
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
       >
         {clonedProducts.map((img, i) => (
           <motion.div
             key={i}
-            className="bg-cream shadow-lg rounded-md snap-center overflow-hidden flex-shrink-0 border border-mocha transition-transform duration-700 ease-in-out"
+            className="bg-white shadow-xl rounded-2xl snap-center overflow-hidden flex-shrink-0 border border-amber-200 hover:shadow-2xl transition-all duration-500 group relative"
             style={{
               width: '273px',
               height: '410px',
               scrollSnapAlign: 'center',
             }}
-            initial={{ opacity: 1, scale: 0.85 }}
-            whileInView={{ opacity: 1, scale: 0.85 }}
+            initial={{ opacity: 0.7, scale: 0.92 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.04, boxShadow: '0 8px 32px 0 rgba(0,0,0,0.15)' }}
             viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }} // cubic bezier for natural motion
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <img
               src={AppwriteService.getFileViewUrl(img.images[0])}
               alt={`SS Special ${i}`}
-              className="w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+              loading="lazy"
             />
+            {/* Overlay for product name or badge */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
+              <span className="text-white font-semibold text-lg drop-shadow">
+                {img.header || 'Special Product'}
+              </span>
+            </div>
+            {/* Optional: Add a badge for new/featured */}
+            {img.isFeatured && (
+              <span className="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                Featured
+              </span>
+            )}
           </motion.div>
         ))}
       </div>
+      {/* Custom scrollbar hide for webkit */}
+      <style>
+        {`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
     </section>
   );
 };

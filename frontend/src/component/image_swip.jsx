@@ -12,7 +12,7 @@ const SwipeImageViewer = ({ images, name }) => {
   });
 
   return (
-    <div className="relative w-full h-50 overflow-hidden rounded" {...handlers}>
+    <div className="relative w-full h-60 overflow-hidden rounded" {...handlers}>
     {/* Main Image */}
     {images.map((image, index) => (
       <img

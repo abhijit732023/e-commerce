@@ -7,6 +7,8 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { motion } from "framer-motion";
+import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck } from "react-icons/fa";
 
 const ProductDetail = () => {
     const { user } = useAuth();
@@ -105,74 +107,104 @@ const ProductDetail = () => {
             console.warn('Error adding to cart:', err);
         }
     };
+    const addTowishlist = async () => {
+        if (!userid) {
+            alert("User ID is not available. Please log in.");
+            return;
+        }
+
+        if (!selectedSize) {
+            alert("Please select a size.");
+            return;
+        }
+
+        const wihslistdata = {
+            userId: userid,
+            productId: productId,
+            header: product.header,
+            description: product.description,
+            images: product.images,
+            buyingMehtod: pricingMode === "retail" ? 'Retail' : 'Wholesale',
+            size: selectedSize,
+            price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
+            quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
+            addressId: null,
+        };
+
+        try {
+            const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
+            alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
+            console.log(res.data);
+        } catch (err) {
+            console.warn('Error adding to cart:', err);
+        }
+    };
 
     if (!product) return <div className="text-center mt-10">Loading...</div>;
-
     return (
         <Container>
-            {/* <Link
-                to={-1}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-400/20 text-gray-700 rounded-md transition-all duration-200"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 19.5L8.25 12l7.5-7.5"
-                    />
-                </svg>
-                Back
-            </Link> */}
-            <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10 pb-20">
+            <div className="max-w-6xl mx-auto p-2 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 pb-20 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl">
                 {/* Swiper */}
-                <div className="w-full h-[500px]">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="w-full h-[64vh] md:h-[500px] flex items-center"
+                >
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={10}
                         slidesPerView={1}
                         navigation
                         pagination={{ clickable: true }}
-                        className="rounded-xl h-full"
+                        className="rounded-xl h-full shadow-lg"
                     >
                         {product.images?.map((img, i) => (
                             <SwiperSlide key={i}>
                                 <img
                                     src={AppwriteService.getFileViewUrl(img)}
                                     alt={`product-img-${i}`}
-                                    className="w-full h-[500px] object-cover rounded-xl"
+                                    className="w-full h-[] md:h-[500px] object-contain rounded-xl"
                                 />
                             </SwiperSlide>
                         ))}
                     </Swiper>
-                </div>
+                </motion.div>
 
                 {/* Product Details */}
-                <div className="space-y-6">
+                <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="space-y-5"
+                >
                     <div>
-                        <h2 className="text-3xl font-bold">{product.header}</h2>
-                        <p className="text-sm text-gray-500 mt-1">Brand: <span className="font-medium">{product.brand}</span></p>
-                        <p className="text-sm text-gray-500">Category: <span className="font-medium">{product.category}</span></p>
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-rose-700 mb-1">{product.header}</h2>
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-2">
+                            <span>Category: <span className="font-medium text-gray-700">{product.category}</span></span>
+                        </div>
                     </div>
 
-                    <p className="text-gray-600">{product.description}</p>
+                    <p className="text-gray-700 text-base md:text-lg">{product.description}</p>
 
                     {/* Retail / Wholesale Toggle */}
                     <div className="grid grid-cols-2 gap-2">
                         <button
-                            className={`py-2 rounded-md border ${pricingMode === 'retail' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}
+                            className={`py-2 rounded-md border font-semibold transition-all duration-200
+                            ${pricingMode === 'retail'
+                                    ? 'bg-rose-600 text-white border-rose-600 shadow'
+                                    : 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-rose-50'
+                                }`}
                             onClick={() => handlePricingMode('retail')}
                         >
                             Retail
                         </button>
                         <button
-                            className={`py-2 rounded-md border ${pricingMode === 'wholesale' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800'}`}
+                            className={`py-2 rounded-md border font-semibold transition-all duration-200
+                            ${pricingMode === 'wholesale'
+                                    ? 'bg-rose-600 text-white border-rose-600 shadow'
+                                    : 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-rose-50'
+                                }`}
                             onClick={() => handlePricingMode('wholesale')}
                         >
                             Wholesale
@@ -180,34 +212,37 @@ const ProductDetail = () => {
                     </div>
 
                     {/* Pricing */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         {pricingMode === "retail" ? (
                             <>
-                                <p className="text-xl font-bold text-green-600">₹{product.price}</p>
-                                <p className="text-xl font-semibold line-through text-gray-400">₹{product.fakePrie}</p>
-                                <p className="text-lg text-red-500 font-semibold">{product.discount}% OFF</p>
+                                <p className="text-2xl font-bold text-green-600">₹{product.price}</p>
+                                {product.fakePrie && (
+                                    <p className="text-lg font-semibold line-through text-gray-400">₹{product.fakePrie}</p>
+                                )}
+                                {product.discount && (
+                                    <p className="text-base text-red-500 font-semibold">{product.discount}% OFF</p>
+                                )}
                             </>
                         ) : (
                             <>
-                                <p className="text-xl font-bold text-green-600">₹{product.WholeSalePrice}</p>
+                                <p className="text-2xl font-bold text-green-600">₹{product.WholeSalePrice}</p>
                                 <p className="text-sm text-gray-500">Min Qty: {product.wholeSaleQuantity}</p>
                             </>
                         )}
                     </div>
-
                     {/* Quantity Selector */}
                     <div>
                         <p className="text-sm text-gray-500 mb-1">Quantity</p>
-                        <div className="flex items-center justify-center space-x-4 py-1 bg-gray-100">
+                        <div className="flex items-center justify-center space-x-4  bg-rose-100/20">
                             <button
-                                className="w-1/4 py-2 bg-gray-800/40 rounded text-lg text-center"
+                                className="w-1/4 py-2 bg-rose-200/50 border border-rose-300 rounded  text-center font-extrabold text-2xl"
                                 onClick={decreaseQuantity}
                             >
                                 -
                             </button>
-                            <span className="text-xl font-semibold w-3/5 text-center">{quantity}</span>
+                            <span className="text-xl  font-semibold  w-3/5 text-center">{quantity}</span>
                             <button
-                                className="w-1/4 py-2 bg-gray-800/40 rounded text-lg text-center"
+                                className="w-1/4 py-2 bg-rose-200/50 border border-rose-300 rounded  text-center font-bold text-lg"
                                 onClick={increaseQuantity}
                             >
                                 +
@@ -217,15 +252,21 @@ const ProductDetail = () => {
 
                     {/* Size Selection */}
                     <div>
-                        <p className="text-sm text-gray-500">Available Sizes</p>
+                        <p className="text-sm text-gray-500 mb-1">Available Sizes</p>
                         <div className="flex gap-2 flex-wrap">
                             {["XS", "S", "M", "L", "XL", "XXL", "CUSTOM-SIZE"].map((size) => {
                                 const isAvailable = product.size?.includes(size);
                                 return (
-                                    <span
+                                    <motion.span
+                                        whileTap={isAvailable ? { scale: 0.92 } : {}}
                                         key={size}
-                                        className={`px-3 py-1 border rounded-full text-sm cursor-pointer 
-                                    ${selectedSize === size ? 'bg-blue-500 text-white' : isAvailable ? 'bg-gray-100' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                                        className={`px-3 py-1 border rounded-full text-sm cursor-pointer transition-all duration-200
+                                        ${selectedSize === size
+                                                ? 'bg-rose-600 text-white border-rose-600 shadow'
+                                                : isAvailable
+                                                    ? 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-rose-50'
+                                                    : 'bg-gray-300 text-gray-400 border-gray-300 cursor-not-allowed'
+                                            }`}
                                         onClick={() => {
                                             if (isAvailable) {
                                                 handleSizeSelect(size);
@@ -233,48 +274,68 @@ const ProductDetail = () => {
                                         }}
                                     >
                                         {size}
-                                    </span>
+                                    </motion.span>
                                 );
                             })}
                         </div>
                     </div>
 
                     {/* Tags */}
-                    <div>
-                        <p className="text-sm text-gray-500">Tags</p>
-                        <div className="flex gap-2 flex-wrap">
-                            {product.tags?.map((tag) => (
-                                <span key={tag} className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
-                                    #{tag}
-                                </span>
-                            ))}
+                    {product.tags?.length > 0 && (
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1 flex items-center gap-1"><FaTag className="inline" /> Tags</p>
+                            <div className="flex gap-2 flex-wrap">
+                                {product.tags.map((tag) => (
+                                    <span key={tag} className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Stock */}
-                    <div>
+                    <div className="flex items-center gap-2">
                         <p className="text-sm text-gray-500">In Stock</p>
-                        <p className={`text-lg font-semibold ${product.inStockStatus ? 'text-green-600' : 'text-red-500'}`}>
-                            {product.inStockStatus ? 'Available' : 'Out of Stock'}
-                        </p>
+                        {product.inStockStatus ? (
+                            <span className="flex items-center gap-1 text-green-600 font-semibold text-base">
+                                <FaCheckCircle /> Available
+                            </span>
+                        ) : (
+                            <span className="flex items-center gap-1 text-red-500 font-semibold text-base">
+                                <FaTimesCircle /> Out of Stock
+                            </span>
+                        )}
                     </div>
 
                     {/* Delivery */}
-                    <div>
+                    <div className="flex items-center gap-2">
+                        <FaTruck className="text-rose-500" />
                         <p className="text-sm text-gray-500">Delivery By</p>
-                        <p className="text-base font-medium">{new Date(product.dateToDeliver).toDateString()}</p>
+                        <p className="text-base font-medium">
+                            {
+                                new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toDateString()
+                            }
+                        </p>
                     </div>
-
                     {/* Add to Cart */}
                     <div className="pt-4">
-                        <Button onClick={addToCart} className="w-full py-3 text-lg">
-                            Add to Cart
-                        </Button>
+                        <motion.div
+                            whileTap={{ scale: 0.97 }}
+                            whileHover={{ scale: 1.03 }}
+                            className="w-full flex gap-1"
+                        >
+                            <Button onClick={addToCart} className="w-[50%] py-3 text-lg bg-rose-500 border-2 border-red-800 hover:bg-rose-700 text-white rounded-xl shadow-lg transition-all duration-200">
+                                Add to Cart
+                            </Button>
+                            <Button onClick={addTowishlist} className="w-[50%] py-3 text-lg bg-blue-500/90 border-2 border-blue-700 hover:bg-rose-700 text-white rounded-xl shadow-lg transition-all duration-200">
+                                Wishlist
+                            </Button>
+                        </motion.div>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </Container>
     );
-};
-
+}
 export default ProductDetail;
