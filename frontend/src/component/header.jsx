@@ -78,7 +78,7 @@ const Header = () => {
   return (
     <>
       {/* Header */}
-      <header className="bg-white sticky flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0 z-40 border-b border-rose-100">
+      <header className="bg-white sticky flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0  border-b border-rose-100">
         {/* Menu Icon */}
         <motion.button
           whileTap={{ scale: 0.85 }}

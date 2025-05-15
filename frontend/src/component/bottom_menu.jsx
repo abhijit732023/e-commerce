@@ -75,7 +75,7 @@ const BottomMenuBar = () => {
   };
 
   return (
-    <div className="rounded-t-2xl fixed bottom-0 w-full border-2 border-b-white border-rose-200/70  bg-white shadow-md   z-40">
+    <div className="rounded-t-2xl fixed bottom-0 w-full border-2 border-b-white border-rose-200/70  bg-white shadow-md">
       <div className="flex justify-around items-center h-[10vh] max-h-20 text-gray-600 text-sm">
         {menuItems.map((item, index) => (
           <button

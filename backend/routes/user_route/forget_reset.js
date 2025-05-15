@@ -15,6 +15,9 @@ export const forgotPassword = async (req, res) => {
     });
 
     const link = `${config.backendURl}/reset-password/${token}`;
+    console.log('my_email',config.email_user);
+    console.log('my_pass',config.email_password);
+    
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -23,7 +26,8 @@ export const forgotPassword = async (req, res) => {
         pass: config.email_password,
       },
     });
-
+   
+   
     await transporter.sendMail({
       from: config.email_user,
       to: user.email,
