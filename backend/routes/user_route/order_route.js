@@ -2,44 +2,92 @@ import express from "express";
 import {Order} from "../../index.js";
 
 const Order_route = express.Router();
-
-// Create a new order
 Order_route.post("/add", async (req, res) => {
-  const { userId, productId, header, description, images, size, quantity, buyingMehtod } = req.body;
-  console.log(req.body);
-
   try {
-    if (buyingMehtod === 'Wholesale') {
-      // Check if a wholesale order with the same size exists
-      const existingWholesaleOrder = await Order.findOne({ userId, productId, size, buyingMehtod: 'Wholesale' });
+    const {
+      userId,
+      productId,
+      header,
+      description,
+      images,
+      size,
+      quantity,
+      buyingMehtod,
+      price,
+      addressId,
+    } = req.body;
 
-      if (existingWholesaleOrder) {
-        // Update quantity of existing wholesale order
-        existingWholesaleOrder.quantity += quantity;
-        await existingWholesaleOrder.save();
-        return res.status(200).json({ message: "Wholesale order quantity updated", order: existingWholesaleOrder });
-      } else {
-        // Create new wholesale order
-        const newOrder = new Order(req.body);
-        await newOrder.save();
-        return res.status(201).json({ message: "Wholesale order created successfully", order: newOrder });
+    // Validate required fields
+    if (!userId || !productId || !size || !quantity) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    let order;
+
+    if (buyingMehtod === "Wholesale") {
+      // Only update wholesale orders
+      order = await Order.findOne({
+        userId,
+        productId,
+        size,
+        buyingMehtod: "Wholesale",
+      });
+
+      if (order) {
+        order.quantity += quantity;
+        await order.save();
+        return res.status(200).json({ message: "Wholesale order quantity updated", order });
       }
+
+      // Create new wholesale order
+      order = new Order({
+        userId,
+        productId,
+        header,
+        description,
+        images,
+        size,
+        quantity,
+        buyingMehtod: "Wholesale",
+        price,
+        addressId,
+      });
+      await order.save();
+      return res.status(201).json({ message: "Wholesale order created successfully", order });
     }
 
-    // Check if order with same userId, productId and size exists for non-wholesale
-    const existingOrder = await Order.findOne({ userId, productId, size });
+    // For non-wholesale, do NOT update wholesale orders
+    order = await Order.findOne({
+      userId,
+      productId,
+      size,
+      $or: [
+        { buyingMehtod: { $exists: false } },
+        { buyingMehtod: { $ne: "Wholesale" } },
+      ],
+    });
 
-    if (existingOrder) {
-      // Update quantity of existing order
-      existingOrder.quantity += quantity;
-      await existingOrder.save();
-      return res.status(200).json({ message: "Order quantity updated", order: existingOrder });
-    } else {
-      // Create new order
-      const newOrder = new Order(req.body);
-      await newOrder.save();
-      return res.status(201).json({ message: "Order created successfully", order: newOrder });
+    if (order) {
+      order.quantity += quantity;
+      await order.save();
+      return res.status(200).json({ message: "Order quantity updated", order });
     }
+
+    // Create new non-wholesale order
+    order = new Order({
+      userId,
+      productId,
+      header,
+      description,
+      images,
+      size,
+      quantity,
+      buyingMehtod: buyingMehtod || "Retail",
+      price,
+      addressId,
+    });
+    await order.save();
+    return res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
     console.error("Error creating order:", error);
     return res.status(500).json({ message: "Server error" });

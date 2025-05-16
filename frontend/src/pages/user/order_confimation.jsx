@@ -2,8 +2,10 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
 import { FaBoxOpen, FaRupeeSign, FaCheckCircle, FaStar, FaMapMarkerAlt } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
 const OrderPage = () => {
+  const{userid}=useParams()
   const [orders, setOrders] = useState([]);
   const [ratings, setRatings] = useState({});
   const [addressMap, setAddressMap] = useState({});
@@ -12,7 +14,7 @@ const OrderPage = () => {
     const fetchOrdersAndAddresses = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order`);
-        const paidOrders = response.data.filter(order => order.paymentStatus === "paid");
+        const paidOrders = response.data.filter(order => order.paymentStatus === "paid"&&order.userId===userid);
         setOrders(paidOrders);
 
         // Get unique address IDs

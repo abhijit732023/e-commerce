@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link, useLocation } from "react-router-dom";
-import { AddressForm, AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path.js";
+import { AddressForm, AppwriteService, Container, ENV_File ,useCartWishlist} from "../../FilesPaths/all_path.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const { userid } = useParams();
+  const { fetchCounts } = useCartWishlist();
   const navigate = useNavigate();
   const [localQuantities, setLocalQuantities] = useState({});
   const [order, setOrder] = useState([]);
@@ -17,6 +18,7 @@ const CartPage = () => {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [AddressId, setAddressId] = useState(null);
   const [Addressdata, setAddressdata] = useState();
+  
 
     const location = useLocation();
   const addressId = location.state?.address_id;
@@ -186,6 +188,7 @@ const CartPage = () => {
               orderId: order.map((item) => item._id),
             });
             if (resp.data.success) {
+              // fetchCounts()
               setTimeout(() => {
                 alert("Redirecting to order page...");
                 navigate(`/order/${userid}`);
