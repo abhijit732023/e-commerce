@@ -8,6 +8,7 @@ const Loader = () => {
   size="60"
   speed="1.75"
   color="red" 
+className='z-50'
 />
   );
 };
