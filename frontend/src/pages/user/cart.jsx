@@ -150,71 +150,75 @@ const CartPage = () => {
     });
   };
 
-  const payment = async () => {
-    if (!AddressId) {
-      alert("Please select an address before proceeding to payment.");
-      return;
+ // ...existing code...
+
+const payment = async () => {
+  if (!AddressId) {
+    if (window.confirm("Please select an address before proceeding to payment.\n\nClick OK to go to your address page.")) {
+      navigate(`/address/${userid}`);
     }
+    return;
+  }
 
-    const res = await loadRazorpayScript();
+  const res = await loadRazorpayScript();
 
-    if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
-      return;
-    }
+  if (!res) {
+    alert("Razorpay SDK failed to load. Are you online?");
+    return;
+  }
 
-    try {
-      const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
-        amount: amountPayable,
-      });
+  try {
+    const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
+      amount: amountPayable,
+    });
 
-      const orderData = response.data;
+    const orderData = response.data;
 
-      const options = {
-        key: ENV_File.razor_key_id,
-        amount: orderData.amount,
-        currency: "INR",
-        name: "E-Commerce Payment",
-        description: `Pay ₹${amountPayable} for your order`,
-        order_id: orderData.id,
-        handler: async function (response) {
-          try {
-            const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              userid: userid,
-              addressId: AddressId,
-              orderId: order.map((item) => item._id),
-            });
-            if (resp.data.success) {
-              // fetchCounts()
-              setTimeout(() => {
-                alert("Redirecting to order page...");
-                navigate(`/order/${userid}`);
-              }, 3000);
-            }
-          } catch (error) {
-            alert("Payment verification failed. Please try again.");
+    const options = {
+      key: ENV_File.razor_key_id,
+      amount: orderData.amount,
+      currency: "INR",
+      name: "E-Commerce Payment",
+      description: `Pay ₹${amountPayable} for your order`,
+      order_id: orderData.id,
+      handler: async function (response) {
+        try {
+          const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            userid: userid,
+            addressId: AddressId,
+            orderId: order.map((item) => item._id),
+          });
+          if (resp.data.success) {
+            setTimeout(() => {
+              alert("Redirecting to order page...");
+              navigate(`/order/${userid}`);
+            }, 3000);
           }
-        },
-        prefill: {
-          name: "User Name",
-          email: "user@example.com",
-          contact: "9876543210",
-        },
-        theme: {
-          color: "#e11d48",
-        },
-      };
+        } catch (error) {
+          alert("Payment verification failed. Please try again.");
+        }
+      },
+      prefill: {
+        name: "User Name",
+        email: "user@example.com",
+        contact: "9876543210",
+      },
+      theme: {
+        color: "#e11d48",
+      },
+    };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error("Error initiating payment:", error);
-    }
-  };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.error("Error initiating payment:", error);
+  }
+};
 
+// ...existing code...
   return (
     <Container>
       <motion.div
@@ -222,9 +226,9 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-      className="h-[95vh] overflow-y-scroll" // changed from h-[80vh] to h-[95vh]
+      className="h-[95vh] " // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
+        <div className="max-w-4xl overflow-hidden  min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2">

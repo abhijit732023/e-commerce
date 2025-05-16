@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useAuth, AppwriteService, Button, ENV_File, Container,useCartWishlist } from '../../FilesPaths/all_path.js';
+import { ReviewSection, useAuth, AppwriteService, Button, ENV_File, Container, useCartWishlist } from '../../FilesPaths/all_path.js';
 import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -8,18 +8,24 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { motion } from "framer-motion";
-import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck } from "react-icons/fa";
+import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck, FaStar } from "react-icons/fa";
 
 const ProductDetail = () => {
     const { user } = useAuth();
     const { productId } = useParams();
-    const{fetchCounts}=useCartWishlist()
+    const { fetchCounts } = useCartWishlist();
 
     const [userid, setuserid] = useState(null);
     const [product, setProduct] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [pricingMode, setPricingMode] = useState("retail");
+
+    // Review state
+    const [reviews, setReviews] = useState([]);
+    const [reviewText, setReviewText] = useState("");
+    const [reviewRating, setReviewRating] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -42,6 +48,19 @@ const ProductDetail = () => {
             }
         };
         fetchProduct();
+    }, [productId]);
+
+    // Fetch reviews for this product
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const res = await axios.get(`${ENV_File.backendURL}/review/${productId}`);
+                setReviews(res.data || []);
+            } catch (err) {
+                setReviews([]);
+            }
+        };
+        fetchReviews();
     }, [productId]);
 
     const handleSizeSelect = (size) => {
@@ -102,13 +121,14 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
-            fetchCounts()
+            fetchCounts();
             alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
             console.log(res.data);
         } catch (err) {
             console.warn('Error adding to cart:', err);
         }
     };
+
     const addTowishlist = async () => {
         if (!userid) {
             alert("User ID is not available. Please log in.");
@@ -134,7 +154,7 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
-            fetchCounts()
+            fetchCounts();
             alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
             console.log(res.data);
         } catch (err) {
@@ -142,10 +162,41 @@ const ProductDetail = () => {
         }
     };
 
+    // Submit review
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            alert("Please log in to submit a review.");
+            return;
+        }
+        if (!reviewText.trim() || reviewRating === 0) {
+            alert("Please provide a rating and review text.");
+            return;
+        }
+        setSubmitting(true);
+        try {
+            await axios.post(`${ENV_File.backendURL}/review/add`, {
+                userId: user._id,
+                productId,
+                rating: reviewRating,
+                text: reviewText,
+                name: user.name || "User"
+            });
+            setReviewText("");
+            setReviewRating(0);
+            // Refresh reviews
+            const res = await axios.get(`${ENV_File.backendURL}/review/${productId}`);
+            setReviews(res.data || []);
+        } catch (err) {
+            alert("Failed to submit review.");
+        }
+        setSubmitting(false);
+    };
+
     if (!product) return <div className="text-center mt-10">Loading...</div>;
     return (
         <Container>
-            <div className="max-w-6xl z-0 h-[94.2vh] overflow-scroll pb-10 mx-auto p-2 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
+            <div className="max-w-6xl z-0 h-[94.2vh] overflow-scroll pb-10 mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -339,9 +390,14 @@ const ProductDetail = () => {
                             <Button onClick={addToCart} className="w-full py-3 text-lg bg-rose-500 border-2 border-red-800 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
                                 Add to Cart
                             </Button>
-                            
                         </motion.div>
                     </div>
+
+                    {/* Review Section */}
+                    <ReviewSection productId={productId} userId={userid} />
+
+
+
                 </motion.div>
             </div>
         </Container>

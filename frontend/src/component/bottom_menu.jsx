@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaHome,
   FaShoppingCart,
@@ -9,15 +9,14 @@ import {
   FaUserPlus
 } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth,useCartWishlist } from '../FilesPaths/all_path';
+import { useAuth, useCartWishlist, Loader } from '../FilesPaths/all_path';
 
 const BottomMenuBar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { wishlistCount, cartCount } = useCartWishlist();
-  // console.log(wishlistCount,cartCount);
-  
+  const [loading, setLoading] = useState(false);
 
   const userid = user?._id || '';
 
@@ -42,31 +41,43 @@ const BottomMenuBar = () => {
   };
 
   const handleMenuClick = (path) => {
-    navigate(path);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate(path);
+    }, 3000);
   };
 
   return (
-    <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-50">
-      <div className="flex justify-around items-center h-[10vh] max-h-20 text-gray-600 text-sm">
-        {menuItems.map((item, index) => (
-          <button
-            key={index}
-            onClick={() => handleMenuClick(item.path)}
-            className={`relative flex flex-col items-center transition duration-200 ${
-              isActive(item.path) ? 'text-rose-600' : 'text-gray-600'
-            }`}
-          >
-            <div className="text-xl mb-1">{item.icon}</div>
-            {item.count > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {item.count}
-              </span>
-            )}
-            <span className="text-xs">{item.label}</span>
-          </button>
-        ))}
+    <>
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
+          <Loader />
+        </div>
+      )}
+      <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md ">
+        <div className="flex justify-around items-center h-[10vh] max-h-20 text-gray-600 text-sm">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => handleMenuClick(item.path)}
+              className={`relative flex flex-col items-center transition duration-200 ${
+                isActive(item.path) ? 'text-rose-600' : 'text-gray-600'
+              }`}
+              disabled={loading}
+            >
+              <div className="text-xl mb-1">{item.icon}</div>
+              {item.count > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {item.count}
+                </span>
+              )}
+              <span className="text-xs">{item.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

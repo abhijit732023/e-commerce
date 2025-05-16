@@ -201,13 +201,13 @@ const AddressCard = ({ userid, addressid }) => {
       <AnimatePresence>
         {isFormVisible && (
           <motion.div
-            className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
+            className="fixed inset-0 overflow-hidden bg-black/30 flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white w-full max-w-lg pt-10 mb-2 rounded-md shadow-2xl h-[85vh] border border-gray-200 relative overflow-y-scroll"
+              className="bg-white w-full overflow-hidden max-w-lg pt-10 mb-2 rounded-md shadow-2xl h-[85vh] border border-gray-200 relative "
               initial={{ scale: 0.8, opacity: 0, y: 100 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 100 }}
@@ -319,7 +319,7 @@ const AddressCard = ({ userid, addressid }) => {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 mt-6 pb-5">
+                <div className="flex justify-end w-full gap-3 pt-4 border-t border-gray-200 mt-6 pb-15">
                   <button
                     type="button"
                     onClick={() => {
@@ -328,13 +328,13 @@ const AddressCard = ({ userid, addressid }) => {
                       setEditAddressId(null);
                       reset();
                     }}
-                    className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition-all duration-150 shadow"
+                    className="bg-gray-400 w-1/2 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-150 shadow"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-rose-600 text-white px-6 py-2 rounded-lg hover:bg-rose-700 transition-all duration-150 shadow font-semibold"
+                    className="bg-rose-600 w-1/2 text-white px-6 py-2 rounded-lg hover:bg-rose-700 transition-all duration-150 shadow font-semibold"
                   >
                     {isEdit ? "Update" : "Save"}
                   </button>

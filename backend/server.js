@@ -13,6 +13,7 @@ import {
   Register_Login_Router,
   forgotPassword,
   resetPassword,
+  Review
 } from "../backend/index.js";
 import path, { join } from "path";
 import { fileURLToPath } from "url";
@@ -60,6 +61,7 @@ app.use("/wishlist", Wishlist_route);
 app.use("/address", Address_route);
 app.use("/reset-password/:token", resetPassword);
 app.use("/forgot-password", forgotPassword);
+app.use("/review", Review);
 
 // 404 fallback
 app.use((req, res) => {

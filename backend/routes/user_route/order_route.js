@@ -57,37 +57,39 @@ Order_route.post("/add", async (req, res) => {
     }
 
     // For non-wholesale, do NOT update wholesale orders
-    order = await Order.findOne({
-      userId,
-      productId,
-      size,
-      $or: [
-        { buyingMehtod: { $exists: false } },
-        { buyingMehtod: { $ne: "Wholesale" } },
-      ],
-    });
+// For non-wholesale, do NOT update wholesale orders
+order = await Order.findOne({
+  userId,
+  productId,
+  size,
+  $or: [
+    { buyingMehtod: { $exists: false } },
+    { buyingMehtod: { $ne: "Wholesale" } },
+  ],
+  paymentStatus: { $ne: "paid" }, // Only find unpaid orders
+});
 
-    if (order) {
-      order.quantity += quantity;
-      await order.save();
-      return res.status(200).json({ message: "Order quantity updated", order });
-    }
+if (order) {
+  order.quantity += quantity;
+  await order.save();
+  return res.status(200).json({ message: "Order quantity updated", order });
+}
 
-    // Create new non-wholesale order
-    order = new Order({
-      userId,
-      productId,
-      header,
-      description,
-      images,
-      size,
-      quantity,
-      buyingMehtod: buyingMehtod || "Retail",
-      price,
-      addressId,
-    });
-    await order.save();
-    return res.status(201).json({ message: "Order created successfully", order });
+// Create new non-wholesale order
+order = new Order({
+  userId,
+  productId,
+  header,
+  description,
+  images,
+  size,
+  quantity,
+  buyingMehtod: buyingMehtod || "Retail",
+  price,
+  addressId,
+});
+await order.save();
+return res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
     console.error("Error creating order:", error);
     return res.status(500).json({ message: "Server error" });

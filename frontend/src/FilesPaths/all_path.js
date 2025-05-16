@@ -42,7 +42,8 @@ import ContactUs from '../pages/user/Contact_us.jsx'
 import AddressPage from "../pages/user/address_form.jsx";
 import { CartWishlistProvider,useCartWishlist } from "../../context_api/CartWishlistContext.jsx";
 import ToggleMenu from "../component/toggle_menu.jsx";
-
+import ReviewSection from "../component/review_component.jsx"; 
+import Loader from "../component/loader.jsx";
 
 export{
     RegisterForm,
@@ -90,7 +91,10 @@ export{
     AddressPage,
     CartWishlistProvider,
     useCartWishlist,
-    ToggleMenu
+    ToggleMenu,
+    ReviewSection,
+    Loader
+    
     
 
     

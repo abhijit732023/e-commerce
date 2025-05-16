@@ -1,24 +1,45 @@
 import { useState } from "react";
 import { FaBars, FaShoppingCart, FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useAuth,ToggleMenu,useCartWishlist} from "../FilesPaths/all_path";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth, ToggleMenu, useCartWishlist, Loader } from "../FilesPaths/all_path";
 import logo from "../images/logo3.png";
 import { motion, AnimatePresence } from "framer-motion";
-// import ToggleMenu from "./ToggleMenu"; // Assuming you extracted it
-// import { useCartWishlist } from "../context/CartWishlistContext";
 
 const Header = () => {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const { cartCount } = useCartWishlist();
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const userId = user?._id || "";
 
-  
+  // Loader navigation handler
+  const handleNavigate = (path) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate(path);
+    }, 3000);
+  };
+
+  // For ToggleMenu, pass a handler to close menu and show loader before navigating
+  const handleToggleMenuNavigate = (path) => {
+    setMenuOpen(false);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate(path);
+    }, 3000);
+  };
 
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
+          <Loader />
+        </div>
+      )}
       {/* Header */}
       <header className="bg-white h-[8vh] sticky flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0 border-b border-rose-100 z-10">
         {/* Menu Icon */}
@@ -30,12 +51,18 @@ const Header = () => {
           <FaBars className="text-2xl text-rose-700 hover:text-rose-900 transition" />
         </motion.button>
 
-        <Link to="/">
+        <span
+          className="cursor-pointer"
+          onClick={() => handleNavigate("/")}
+        >
           <img src={logo} alt="Logo" className="w-24 mx-auto drop-shadow" />
-        </Link>
+        </span>
 
         {/* Cart Icon */}
-        <Link to={user ? `/cart/${userId}` : "/login"}>
+        <button
+          onClick={() => handleNavigate(user ? `/cart/${userId}` : "/login")}
+          className="focus:outline-none"
+        >
           <div className="relative">
             <FaShoppingCart className="text-2xl text-rose-700 hover:text-rose-900 transition" />
             {cartCount > 0 && (
@@ -44,7 +71,7 @@ const Header = () => {
               </span>
             )}
           </div>
-        </Link>
+        </button>
       </header>
 
       {/* Overlay */}
@@ -75,15 +102,18 @@ const Header = () => {
             </div>
 
             <nav className="flex flex-col p-6 space-y-4 text-gray-700 font-medium">
-              <Link
-                to="/"
-                className="hover:text-rose-600 font-semibold transition-colors duration-200 py-1"
-                onClick={() => setMenuOpen(false)}
+              <button
+                className="hover:text-rose-600 font-semibold transition-colors duration-200 py-1 text-left"
+                onClick={() => handleToggleMenuNavigate("/")}
               >
                 Home
-              </Link>
+              </button>
 
-              <ToggleMenu title="Company" links={[{ to: "/about-company", label: "About Company" }]} />
+              <ToggleMenu
+                title="Company"
+                links={[{ to: "/about-company", label: "About Company" }]}
+                onNavigate={handleToggleMenuNavigate}
+              />
               <ToggleMenu
                 title="Need Help"
                 links={[
@@ -92,6 +122,7 @@ const Header = () => {
                   { to: "/refund-and-returns", label: "Refund and Returns" },
                   { to: "/faq", label: "FAQ" },
                 ]}
+                onNavigate={handleToggleMenuNavigate}
               />
               <ToggleMenu
                 title="Categories"
@@ -100,6 +131,7 @@ const Header = () => {
                   { to: "/categories/premium", label: "Premium" },
                   { to: "/categories/ssspecial", label: "SSspecial" },
                 ]}
+                onNavigate={handleToggleMenuNavigate}
               />
             </nav>
 

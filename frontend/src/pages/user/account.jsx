@@ -11,7 +11,7 @@ const AccountPage = () => {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const menuItems = [
-        { title: "Orders", Link: `/order/${user}` },
+        { title: "Orders", Link: `/order/${users}` },
         { title: "Customer Care", Link: "/customer-care" },
         { title: "Address", Link: "/address" },
         { title: "Notifications", Link: "/notifications" },
