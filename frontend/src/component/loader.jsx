@@ -13,6 +13,5 @@ const Loader = () => {
 };
 
 export default Loader;
-import { TailChase } from 'ldrs/react'
-import 'ldrs/react/TailChase.css'
+
 
