@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bouncy } from 'ldrs/react';
+import { TailChase } from 'ldrs/react';
 import 'ldrs/react/Bouncy.css';
 
 const Loader = () => {
