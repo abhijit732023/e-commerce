@@ -87,7 +87,7 @@ const WishlistPage = () => {
                 className="bg-white rounded-2xl shadow-lg p-4 flex flex-col border border-rose-100 hover:shadow-2xl transition-all duration-300 relative group"
               >
                 <div className="absolute top-3 right-3">
-                  <FaHeart className="text-rose-500 drop-shadow" />
+                  <FaHeart className="text-rose-500 drop-shadow overflow-hidden" />
                 </div>
                 <div className="text-xs text-gray-400 mb-2">Wish ID: {item.productId}</div>
                 <div className="flex items-start gap-4">

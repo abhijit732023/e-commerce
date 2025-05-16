@@ -3,13 +3,14 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Container, ENV_File } from "../FilesPaths/all_path";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
 
 const AddressCard = ({ userid, addressid }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formdata, setFormData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [editAddressId, setEditAddressId] = useState(null);
+  const navigate=useNavigate()
 
   const {
     register,
@@ -190,7 +191,7 @@ const AddressCard = ({ userid, addressid }) => {
               </div>
               
             </div>
-            <Link to={-1} className="absolute z-50">back</Link>
+            {/* <Link to={-1} className="absolute z-50">back</Link> */}
             
           </motion.div>
         ))}
@@ -206,7 +207,7 @@ const AddressCard = ({ userid, addressid }) => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white w-full max-w-lg  rounded-md shadow-2xl min-h-[70vh] border border-gray-200 relative"
+              className="bg-white w-full max-w-lg pt-10 mb-2 rounded-md shadow-2xl h-[85vh] border border-gray-200 relative overflow-y-scroll"
               initial={{ scale: 0.8, opacity: 0, y: 100 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 100 }}
@@ -318,7 +319,7 @@ const AddressCard = ({ userid, addressid }) => {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 mt-6">
+                <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 mt-6 pb-5">
                   <button
                     type="button"
                     onClick={() => {
@@ -343,6 +344,33 @@ const AddressCard = ({ userid, addressid }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+
+   {/* <div className="fixed bottom-24 right-3">
+     <button
+      onClick={() => navigate(-1)}
+      className="p-3 bg-gray-700 rounded-full hover:bg-gray-600 transition-colors fxied bottom-0 right-0"
+      aria-label="Go Back"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 19l-7-7 7-7M3 12h18"
+        />
+      </svg>
+    </button>
+    <h2>back to Cart</h2>
+   </div> */}
+
+
     </div>
     </Container>
   );

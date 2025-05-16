@@ -16,9 +16,31 @@ const CartPage = () => {
   const [singleItem, setsingleItem] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [AddressId, setAddressId] = useState(null);
-  const [AddressArray, setAddressArray] = useState([]);
+  const [Addressdata, setAddressdata] = useState();
+
     const location = useLocation();
   const addressId = location.state?.address_id;
+
+  useEffect(() => {
+    try {
+      if (addressId) {
+        setAddressId(addressId);
+      console.log(addressId);
+      const fetchaddressdata=async()=>{
+        const response = await axios.get(`${ENV_File.backendURL}/address/${addressId}`);
+        console.log('datatata',response.data);
+        setAddressdata(response.data.data);
+        
+      }
+      fetchaddressdata();
+      
+      
+    }
+      
+    } catch (error) {
+      
+    }
+  }, [addressId]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -29,10 +51,10 @@ const CartPage = () => {
     setShowConfirmModal(true);
   };
 
-if (addressId) {
-  setAddressId(addressId)
+// if (addressId) {
+//   setAddressId(addressId)
   
-}
+// }
   
 
   const handleRemove = async (id) => {
@@ -226,7 +248,7 @@ if (addressId) {
                 >
                   Back to cart
                 </button>
-                <AddressForm addressid={getaddress} />
+                <AddressForm />
               </motion.div>
             </div>
           )}

@@ -57,7 +57,7 @@ const OrderPage = () => {
 
         {orders.length === 0 ? (
           <div className="text-center text-gray-500 mt-16 text-lg">
-            <FaBoxOpen className="text-5xl text-rose-200 mb-4 mx-auto animate-bounce" />
+            <FaBoxOpen className="text-5xl text-rose-200 mb-4 mx-auto animate-bounce overflow-hidden" />
             No paid orders found.
           </div>
         ) : (
