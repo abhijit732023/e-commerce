@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   FaHome,
   FaShoppingCart,
@@ -9,51 +9,23 @@ import {
   FaUserPlus
 } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ENV_File, useAuth } from '../FilesPaths/all_path';
-import useSWR from 'swr';
-import axios from 'axios';
-
-const fetcher = url => axios.get(url).then(res => res.data);
+import { useAuth,useCartWishlist } from '../FilesPaths/all_path';
 
 const BottomMenuBar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // 🔑 Use location to track current path
-  const [wishlistlenght, setwishlist] = useState(null);
-  const [cartlenght, setcart] = useState(null);
+  const location = useLocation();
+  const { wishlistCount, cartCount } = useCartWishlist();
+  // console.log(wishlistCount,cartCount);
+  
 
   const userid = user?._id || '';
-
-  const { data: orders } = useSWR(
-    user ? `${ENV_File.backendURL}/order` : null,
-    async (url) => {
-      const response = await axios.get(url);
-      return response.data.filter((order) => order.paymentStatus === "pending");
-    },
-    { refreshInterval: 5000 }
-  );
-
-  const { data: wishlist } = useSWR(
-    user ? `${ENV_File.backendURL}/wishlist` : null,
-    fetcher,
-    { refreshInterval: 5000 }
-  );
-
-  // Use useEffect to update wishlist and cart lengths
-  useEffect(() => {
-    if (wishlist) {
-      setwishlist(wishlist.filter(item => item.userId === userid));
-    }
-    if (orders) {
-      setcart(orders.filter(item => item.userId === userid));
-    }
-  }, [wishlist, orders, userid]);
 
   const loggedInMenuItems = [
     { label: 'Home', icon: <FaHome />, path: '/' },
     { label: 'Shop', icon: <FaStore />, path: '/product' },
-    { label: 'Cart', icon: <FaShoppingCart />, path: `/cart/${userid}`, count: cartlenght?.length },
-    { label: 'Wishlist', icon: <FaHeart />, path: `/wishlist/${userid}`, count: wishlistlenght?.length },
+    { label: 'Cart', icon: <FaShoppingCart />, path: `/cart/${userid}`, count: cartCount },
+    { label: 'Wishlist', icon: <FaHeart />, path: `/wishlist/${userid}`, count: wishlistCount },
     { label: 'Account', icon: <FaUser />, path: `/account/${userid}` },
   ];
 
@@ -66,7 +38,6 @@ const BottomMenuBar = () => {
   const menuItems = user ? loggedInMenuItems : guestMenuItems;
 
   const isActive = (path) => {
-    // Handle dynamic paths like /cart/:id
     return location.pathname === path || location.pathname.startsWith(path.split('/:')[0]);
   };
 
@@ -75,7 +46,7 @@ const BottomMenuBar = () => {
   };
 
   return (
-    <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70  bg-white shadow-md">
+    <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-50">
       <div className="flex justify-around items-center h-[10vh] max-h-20 text-gray-600 text-sm">
         {menuItems.map((item, index) => (
           <button

@@ -34,7 +34,7 @@ app.use(
         "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
         "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
         "http://localhost:5173",
-        "http://192.168.0.106:5173",
+        "http://192.168.0.105:5173",
       ];
       if (allowedOrigins.includes(origin) || !origin) {
         callback(null, true);

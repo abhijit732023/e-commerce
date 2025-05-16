@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useAuth, AppwriteService, Button, ENV_File, Container } from '../../FilesPaths/all_path.js';
+import { useAuth, AppwriteService, Button, ENV_File, Container,useCartWishlist } from '../../FilesPaths/all_path.js';
 import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -13,6 +13,7 @@ import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck } from "react-icons/fa";
 const ProductDetail = () => {
     const { user } = useAuth();
     const { productId } = useParams();
+    const{fetchCounts}=useCartWishlist()
 
     const [userid, setuserid] = useState(null);
     const [product, setProduct] = useState(null);
@@ -101,6 +102,7 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
+            fetchCounts()
             alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
             console.log(res.data);
         } catch (err) {
@@ -132,6 +134,7 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
+            fetchCounts()
             alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
             console.log(res.data);
         } catch (err) {

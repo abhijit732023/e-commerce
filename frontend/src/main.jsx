@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
   AddressPage,
+  CartWishlistProvider,
   FAQ,
   TermsConditions,
   RefundReturn,
@@ -209,11 +210,14 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <AuthProvider>
+    <CartWishlistProvider>
+
     <StrictMode>
 
       <RouterProvider router={router} />
 
     </StrictMode>,
+    </CartWishlistProvider>
   </AuthProvider>
 )
 // import { StrictMode } from 'react';

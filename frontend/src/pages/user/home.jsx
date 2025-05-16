@@ -70,7 +70,7 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="max-w-6xl z-0 overflow-y-scroll h-[94.2vh] overflow-scroll  mx-auto  grid grid-cols-1 md:grid-cols-2  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
+      <div className="max-w-6xl z-0 overflow-y-scroll h-[96vh] overflow-scroll  mx-auto  grid grid-cols-1 md:grid-cols-2  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
         <section className="relative w-full h-[90vh] md:h-[90vh] rounded-xl overflow-hidden shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
           {/* Background Image Carousel */}
           {imageURLs.map((img, idx) => (

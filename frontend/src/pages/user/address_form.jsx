@@ -1,33 +1,25 @@
 import React, { useState } from "react";
-import {AddressCard,Address_form, Container} from '../../FilesPaths/all_path';
-import { useParams } from "react-router-dom";
+import { AddressCard, Container } from '../../FilesPaths/all_path';
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddressPage = ({addressid}) => {
+const AddressPage = () => {
   const { userid } = useParams();
-  const [isAdding, setIsAdding] = useState(false);
-  const[addressId,setAddressId]=useState(null)
+  const navigate = useNavigate(); // ✅ needed for navigation
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
 
-const handleadressid = (addressId) => {
-  console.log("Address ID:", addressId);
-  setAddressId(addressId);
-  // if (typeof address_id === "function") {
-  //   address_id(addressId);
-  // }
-};
+  const handleAddressId = (addressId) => {
+    setSelectedAddressId(addressId); // optional local state update
+    navigate(`/cart/${userid}`, { state: { address_id: addressId } }); // ✅ pass address_id to CartPage
+  };
+
   return (
-    // <Container>
-      
-    <div className=" h-[95vh] overflow-y-scroll max-w-xl mx-auto  space-y-6">
-
-
+    <div className="h-[95vh] overflow-y-scroll max-w-xl mx-auto space-y-6">
       <AddressCard
-        addressid={handleadressid}
+        addressid={handleAddressId} // ✅ sending the handler to AddressCard
         userid={userid}
       />
     </div>
-  
-  // </Container>
-    );
+  );
 };
 
 export default AddressPage;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { AddressForm, AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,8 @@ const CartPage = () => {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [AddressId, setAddressId] = useState(null);
   const [AddressArray, setAddressArray] = useState([]);
+    const location = useLocation();
+  const addressId = location.state?.address_id;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -27,9 +29,11 @@ const CartPage = () => {
     setShowConfirmModal(true);
   };
 
-  const getaddress = (addressid) => {
-    setAddressId(addressid);
-  };
+if (addressId) {
+  setAddressId(addressId)
+  
+}
+  
 
   const handleRemove = async (id) => {
     try {

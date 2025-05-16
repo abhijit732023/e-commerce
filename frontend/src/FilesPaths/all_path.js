@@ -40,6 +40,8 @@ import RefundReturn from "../pages/user/refund_return.jsx";
 import AboutUs from "../pages/user/About_company.jsx";
 import ContactUs from '../pages/user/Contact_us.jsx'
 import AddressPage from "../pages/user/address_form.jsx";
+import { CartWishlistProvider,useCartWishlist } from "../../context_api/CartWishlistContext.jsx";
+import ToggleMenu from "../component/toggle_menu.jsx";
 
 
 export{
@@ -85,7 +87,10 @@ export{
     RefundReturn,
     AboutUs,
     ContactUs,
-    AddressPage
+    AddressPage,
+    CartWishlistProvider,
+    useCartWishlist,
+    ToggleMenu
     
 
     
