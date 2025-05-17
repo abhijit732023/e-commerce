@@ -12,7 +12,11 @@ const razorpay = new Razorpay({
 
 // Payment request route
 PaymentRouter.post("/request", async (req, res) => {
+  console.log('bye bye');
+  
   const { amount } = req.body;
+  console.log(amount);
+  
   try {
     const order = await razorpay.orders.create({
       amount: amount * 100, // Convert ₹ to paise

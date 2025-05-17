@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { useAuth, Container } from "../../FilesPaths/all_path";
-import { Link } from "react-router-dom";
+import { useAuth, Container, Loader } from "../../FilesPaths/all_path";
+import { Link, useNavigate } from "react-router-dom";
 
 const AccountPage = () => {
     const { user, logout } = useAuth();
     const [users, setUser] = useState('');
     const [userdata, setUserData] = useState('');
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const menuItems = [
         { title: "Orders", Link: `/order/${users}` },
@@ -29,8 +31,20 @@ const AccountPage = () => {
         }
     }, [user]);
 
+    // Loader navigation handler for menu items
+    const handleMenuClick = (path) => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            navigate(path);
+        }, 3000);
+    };
+
     return (
         <Container>
+            {loading && (
+                    <Loader />
+            )}
             <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen p-4 rounded-2xl shadow-xl">
                 <motion.h1
                     className="text-2xl font-bold mt-2 mb-6 text-rose-700 tracking-wide flex items-center gap-2"
@@ -69,7 +83,12 @@ const AccountPage = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.02 * index }}
                         >
-                            <Link to={item.Link} className="flex justify-between items-center w-full">
+                            <button
+                                type="button"
+                                onClick={() => handleMenuClick(item.Link)}
+                                className="flex justify-between items-center w-full text-left"
+                                style={{ background: "none", border: "none", padding: 0, margin: 0 }}
+                            >
                                 <div>
                                     <p className="font-medium text-gray-800 group-hover:text-rose-700 transition">{item.title}</p>
                                     {item.description && (
@@ -77,7 +96,7 @@ const AccountPage = () => {
                                     )}
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-rose-600 transition" />
-                            </Link>
+                            </button>
                         </motion.div>
                     ))}
                 </div>

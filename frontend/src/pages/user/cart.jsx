@@ -152,6 +152,8 @@ const CartPage = () => {
 
  // ...existing code...
 
+// ...existing code...
+
 const payment = async () => {
   if (!AddressId) {
     if (window.confirm("Please select an address before proceeding to payment.\n\nClick OK to go to your address page.")) {
@@ -169,7 +171,7 @@ const payment = async () => {
 
   try {
     const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
-      amount: amountPayable,
+      amount: amountPayable, // FIX: send integer paise
     });
 
     const orderData = response.data;
@@ -192,10 +194,11 @@ const payment = async () => {
             orderId: order.map((item) => item._id),
           });
           if (resp.data.success) {
+            fetchCounts()
             setTimeout(() => {
               alert("Redirecting to order page...");
               navigate(`/order/${userid}`);
-            }, 3000);
+            }, 2000);
           }
         } catch (error) {
           alert("Payment verification failed. Please try again.");
@@ -217,6 +220,7 @@ const payment = async () => {
     console.error("Error initiating payment:", error);
   }
 };
+// ...existing code...
 
 // ...existing code...
   return (

@@ -44,6 +44,7 @@ import { CartWishlistProvider,useCartWishlist } from "../../context_api/CartWish
 import ToggleMenu from "../component/toggle_menu.jsx";
 import ReviewSection from "../component/review_component.jsx"; 
 import Loader from "../component/loader.jsx";
+import Invoice from "../component/invoive.jsx";
 
 export{
     RegisterForm,
@@ -93,7 +94,8 @@ export{
     useCartWishlist,
     ToggleMenu,
     ReviewSection,
-    Loader
+    Loader,
+    Invoice
     
     
 

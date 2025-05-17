@@ -51,9 +51,7 @@ const BottomMenuBar = () => {
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30">
           <Loader />
-        </div>
       )}
       <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md ">
         <div className="flex justify-around items-center h-[10vh] max-h-20 text-gray-600 text-sm">

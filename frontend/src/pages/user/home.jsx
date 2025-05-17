@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container, BottomMenuBar, SSSpecialCarousel, FeaturedCollection,
   Header, ENV_File, AppwriteService, SecondSection
@@ -17,7 +17,8 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-        const withURLs = response.data.map(product => ({
+        // Reverse products so newest appear first
+        const withURLs = [...response.data].reverse().map(product => ({
           ...product,
           previewImage: AppwriteService.getFileViewUrl(product.images[0])
         }));
@@ -70,8 +71,8 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="max-w-6xl z-0 overflow-y-scroll h-[96vh] overflow-scroll  mx-auto  grid grid-cols-1 md:grid-cols-2  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
-        <section className="relative w-full h-[90vh] md:h-[90vh] rounded-xl overflow-hidden shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
+      <div className="max-w-6xl mt-18 z-0 overflow-y-scroll h-[88vh]   mx-auto  grid grid-cols-1 md:grid-cols-2  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
+        <section className="relative w-full h-[84vh] md:h-[90vh] rounded-xl overflow-hidden shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
           {/* Background Image Carousel */}
           {imageURLs.map((img, idx) => (
             <img
@@ -102,7 +103,6 @@ const Home = () => {
         </section>
 
         <section className="mt-1">
-          {/* <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">New Arrivals</h2> */}
           <SecondSection images={secondSectionImages} />
         </section>
 
@@ -126,12 +126,10 @@ const Home = () => {
         </section>
 
         <section className="mt-1 ">
-          {/* <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Featured Collection</h2> */}
           <FeaturedCollection products={products} />
         </section>
 
         <section className="mt-1">
-          {/* <h2 className="text-3xl font-bold text-center text-gray-800 ">SS Special Picks</h2> */}
           <SSSpecialCarousel products={products} />
         </section>
 
@@ -157,11 +155,7 @@ const Home = () => {
             © 2025 <span className="font-semibold text-rose-700">SS Collection</span>. All rights reserved.
           </p>
         </footer>
-
-        {/* <BottomMenuBar /> */}
       </div>
-
-
     </Container>
   );
 };

@@ -7,6 +7,7 @@ const SSSpecialCarousel = ({ products }) => {
   const [isInteracting, setIsInteracting] = useState(false);
   const interactionTimeout = useRef(null);
   const autoScrollTimeout = useRef(null);
+  const [scrollX, setScrollX] = useState(0);
 
   const scrollAmount = 293; // 273 + 20 for spacing
   const scrollInterval = 3000;
@@ -61,6 +62,15 @@ const SSSpecialCarousel = ({ products }) => {
     }, 3000);
   };
 
+  // Track scroll position for scaling effect
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const onScroll = () => setScrollX(container.scrollLeft);
+    container.addEventListener('scroll', onScroll);
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
+
   useEffect(() => {
     interactionTimeout.current = setTimeout(() => {
       setIsInteracting(false);
@@ -75,7 +85,7 @@ const SSSpecialCarousel = ({ products }) => {
 
   return (
     <section className="rounded-xl bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-2 md:px-10 py-8 shadow-lg ">
-      <div className="flex items-center justify-between mb-4 px-2">
+      <div className="flex items-center justify-between  px-2">
         <h2 className="text-2xl md:text-3xl font-bold text-rose-700  tracking-tight drop-shadow-sm">
           SS Special Picks
         </h2>
@@ -85,7 +95,7 @@ const SSSpecialCarousel = ({ products }) => {
       </div>
       <div
         ref={scrollRef}
-        className="overflow-x-auto flex space-x-6 overflow-y-hidden h-full scroll-smooth snap-x snap-mandatory pb-4"
+        className="overflow-x-auto flex space-x-6 overflow-y-hidden  h-full scroll-smooth snap-x snap-mandatory pb-4"
         onWheel={handleInteraction}
         onTouchStart={handleInteraction}
         onMouseDown={handleInteraction}
@@ -94,41 +104,56 @@ const SSSpecialCarousel = ({ products }) => {
           msOverflowStyle: 'none',
         }}
       >
-        {clonedProducts.map((img, i) => (
-          <motion.div
-            key={i}
-            className="bg-white shadow-xl rounded-2xl snap-center overflow-hidden flex-shrink-0 border border-amber-200 hover:shadow-2xl transition-all duration-500 group relative"
-            style={{
-              width: '273px',
-              height: '410px',
-              scrollSnapAlign: 'center',
-            }}
-            initial={{ opacity: 0.7, scale: 0.92 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.04, boxShadow: '0 8px 32px 0 rgba(0,0,0,0.15)' }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <img
-              src={AppwriteService.getFileViewUrl(img.images[0])}
-              alt={`SS Special ${i}`}
-              className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
-              loading="lazy"
-            />
-            {/* Overlay for product name or badge */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
-              <span className="text-white font-semibold text-lg drop-shadow">
-                {img.header || 'Special Product'}
-              </span>
-            </div>
-            {/* Optional: Add a badge for new/featured */}
-            {img.isFeatured && (
-              <span className="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
-                Featured
-              </span>
-            )}
-          </motion.div>
-        ))}
+        {clonedProducts.map((img, i) => {
+          // --- SCALE CALCULATION BASED ON CENTER ---
+          let scale = 0.92;
+          const container = scrollRef.current;
+          if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const containerCenter = containerRect.left + containerRect.width / 2;
+            const itemLeft = i * (273 + 24) - scrollX; // 273px width + 24px gap (space-x-6)
+            const itemCenter = itemLeft + 273 / 2 + containerRect.left;
+            const distance = Math.abs(containerCenter - itemCenter);
+            const maxDistance = containerRect.width / 2;
+            // Scale from 0.92 (edge) to 1.08 (center)
+            scale = 0.92 + (1 - Math.min(distance / maxDistance, 1)) * 0.16;
+          }
+          // ------------------------------------------
+
+          return (
+            <motion.div
+              key={i}
+              className="bg-white shadow-xl mt-15 rounded-2xl snap-center overflow-hidden flex-shrink-0 border border-amber-200 hover:shadow-2xl transition-all duration-500 group relative"
+              style={{
+                width: '273px',
+                height: '410px',
+                scrollSnapAlign: 'center',
+                scale,
+              }}
+              initial={false}
+              animate={false}
+            >
+              <img
+                src={AppwriteService.getFileViewUrl(img.images[0])}
+                alt={`SS Special ${i}`}
+                className="w-full h-full object-cover transition-transform duration-700 ease-in-out  group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* Overlay for product name or badge */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
+                <span className="text-white font-semibold text-lg drop-shadow">
+                  {img.header || 'Special Product'}
+                </span>
+              </div>
+              {/* Optional: Add a badge for new/featured */}
+              {img.isFeatured && (
+                <span className="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                  Featured
+                </span>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
       {/* Custom scrollbar hide for webkit */}
       <style>

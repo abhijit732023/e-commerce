@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
+  Invoice,
   AddressPage,
   CartWishlistProvider,
   FAQ,
@@ -202,6 +203,13 @@ const router = createBrowserRouter([
     path: '/address/:userid',
     element: (
       < AddressPage/>
+
+    ),
+  },
+  {
+    path: '/invoice',
+    element: (
+      < Invoice/>
 
     ),
   }

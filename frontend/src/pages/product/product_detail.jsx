@@ -13,7 +13,7 @@ import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck, FaStar } from "react-icon
 const ProductDetail = () => {
     const { user } = useAuth();
     const { productId } = useParams();
-    const { fetchCounts } = useCartWishlist();
+    const { fetchCounts } = useCartWishlist() || {};
 
     const [userid, setuserid] = useState(null);
     const [product, setProduct] = useState(null);
@@ -39,7 +39,6 @@ const ProductDetail = () => {
                 const res = await axios.get(`${ENV_File.backendURL}/admin/${productId}`);
                 setProduct(res.data);
 
-                // Ensure quantity meets wholesale minimum if wholesale mode is selected
                 if (pricingMode === "wholesale" && res.data.wholeSaleQuantity) {
                     setQuantity(res.data.wholeSaleQuantity);
                 }
@@ -121,7 +120,7 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
-            fetchCounts();
+            fetchCounts && fetchCounts();
             alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
             console.log(res.data);
         } catch (err) {
@@ -154,11 +153,11 @@ const ProductDetail = () => {
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
-            fetchCounts();
-            alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
+            fetchCounts && fetchCounts();
+            alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to wishlist`);
             console.log(res.data);
         } catch (err) {
-            console.warn('Error adding to cart:', err);
+            console.warn('Error adding to wishlist:', err);
         }
     };
 
@@ -196,7 +195,7 @@ const ProductDetail = () => {
     if (!product) return <div className="text-center mt-10">Loading...</div>;
     return (
         <Container>
-            <div className="max-w-6xl z-0 h-[94.2vh] overflow-scroll pb-10 mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10  bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-lg shadow-xl">
+            <div className="mt-20 max-w-6xl z-0 h-[92vh] overflow-y-auto pb-20 mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-3xl shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -210,14 +209,14 @@ const ProductDetail = () => {
                         slidesPerView={1}
                         navigation
                         pagination={{ clickable: true }}
-                        className="rounded-xl h-full shadow-lg"
+                        className="rounded-2xl h-full shadow-xl border border-rose-100 bg-white"
                     >
                         {product.images?.map((img, i) => (
                             <SwiperSlide key={i}>
                                 <img
                                     src={AppwriteService.getFileViewUrl(img)}
                                     alt={`product-img-${i}`}
-                                    className="w-full h-[] md:h-[500px] object-contain rounded-xl"
+                                    className="w-full h-full md:h-[500px] object-cover rounded-2xl"
                                 />
                             </SwiperSlide>
                         ))}
@@ -229,10 +228,10 @@ const ProductDetail = () => {
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
-                    className="space-y-5"
+                    className="space-y-7"
                 >
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-rose-700 mb-1">{product.header}</h2>
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-rose-700 mb-1 drop-shadow">{product.header}</h2>
                         <div className="flex flex-wrap gap-3 text-sm text-gray-500 mb-2">
                             <span>Category: <span className="font-medium text-gray-700">{product.category}</span></span>
                         </div>
@@ -286,16 +285,16 @@ const ProductDetail = () => {
                     {/* Quantity Selector */}
                     <div>
                         <p className="text-sm text-gray-500 mb-1">Quantity</p>
-                        <div className="flex items-center justify-center space-x-4  bg-rose-100/20">
+                        <div className="flex items-center justify-between space-x-4 bg-rose-100/30 rounded-lg py-2">
                             <button
-                                className="w-1/4 py-2 bg-rose-200/50 border border-rose-300 rounded  text-center font-extrabold text-2xl"
+                                className="w-10 h-10 bg-rose-200/60 border border-rose-300 rounded-full text-center font-extrabold text-2xl hover:bg-rose-300 transition"
                                 onClick={decreaseQuantity}
                             >
                                 -
                             </button>
-                            <span className="text-xl  font-semibold  w-3/5 text-center">{quantity}</span>
+                            <span className="text-xl font-semibold w-12 text-center">{quantity}</span>
                             <button
-                                className="w-1/4 py-2 bg-rose-200/50 border border-rose-300 rounded  text-center font-bold text-lg"
+                                className="w-10 h-10 bg-rose-200/60 border border-rose-300 rounded-full text-center font-bold text-lg hover:bg-rose-300 transition"
                                 onClick={increaseQuantity}
                             >
                                 +
@@ -313,7 +312,7 @@ const ProductDetail = () => {
                                     <motion.span
                                         whileTap={isAvailable ? { scale: 0.92 } : {}}
                                         key={size}
-                                        className={`px-3 py-1 border rounded-full text-sm cursor-pointer transition-all duration-200
+                                        className={`px-4 py-1 border rounded-full text-sm cursor-pointer transition-all duration-200
                                         ${selectedSize === size
                                                 ? 'bg-rose-600 text-white border-rose-600 shadow'
                                                 : isAvailable
@@ -371,23 +370,23 @@ const ProductDetail = () => {
                             }
                         </p>
                     </div>
-                    {/* Add to Cart */}
-                    <div className="pt-4 flex gap-1">
+                    {/* Add to Cart / Wishlist */}
+                    <div className="pt-4 flex gap-3">
                         <motion.div
                             whileTap={{ scale: 0.97 }}
                             whileHover={{ scale: 1.03 }}
                             className="w-1/2 flex gap-1"
                         >
-                            <Button onClick={addTowishlist} className="w-full py-3 text-lg bg-blue-500/90 border-2 border-blue-700 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
+                            <Button onClick={addTowishlist} className="w-full py-3 text-lg bg-blue-500/90 border-2 border-blue-700 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-all duration-200">
                                 Wishlist
                             </Button>
                         </motion.div>
                         <motion.div
                             whileTap={{ scale: 0.97 }}
                             whileHover={{ scale: 1.03 }}
-                            className=" flex gap-1 w-1/2"
+                            className="flex gap-1 w-1/2"
                         >
-                            <Button onClick={addToCart} className="w-full py-3 text-lg bg-rose-500 border-2 border-red-800 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
+                            <Button onClick={addToCart} className="w-full py-3 text-lg bg-rose-500 border-2 border-rose-700 hover:bg-rose-700 text-white rounded-lg shadow-lg transition-all duration-200">
                                 Add to Cart
                             </Button>
                         </motion.div>
@@ -395,9 +394,6 @@ const ProductDetail = () => {
 
                     {/* Review Section */}
                     <ReviewSection productId={productId} userId={userid} />
-
-
-
                 </motion.div>
             </div>
         </Container>
