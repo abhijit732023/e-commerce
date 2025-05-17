@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useAuth, Container, Loader } from "../../FilesPaths/all_path";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AccountPage = () => {
     const { user, logout } = useAuth();
@@ -11,6 +11,7 @@ const AccountPage = () => {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const scrollRef = useRef(null);
 
     const menuItems = [
         { title: "Orders", Link: `/order/${users}` },
@@ -37,79 +38,94 @@ const AccountPage = () => {
         setTimeout(() => {
             setLoading(false);
             navigate(path);
-        }, 3000);
+        }, 1000);
     };
+
+    // Optional: Scroll to top on mount
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = 0;
+        }
+    }, []);
 
     return (
         <Container>
-            {loading && (
-                    <Loader />
-            )}
-            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen p-4 rounded-2xl shadow-xl">
-                <motion.h1
-                    className="text-2xl font-bold mt-2 mb-6 text-rose-700 tracking-wide flex items-center gap-2"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
+            {loading && <Loader />}
+            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen rounded-2xl shadow-xl flex flex-col">
+                {/* Scrollable content */}
+                <div
+                    ref={scrollRef}
+                    className="flex-1 overflow-y-auto p-4 custom-scrollbar flex flex-col"
+                    style={{
+                        maxHeight: "calc(100vh - 2rem)",
+                        minHeight: "400px",
+                        scrollBehavior: "smooth"
+                    }}
                 >
-                    My Account
-                </motion.h1>
-
-                {/* Profile Section */}
-                <motion.div
-                    className="bg-white p-6 rounded-2xl flex items-center justify-between mb-6 shadow-lg border border-rose-100"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 via-amber-300 to-rose-300 text-white flex items-center justify-center font-bold text-2xl shadow">
-                            {userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U'}
-                        </div>
-                        <div>
-                            <h2 className="font-semibold text-lg text-gray-800">{userdata.username}</h2>
-                            <p className="text-sm text-gray-600">{userdata.email}</p>
-                            <p className="text-sm text-gray-600">{userdata.phoneNumber || "Phone number"}</p>
-                        </div>
-                    </div>
-                    <button className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition">Edit</button>
-                </motion.div>
-
-                {/* Menu Items */}
-                <div className="bg-white rounded-2xl shadow-lg divide-y border border-rose-100">
-                    {menuItems.map((item, index) => (
-                        <motion.div
-                            key={index}
-                            className="p-4 flex items-center justify-between hover:bg-rose-50 transition group"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.02 * index }}
-                        >
-                            <button
-                                type="button"
-                                onClick={() => handleMenuClick(item.Link)}
-                                className="flex justify-between items-center w-full text-left"
-                                style={{ background: "none", border: "none", padding: 0, margin: 0 }}
-                            >
-                                <div>
-                                    <p className="font-medium text-gray-800 group-hover:text-rose-700 transition">{item.title}</p>
-                                    {item.description && (
-                                        <p className="text-xs text-gray-500">{item.description}</p>
-                                    )}
-                                </div>
-                                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-rose-600 transition" />
-                            </button>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Logout Button */}
-                <div className="mt-8 flex flex-col items-center">
-                    <button
-                        onClick={() => setShowLogoutConfirm(true)}
-                        className="border px-8 py-2 rounded-full text-red-500 font-semibold hover:bg-rose-50 hover:text-red-700 transition shadow"
+                    <motion.h1
+                        className="text-2xl font-bold mt-2 mb-6 text-rose-700 tracking-wide flex items-center gap-2"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
                     >
-                        Logout
-                    </button>
-                    <p className="text-xs text-gray-400 mt-2">Version 9.21.0 Build 3457</p>
+                        My Account
+                    </motion.h1>
+
+                    {/* Profile Section */}
+                    <motion.div
+                        className="bg-white p-6 rounded-2xl flex items-center justify-between mb-6 shadow-lg border border-rose-100"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 via-amber-300 to-rose-300 text-white flex items-center justify-center font-bold text-2xl shadow">
+                                {userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <h2 className="font-semibold text-lg text-gray-800">{userdata.username}</h2>
+                                <p className="text-sm text-gray-600">{userdata.email}</p>
+                                <p className="text-sm text-gray-600">{userdata.phoneNumber || "Phone number"}</p>
+                            </div>
+                        </div>
+                        <button className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition">Edit</button>
+                    </motion.div>
+
+                    {/* Menu Items */}
+                    <div className="bg-white rounded-2xl shadow-lg divide-y border border-rose-100">
+                        {menuItems.map((item, index) => (
+                            <motion.div
+                                key={index}
+                                className="p-4 flex items-center justify-between hover:bg-rose-50 transition group"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.02 * index }}
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => handleMenuClick(item.Link)}
+                                    className="flex justify-between items-center w-full text-left bg-transparent border-0 p-0 m-0"
+                                >
+                                    <div>
+                                        <p className="font-medium text-gray-800 group-hover:text-rose-700 transition">{item.title}</p>
+                                        {item.description && (
+                                            <p className="text-xs text-gray-500">{item.description}</p>
+                                        )}
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-rose-600 transition" />
+                                </button>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Logout Button at the very end of scrollable content */}
+                    <div className="mt-8 flex flex-col items-center">
+                        <button
+                            onClick={() => setShowLogoutConfirm(true)}
+                            className="border px-8 py-2 rounded-full text-red-500 font-semibold hover:bg-rose-50 hover:text-red-700 transition shadow"
+                        >
+                            Logout
+                        </button>
+                        <p className="text-xs text-gray-400 mt-2">Version 9.21.0 Build 3457</p>
+                    </div>
                 </div>
 
                 {/* Logout Confirmation Popup */}

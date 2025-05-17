@@ -8,7 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const Header = () => {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { cartCount } = useCartWishlist();
+  const cartWishlist = useCartWishlist();
+  const cartCount = cartWishlist?.cartCount ?? 0;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const Header = () => {
         </div>
       )}
       {/* Header */}
-      <header className="bg-white h-[8vh] fixed w-full flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0 border-b border-rose-100 z-10">
+      <header className="bg-white h-[8vh] fixed  w-full flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0 border-b border-rose-100 z-10">
         {/* Menu Icon */}
         <motion.button
           whileTap={{ scale: 0.85 }}
@@ -52,10 +53,10 @@ const Header = () => {
         </motion.button>
 
         <span
-          className="cursor-pointer"
+          className="cursor-pointer "
           onClick={() => handleNavigate("/")}
         >
-          <img src={logo} alt="Logo" className="w-24 mx-auto drop-shadow" />
+          <img src={logo} alt="Logo" className="w-20 mx-auto drop-shadow" />
         </span>
 
         {/* Cart Icon */}

@@ -192,10 +192,10 @@ const ProductDetail = () => {
         setSubmitting(false);
     };
 
-    if (!product) return <div className="text-center mt-10">Loading...</div>;
+    if (!product) return <div className="text-center ">Loading...</div>;
     return (
         <Container>
-            <div className="mt-20 max-w-6xl z-0 h-[92vh] overflow-y-auto pb-20 mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-3xl shadow-2xl border border-rose-100">
+            <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-3xl shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}

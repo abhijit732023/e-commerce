@@ -65,6 +65,7 @@ const CartPage = () => {
       setOrder((prev) => prev.filter((item) => item._id !== id));
       setShowConfirmModal(false);
       setSelectedItemId(null);
+      fetchCounts()
     } catch (err) {
       console.error("Failed to remove item", err);
     }
@@ -107,6 +108,7 @@ const CartPage = () => {
           setOrder((prev) => prev.filter((item) => item._id !== selectedItemId));
           setShowConfirmModal(false);
           setSelectedItemId(null);
+          // fetchCounts()
         }
       }
     } catch (error) {
@@ -228,13 +230,25 @@ const CartPage = () => {
         transition={{ duration: 0.7, ease: "easeInOut" }}
         className="h-[95vh] " // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl overflow-scroll h-[90vh] mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
+        <div className="max-w-4xl overflow-scroll h-[90vh] mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
-            <p className="font-semibold text-rose-700 flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
-              Abhijit | Room no 7, Sion Dharavi... 400017
-            </p>
+           <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">
+  <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
+  {Addressdata ? (
+    <span
+      className="truncate block max-w-[280px] md:max-w-md lg:max-w-lg"
+      title={`${Addressdata.name} | ${Addressdata.flatNo}, ${Addressdata.areaStreet}, ${Addressdata.landmark ? Addressdata.landmark + ', ' : ''}${Addressdata.city}, ${Addressdata.state} - ${Addressdata.pincode} (${Addressdata.phoneNumber})`}
+    >
+      {Addressdata.name} | {Addressdata.flatNo}, {Addressdata.areaStreet}
+      {Addressdata.landmark ? `, ${Addressdata.landmark}` : ""}
+      , {Addressdata.city}, {Addressdata.state} - {Addressdata.pincode}
+      {/* Optionally: <span className="ml-2 text-xs text-gray-500">({Addressdata.phoneNumber})</span> */}
+    </span>
+  ) : (
+    "No address selected"
+  )}
+</p>
             <button className="text-blue-600 font-medium hover:underline">
               <Link to={`/address/${userid}`}>Change</Link>
             </button>
@@ -360,7 +374,7 @@ const CartPage = () => {
               </div>
 
               {/* Order Details */}
-              <div className="border-t mt-6 pt-4 pb-20">
+              <div className="border-t mt-6 pt-4 pb-10">
                 <h3 className="font-semibold text-sm mb-3">Order Details</h3>
                 <div className="text-sm space-y-2">
                   <div className="flex justify-between">
@@ -379,10 +393,20 @@ const CartPage = () => {
                     <span>Amount Payable</span>
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
-                  <div className=" fixed bottom-17 left-0 right-0 bg-white p-4 border-t  flex justify-between items-center  max-w-4xl mx-auto ">
+                  <div
+                    className="relative mt-10 bottom-0 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-20"
+                    style={{
+                      boxShadow: "0 -2px 16px 0 rgba(0,0,0,0.04)",
+                      minHeight: "72px",
+                    }}
+                  >
                     <div>
-                      <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
-                      <p className="text-lg font-bold text-rose-700">₹{amountPayable.toFixed(2)}</p>
+                      <p className="text-xs text-green-700">
+                        🎉 Cheers! You saved ₹{savings.toFixed(2)}
+                      </p>
+                      <p className="text-lg font-bold text-rose-700">
+                        ₹{amountPayable.toFixed(2)}
+                      </p>
                     </div>
                     <div></div>
                     <button

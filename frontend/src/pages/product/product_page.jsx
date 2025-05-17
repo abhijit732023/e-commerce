@@ -72,7 +72,6 @@ const ProductPage = () => {
     if (category === "All") {
       setFilteredProducts(products);
     } else {
-      // Reverse filtered products so newest in category appear first
       setFilteredProducts(
         products.filter((product) => product.category === category)
       );
@@ -82,7 +81,7 @@ const ProductPage = () => {
   return (
     <Container>
       <motion.div
-        className="px-2 sm:px-4 md:px-6 py-4 md:py-6 min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl"
+        className="flex flex-col h-full w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -121,90 +120,91 @@ const ProductPage = () => {
           </div>
         </motion.div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          <AnimatePresence>
-            {filteredProducts.length === 0 && (
-              <motion.div
-                className="col-span-full text-center text-gray-400 text-base md:text-lg font-semibold py-12"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-              >
-                No products found in this category.
-              </motion.div>
-            )}
-            {[...filteredProducts].map((product) => {
-              // No need to reverse here, already reversed in state
-              const discount =
-                product.fakePrie && product.fakePrie > 0
-                  ? Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100)
-                  : 0;
-              const isLiked = likedProducts[product._id];
-
-              return (
+        {/* Product Grid with scroll */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <AnimatePresence>
+              {filteredProducts.length === 0 && (
                 <motion.div
-                  key={product._id}
-                  className="w-full bg-white border border-rose-100 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative group"
-                  variants={cardVariants}
+                  className="col-span-full text-center text-gray-400 text-base md:text-lg font-semibold py-12"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 30 }}
                 >
-                  <Link to={`${product._id}`} className="block h-full">
-                    <div className="relative p-2">
-                      {/* Responsive Image Box */}
-                      <div className="w-full overflow-hidden rounded-xl">
-                        <SwipeImageViewer images={product.images} name={product.name} />
-                      </div>
-
-                      {/* Heart Icon */}
-                      <motion.button
-                        whileTap={{ scale: 0.8, rotate: -15 }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleLike(product._id);
-                        }}
-                        className="absolute top-2 right-2 text-lg md:text-xl bg-white/90 rounded-full p-2 shadow-md hover:bg-rose-100 transition"
-                        aria-label="Like"
-                      >
-                        <FaHeart
-                          className={`transition-colors duration-200 ${isLiked ? "text-rose-600" : "text-gray-300"}`}
-                        />
-                      </motion.button>
-                    </div>
-
-                    <div className="px-3 py-2 md:p-4 w-full aspect-[6/2]">
-                      <h4 className="font-semibold text-base md:text-lg text-gray-800 truncate mb-1">
-                        {product.header}
-                      </h4>
-                      <p className="text-xs text-gray-500 truncate mb-2">{product.description}</p>
-
-                      <div className="flex items-center space-x-2 mt-2 w-full">
-                        <span className="font-bold text-base md:text-lg text-rose-700">
-                          ₹{product.price}
-                        </span>
-                        {product.fakePrie && (
-                          <span className="line-through text-gray-400 text-xs md:text-sm">
-                            ₹{product.fakePrie}
-                          </span>
-                        )}
-                        {discount > 0 && (
-                          <span className="text-green-600 text-xs font-semibold px-1 py-0.5">
-                            {discount}% OFF
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Optional Badge */}
-                    {product.category === "SSspecial" && (
-                      <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
-                        SS Special
-                      </span>
-                    )}
-                  </Link>
+                  No products found in this category.
                 </motion.div>
-              );
-            })}
-          </AnimatePresence>
+              )}
+              {[...filteredProducts].map((product) => {
+                const discount =
+                  product.fakePrie && product.fakePrie > 0
+                    ? Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100)
+                    : 0;
+                const isLiked = likedProducts[product._id];
+
+                return (
+                  <motion.div
+                    key={product._id}
+                    className="w-full bg-white border border-rose-100 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative group"
+                    variants={cardVariants}
+                  >
+                    <Link to={`${product._id}`} className="block h-full">
+                      <div className="relative p-2">
+                        {/* Responsive Image Box */}
+                        <div className="w-full overflow-hidden rounded-xl">
+                          <SwipeImageViewer images={product.images} name={product.name} />
+                        </div>
+
+                        {/* Heart Icon */}
+                        <motion.button
+                          whileTap={{ scale: 0.8, rotate: -15 }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleLike(product._id);
+                          }}
+                          className="absolute top-2 right-2 text-lg md:text-xl bg-white/90 rounded-full p-2 shadow-md hover:bg-rose-100 transition"
+                          aria-label="Like"
+                        >
+                          <FaHeart
+                            className={`transition-colors duration-200 ${isLiked ? "text-rose-600" : "text-gray-300"}`}
+                          />
+                        </motion.button>
+                      </div>
+
+                      <div className="px-3 py-2 md:p-4 w-full aspect-[6/2]">
+                        <h4 className="font-semibold text-base md:text-lg text-gray-800 truncate mb-1">
+                          {product.header}
+                        </h4>
+                        <p className="text-xs text-gray-500 truncate mb-2">{product.description}</p>
+
+                        <div className="flex items-center space-x-2 mt-2 w-full">
+                          <span className="font-bold text-base md:text-lg text-rose-700">
+                            ₹{product.price}
+                          </span>
+                          {product.fakePrie && (
+                            <span className="line-through text-gray-400 text-xs md:text-sm">
+                              ₹{product.fakePrie}
+                            </span>
+                          )}
+                          {discount > 0 && (
+                            <span className="text-green-600 text-xs font-semibold px-1 py-0.5">
+                              {discount}% OFF
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Optional Badge */}
+                      {product.category === "SSspecial" && (
+                        <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                          SS Special
+                        </span>
+                      )}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
         </div>
       </motion.div>
     </Container>

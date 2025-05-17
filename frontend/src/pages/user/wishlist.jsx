@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
-import useSWR from "swr";
-import { FaStar, FaHeart, FaShoppingCart,FaTrash } from "react-icons/fa";
-import { AppwriteService, Container, ENV_File } from "../../FilesPaths/all_path";
+import React, { useEffect, useState } from "react";
+import { FaStar, FaHeart, FaShoppingCart, FaTrash } from "react-icons/fa";
+import { AppwriteService, Container, ENV_File, useCartWishlist } from "../../FilesPaths/all_path";
 import { Link, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,47 +10,61 @@ const WishlistPage = () => {
   const [ratings, setRatings] = useState({});
   const [loadingCart, setLoadingCart] = useState(null);
   const [removing, setRemoving] = useState(null);
+  const [wishlist, setWishlist] = useState([]);
+  const [popup, setPopup] = useState({ show: false, message: "", type: "" });
+  const { fetchCounts } = useCartWishlist();
 
-  // Fetch wishlist data and filter by userId
-  const { data: wishlist, error, mutate } = useSWR(
-    `${ENV_File.backendURL}/wishlist`,
-    async (url) => {
-      const response = await axios.get(url);
-      return response.data;
-    },
-    {
-      refreshInterval: 5000,
-      revalidateOnFocus: true,
+  // Fetch wishlist data
+  const fetchWishlist = async () => {
+    try {
+      const response = await axios.get(`${ENV_File.backendURL}/wishlist`);
+      setWishlist(response.data);
+    } catch (error) {
+      setPopup({ show: true, message: "Failed to fetch wishlist.", type: "error" });
+      console.error("Error fetching wishlist:", error);
     }
-  );
+  };
+
+  useEffect(() => {
+    fetchWishlist();
+    // eslint-disable-next-line
+  }, []);
+
+  // Re-fetch wishlist when fetchCounts changes (after add/remove)
+  useEffect(() => {
+    fetchWishlist();
+    // eslint-disable-next-line
+  }, [fetchCounts]);
 
   const Filtered = wishlist?.filter((item) => item.userId === userid);
-
-  if (error) {
-    console.error("Error fetching wishlist:", error);
-  }
 
   const handleAddToCart = async (item) => {
     setLoadingCart(item._id);
     const { _id, _v, createdAt, updateAt, ...orderitem } = item;
     try {
       await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
-      mutate();
+      setPopup({ show: true, message: "Added to cart successfully!", type: "success" });
+      fetchCounts(); // trigger re-render
     } catch (error) {
+      setPopup({ show: true, message: "Failed to add to cart.", type: "error" });
       console.error("Error adding to cart:", error);
     }
     setLoadingCart(null);
+    setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
   };
 
   const handleRemoveFromWishlist = async (item) => {
     setRemoving(item._id);
     try {
       await axios.delete(`${ENV_File.backendURL}/wishlist/${item._id}`);
-      mutate();
+      setPopup({ show: true, message: "Removed from wishlist!", type: "success" });
+      fetchCounts(); // trigger re-render
     } catch (error) {
+      setPopup({ show: true, message: "Failed to remove from wishlist.", type: "error" });
       console.error("Error removing from wishlist:", error);
     }
     setRemoving(null);
+    setTimeout(() => setPopup({ show: false, message: "", type: "" }), 2000);
   };
 
   const handleRating = (productId, rating) => {
@@ -63,6 +76,15 @@ const WishlistPage = () => {
 
   return (
     <Container>
+      {/* Popup Notification */}
+      {popup.show && (
+        <div
+          className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-semibold transition-all duration-300
+            ${popup.type === "success" ? "bg-green-600" : "bg-rose-600"}`}
+        >
+          {popup.message}
+        </div>
+      )}
       <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen px-4 py-6 text-sm rounded-2xl shadow-xl">
         <div className="flex items-center gap-3 pb-4">
           <FaHeart className="text-2xl text-rose-600 drop-shadow" />
