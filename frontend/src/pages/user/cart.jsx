@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link, useLocation } from "react-router-dom";
-import { AddressForm, AppwriteService, Container, ENV_File ,useCartWishlist} from "../../FilesPaths/all_path.js";
+import { AddressForm, AppwriteService, Container, ENV_File, useCartWishlist } from "../../FilesPaths/all_path.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -18,29 +18,29 @@ const CartPage = () => {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [AddressId, setAddressId] = useState(null);
   const [Addressdata, setAddressdata] = useState();
-  
 
-    const location = useLocation();
+
+  const location = useLocation();
   const addressId = location.state?.address_id;
 
   useEffect(() => {
     try {
       if (addressId) {
         setAddressId(addressId);
-      console.log(addressId);
-      const fetchaddressdata=async()=>{
-        const response = await axios.get(`${ENV_File.backendURL}/address/${addressId}`);
-        console.log('datatata',response.data);
-        setAddressdata(response.data.data);
-        
+        console.log(addressId);
+        const fetchaddressdata = async () => {
+          const response = await axios.get(`${ENV_File.backendURL}/address/${addressId}`);
+          console.log('datatata', response.data);
+          setAddressdata(response.data.data);
+
+        }
+        fetchaddressdata();
+
+
       }
-      fetchaddressdata();
-      
-      
-    }
-      
+
     } catch (error) {
-      
+
     }
   }, [addressId]);
 
@@ -53,11 +53,11 @@ const CartPage = () => {
     setShowConfirmModal(true);
   };
 
-// if (addressId) {
-//   setAddressId(addressId)
-  
-// }
-  
+  // if (addressId) {
+  //   setAddressId(addressId)
+
+  // }
+
 
   const handleRemove = async (id) => {
     try {
@@ -150,79 +150,75 @@ const CartPage = () => {
     });
   };
 
- // ...existing code...
+  // ...existing code...
 
-// ...existing code...
-
-const payment = async () => {
-  if (!AddressId) {
-    if (window.confirm("Please select an address before proceeding to payment.\n\nClick OK to go to your address page.")) {
-      navigate(`/address/${userid}`);
+  const payment = async () => {
+    if (!AddressId) {
+      if (window.confirm("Please select an address before proceeding to payment.\n\nClick OK to go to your address page.")) {
+        navigate(`/address/${userid}`);
+      }
+      return;
     }
-    return;
-  }
 
-  const res = await loadRazorpayScript();
+    const res = await loadRazorpayScript();
 
-  if (!res) {
-    alert("Razorpay SDK failed to load. Are you online?");
-    return;
-  }
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
 
-  try {
-    const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
-      amount: amountPayable, // FIX: send integer paise
-    });
+    try {
+      const response = await axios.post(`${ENV_File.backendURL}/payment/request`, {
+        amount: Math.round(amountPayable),
+      });
 
-    const orderData = response.data;
+      const orderData = response.data;
 
-    const options = {
-      key: ENV_File.razor_key_id,
-      amount: orderData.amount,
-      currency: "INR",
-      name: "E-Commerce Payment",
-      description: `Pay ₹${amountPayable} for your order`,
-      order_id: orderData.id,
-      handler: async function (response) {
-        try {
-          const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            userid: userid,
-            addressId: AddressId,
-            orderId: order.map((item) => item._id),
-          });
-          if (resp.data.success) {
-            fetchCounts()
-            setTimeout(() => {
-              alert("Redirecting to order page...");
-              navigate(`/order/${userid}`);
-            }, 2000);
+      const options = {
+        key: ENV_File.razor_key_id,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "E-Commerce Payment",
+        description: `Pay ₹${amountPayable} for your order`,
+        order_id: orderData.id,
+        handler: async function (response) {
+          try {
+            const resp = await axios.post(`${ENV_File.backendURL}/payment/verify`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              userid: userid,
+              addressId: AddressId,
+              orderId: order.map((item) => item._id),
+            });
+            if (resp.data.success) {
+              setTimeout(() => {
+                alert("Redirecting to order page...");
+                navigate(`/order/${userid}`);
+              }, 3000);
+            }
+          } catch (error) {
+            alert("Payment verification failed. Please try again.");
           }
-        } catch (error) {
-          alert("Payment verification failed. Please try again.");
-        }
-      },
-      prefill: {
-        name: "User Name",
-        email: "user@example.com",
-        contact: "9876543210",
-      },
-      theme: {
-        color: "#e11d48",
-      },
-    };
+        },
+        prefill: {
+          name: "User Name",
+          email: "user@example.com",
+          contact: "9876543210",
+        },
+        theme: {
+          color: "#e11d48",
+        },
+      };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-  } catch (error) {
-    console.error("Error initiating payment:", error);
-  }
-};
-// ...existing code...
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+    }
+  };
 
-// ...existing code...
+  // ...existing code...
   return (
     <Container>
       <motion.div
@@ -230,9 +226,9 @@ const payment = async () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-      className="h-[95vh] " // changed from h-[80vh] to h-[95vh]
+        className="h-[95vh] " // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl overflow-hidden  min-h-screen mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
+        <div className="max-w-4xl overflow-scroll h-[90vh] mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-xl text-sm font-sans pb-5">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2">
@@ -384,22 +380,23 @@ const payment = async () => {
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
                   <div className=" fixed bottom-17 left-0 right-0 bg-white p-4 border-t  flex justify-between items-center  max-w-4xl mx-auto ">
-                <div>
-                  <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
-                  <p className="text-lg font-bold text-rose-700">₹{amountPayable.toFixed(2)}</p>
-                </div>
-                <button
-                  onClick={payment}
-                  className="bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-6 py-2 rounded-xl font-semibold shadow hover:scale-105 transition-all duration-200"
-                >
-                  Proceed to Payment
-                </button>
-              </div>
+                    <div>
+                      <p className="text-xs text-green-700">🎉 Cheers! You saved ₹{savings.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-rose-700">₹{amountPayable.toFixed(2)}</p>
+                    </div>
+                    <div></div>
+                    <button
+                      onClick={payment}
+                      className="bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-6 py-2 rounded-xl font-semibold shadow hover:scale-105 transition-all duration-200"
+                    >
+                      Proceed to Payment
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Bottom Bar */}
-              
+
             </>
           )}
 

@@ -1,9 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Loader } from '../FilesPaths/all_path';
 
 const ToggleMenu = ({ title, links }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNav = (to) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate(to);
+    }, 2000);
+  };
 
   return (
     <div>
@@ -38,15 +49,22 @@ const ToggleMenu = ({ title, links }) => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2, delay: index * 0.07 }}
               >
-                <Link
-                  to={link.to}
-                  className="hover:text-rose-600 transition-colors duration-200 pl-2 py-1 rounded hover:bg-rose-50"
+                <button
+                  onClick={() => handleNav(link.to)}
+                  className="hover:text-rose-600 transition-colors duration-200 pl-2 py-1 rounded hover:bg-rose-50 text-left w-full"
+                  disabled={loading}
                 >
                   {link.label}
-                </Link>
+                </button>
               </motion.div>
             ))}
           </motion.nav>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {loading && (
+          
+            <Loader />
         )}
       </AnimatePresence>
     </div>

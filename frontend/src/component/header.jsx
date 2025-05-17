@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaBars, FaShoppingCart, FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ToggleMenu, useCartWishlist, Loader } from "../FilesPaths/all_path";
-import logo from "../images/logo3.png";
+import logo from "../images/logo4.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
@@ -20,7 +20,7 @@ const Header = () => {
     setTimeout(() => {
       setLoading(false);
       navigate(path);
-    }, 3000);
+    }, 2000);
   };
 
   // For ToggleMenu, pass a handler to close menu and show loader before navigating
@@ -30,7 +30,7 @@ const Header = () => {
     setTimeout(() => {
       setLoading(false);
       navigate(path);
-    }, 3000);
+    }, 2000);
   };
 
   return (
