@@ -24,19 +24,19 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
   hover: {
     scale: 1.045,
     boxShadow: "0 8px 32px 0 rgba(255, 72, 66, 0.13)",
-    transition: { type: "spring", stiffness: 260, damping: 18 }
+    transition: { type: "spring", stiffness: 260, damping: 18 },
   },
   exit: {
     opacity: 0,
     y: 40,
     scale: 0.97,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] }
-  }
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 const ProductPage = () => {
@@ -49,7 +49,6 @@ const ProductPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-        // Reverse the products so newest appear first
         const reversed = [...response.data].reverse();
         setProducts(reversed);
         setFilteredProducts(reversed);
@@ -72,9 +71,7 @@ const ProductPage = () => {
     if (category === "All") {
       setFilteredProducts(products);
     } else {
-      setFilteredProducts(
-        products.filter((product) => product.category === category)
-      );
+      setFilteredProducts(products.filter((product) => product.category === category));
     }
   };
 
@@ -94,7 +91,7 @@ const ProductPage = () => {
           transition={{ delay: 0.1, duration: 0.6 }}
         >
           <div>
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-rose-700 drop-shadow mb-1">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-rose-700 drop-shadow mb-1">
               Shop Bridal Collection
             </h2>
             <p className="text-gray-500 text-sm md:text-base font-medium">
@@ -103,12 +100,12 @@ const ProductPage = () => {
           </div>
 
           {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-2 md:gap-3 mt-2 md:mt-0">
+          <div className="flex gap-2 md:gap-3 mt-2 md:mt-0 overflow-x-auto scrollbar-hide">
             {CATEGORY_OPTIONS.map(({ label, value }) => (
               <button
                 key={value}
                 onClick={() => handleCategoryChange(value)}
-                className={`px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
                   ${selectedCategory === value
                     ? "bg-rose-600 text-white border-rose-600 shadow-lg"
                     : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
@@ -120,9 +117,9 @@ const ProductPage = () => {
           </div>
         </motion.div>
 
-        {/* Product Grid with scroll */}
+        {/* Product Grid */}
         <div className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             <AnimatePresence>
               {filteredProducts.length === 0 && (
                 <motion.div
@@ -134,7 +131,8 @@ const ProductPage = () => {
                   No products found in this category.
                 </motion.div>
               )}
-              {[...filteredProducts].map((product) => {
+
+              {filteredProducts.map((product) => {
                 const discount =
                   product.fakePrie && product.fakePrie > 0
                     ? Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100)
@@ -144,24 +142,24 @@ const ProductPage = () => {
                 return (
                   <motion.div
                     key={product._id}
-                    className="w-full bg-white border border-rose-100 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative group"
+                    className="w-full   bg-white border border-rose-100 rounded-2xl shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
                     variants={cardVariants}
                   >
-                    <Link to={`${product._id}`} className="block h-full">
-                      <div className="relative p-2">
-                        {/* Responsive Image Box */}
-                        <div className="w-full overflow-hidden rounded-xl">
+                    <Link to={`${product._id}`} className="block h-full w-full">
+                      <div className="relative w-full p-2">
+                        {/* Image Viewer */}
+                        <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
                           <SwipeImageViewer images={product.images} name={product.name} />
                         </div>
 
-                        {/* Heart Icon */}
+                        {/* Heart Button */}
                         <motion.button
                           whileTap={{ scale: 0.8, rotate: -15 }}
                           onClick={(e) => {
                             e.preventDefault();
                             toggleLike(product._id);
                           }}
-                          className="absolute top-2 right-2 text-lg md:text-xl bg-white/90 rounded-full p-2 shadow-md hover:bg-rose-100 transition"
+                          className="absolute top-1.5 right-1.5 md:top-2 md:right-2 text-base md:text-xl bg-white/90 rounded-full p-2 shadow-md hover:bg-rose-100 transition"
                           aria-label="Like"
                         >
                           <FaHeart
@@ -170,11 +168,11 @@ const ProductPage = () => {
                         </motion.button>
                       </div>
 
-                      <div className="px-3 py-2 md:p-4 w-full aspect-[6/2]">
-                        <h4 className="font-semibold text-base md:text-lg text-gray-800 truncate mb-1">
+                      <div className="px-3 py-2 md:p-4 w-full">
+                        <h4 className="font-semibold text-sm sm:text-base md:text-lg text-gray-800 truncate mb-1">
                           {product.header}
                         </h4>
-                        <p className="text-xs text-gray-500 truncate mb-2">{product.description}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 truncate mb-2">{product.description}</p>
 
                         <div className="flex items-center space-x-2 mt-2 w-full">
                           <span className="font-bold text-base md:text-lg text-rose-700">
@@ -193,7 +191,7 @@ const ProductPage = () => {
                         </div>
                       </div>
 
-                      {/* Optional Badge */}
+                      {/* Badge */}
                       {product.category === "SSspecial" && (
                         <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
                           SS Special

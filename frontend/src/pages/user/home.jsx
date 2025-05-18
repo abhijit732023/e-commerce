@@ -121,7 +121,7 @@ const Home = () => {
               loop
               muted
               playsInline
-              className="w-full h-[30vw] md:h-[480px] object-cover"
+              className="w-full h-[30vh] md:h-[480px] object-cover"
               poster="/images/video-poster.jpg"
             >
               Sorry, your browser doesn't support embedded videos.

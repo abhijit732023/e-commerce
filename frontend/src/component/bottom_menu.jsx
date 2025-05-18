@@ -45,7 +45,7 @@ const BottomMenuBar = () => {
     setTimeout(() => {
       setLoading(false);
       navigate(path);
-    }, 3000);
+    }, 2000);
   };
 
   return (

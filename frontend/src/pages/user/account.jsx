@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, warning } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useAuth, Container, Loader } from "../../FilesPaths/all_path";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,15 @@ const AccountPage = () => {
         { title: "We Respect Your Privacy", Link: "/privacy-policy" },
         { title: "Who We Are", Link: "/about-us" },
     ];
+
+
+
+    const handlelogout = () => {
+        const confirmed = window.confirm("Are you sure you want to logout?");
+        if (confirmed) {
+            logout();
+        }
+    }
 
     useEffect(() => {
         if (user) {
@@ -51,11 +60,11 @@ const AccountPage = () => {
     return (
         <Container>
             {loading && <Loader />}
-            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen rounded-2xl shadow-xl flex flex-col">
+            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen overflow-scroll  shadow-xl flex flex-col">
                 {/* Scrollable content */}
                 <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto p-4 custom-scrollbar flex flex-col"
+                    className="flex-1 overflow-y-auto p-4 overflow-scroll pb-30 flex flex-col"
                     style={{
                         maxHeight: "calc(100vh - 2rem)",
                         minHeight: "400px",
@@ -72,25 +81,42 @@ const AccountPage = () => {
 
                     {/* Profile Section */}
                     <motion.div
-                        className="bg-white p-6 rounded-2xl flex items-center justify-between mb-6 shadow-lg border border-rose-100"
+                        className="bg-white p-6 rounded-2xl flex flex-col mb-6 shadow-lg border border-rose-100"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
                             <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 via-amber-300 to-rose-300 text-white flex items-center justify-center font-bold text-2xl shadow">
                                 {userdata.username ? userdata.username.charAt(0).toUpperCase() : 'U'}
                             </div>
-                            <div>
-                                <h2 className="font-semibold text-lg text-gray-800">{userdata.username}</h2>
-                                <p className="text-sm text-gray-600">{userdata.email}</p>
-                                <p className="text-sm text-gray-600">{userdata.phoneNumber || "Phone number"}</p>
+                            <div className="flex-1 text-center sm:text-left">
+                                <h2 className="font-semibold text-lg text-gray-800 break-words">{userdata.username}</h2>
+                                <p className="text-sm text-gray-600 break-words">{userdata.email}</p>
+                                <p className="text-sm text-gray-600 break-words">{userdata.phoneNumber || "Phone number"}</p>
+                            </div>
+                            <div className="w-full flex gap-3  justify-center sm:justify-center lg:justify-end">
+                                <button
+                                    onClick={() => handlelogout()}
+                                    className=" sm:mt-0  bg-gradient-to-r from-rose-500 via-amber-400 to-rose-400 text-white px-5 py-2 rounded-full font-semibold shadow hover:from-rose-600 hover:to-amber-500 hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                                    style={{ alignSelf: "flex-start" }}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                                    </svg>
+                                    Logout
+                                </button>
+                                <button
+                                    className="  text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition border border-blue-200 px-6 py-2 rounded-full shadow self-start"
+                                >
+                                    Edit Profile
+                                </button>
+
                             </div>
                         </div>
-                        <button className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition">Edit</button>
                     </motion.div>
 
                     {/* Menu Items */}
-                    <div className="bg-white rounded-2xl shadow-lg divide-y border border-rose-100">
+                    <div className="bg-white rounded-2xl overflow-scroll  shadow-lg divide-y border border-rose-100">
                         {menuItems.map((item, index) => (
                             <motion.div
                                 key={index}
@@ -118,51 +144,12 @@ const AccountPage = () => {
 
                     {/* Logout Button at the very end of scrollable content */}
                     <div className="mt-8 flex flex-col items-center">
-                        <button
-                            onClick={() => setShowLogoutConfirm(true)}
-                            className="border px-8 py-2 rounded-full text-red-500 font-semibold hover:bg-rose-50 hover:text-red-700 transition shadow"
-                        >
-                            Logout
-                        </button>
+
                         <p className="text-xs text-gray-400 mt-2">Version 9.21.0 Build 3457</p>
                     </div>
                 </div>
 
-                {/* Logout Confirmation Popup */}
-                <AnimatePresence>
-                    {showLogoutConfirm && (
-                        <motion.div
-                            className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
-                            <motion.div
-                                className="bg-white rounded-2xl p-8 w-full max-w-xs shadow-2xl text-center border border-rose-200"
-                                initial={{ scale: 0.8, opacity: 0, y: 40 }}
-                                animate={{ scale: 1, opacity: 1, y: 0 }}
-                                exit={{ scale: 0.8, opacity: 0, y: 40 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            >
-                                <h3 className="text-lg font-bold mb-4 text-rose-700">Are you sure you want to logout?</h3>
-                                <div className="flex justify-center gap-4 mt-4">
-                                    <button
-                                        onClick={() => { logout(); setShowLogoutConfirm(false); }}
-                                        className="bg-rose-600 text-white px-6 py-2 rounded-lg border border-rose-700 hover:bg-rose-700 transition font-semibold shadow"
-                                    >
-                                        Yes
-                                    </button>
-                                    <button
-                                        onClick={() => setShowLogoutConfirm(false)}
-                                        className="bg-gray-200 px-6 py-2 rounded-lg border border-gray-400 hover:bg-gray-300 transition font-semibold shadow"
-                                    >
-                                        No
-                                    </button>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
             </div>
         </Container>
     );

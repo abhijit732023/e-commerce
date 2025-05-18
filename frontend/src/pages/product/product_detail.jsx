@@ -201,7 +201,7 @@ const ProductDetail = () => {
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
-                    className="w-full h-[64vh] md:h-[500px] flex items-center"
+                    className="w-full h-[64vh] md:h-[500px] lg:h-[75vh] lg:w-[80%] flex items-center"
                 >
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -216,7 +216,7 @@ const ProductDetail = () => {
                                 <img
                                     src={AppwriteService.getFileViewUrl(img)}
                                     alt={`product-img-${i}`}
-                                    className="w-full h-full md:h-[500px] object-cover rounded-2xl"
+                                    className="w-full h-full lg:h-full lg:w-full md:h-[500px] lg:object-cover object-cover rounded-2xl"
                                 />
                             </SwiperSlide>
                         ))}

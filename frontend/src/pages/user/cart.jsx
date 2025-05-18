@@ -228,27 +228,27 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        className="h-[95vh] " // changed from h-[80vh] to h-[95vh]
+        className=" h-full" // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl overflow-scroll h-[90vh] mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
+        <div className="max-w-4xl h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
-           <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">
-  <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
-  {Addressdata ? (
-    <span
-      className="truncate block max-w-[280px] md:max-w-md lg:max-w-lg"
-      title={`${Addressdata.name} | ${Addressdata.flatNo}, ${Addressdata.areaStreet}, ${Addressdata.landmark ? Addressdata.landmark + ', ' : ''}${Addressdata.city}, ${Addressdata.state} - ${Addressdata.pincode} (${Addressdata.phoneNumber})`}
-    >
-      {Addressdata.name} | {Addressdata.flatNo}, {Addressdata.areaStreet}
-      {Addressdata.landmark ? `, ${Addressdata.landmark}` : ""}
-      , {Addressdata.city}, {Addressdata.state} - {Addressdata.pincode}
-      {/* Optionally: <span className="ml-2 text-xs text-gray-500">({Addressdata.phoneNumber})</span> */}
-    </span>
-  ) : (
-    "No address selected"
-  )}
-</p>
+            <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">
+              <span className="inline-block w-2 h-2 bg-rose-600 rounded-full animate-pulse"></span>
+              {Addressdata ? (
+                <span
+                  className="truncate block max-w-[280px] md:max-w-md lg:max-w-lg"
+                  title={`${Addressdata.name} | ${Addressdata.flatNo}, ${Addressdata.areaStreet}, ${Addressdata.landmark ? Addressdata.landmark + ', ' : ''}${Addressdata.city}, ${Addressdata.state} - ${Addressdata.pincode} (${Addressdata.phoneNumber})`}
+                >
+                  {Addressdata.name} | {Addressdata.flatNo}, {Addressdata.areaStreet}
+                  {Addressdata.landmark ? `, ${Addressdata.landmark}` : ""}
+                  , {Addressdata.city}, {Addressdata.state} - {Addressdata.pincode}
+                  {/* Optionally: <span className="ml-2 text-xs text-gray-500">({Addressdata.phoneNumber})</span> */}
+                </span>
+              ) : (
+                "No address selected"
+              )}
+            </p>
             <button className="text-blue-600 font-medium hover:underline">
               <Link to={`/address/${userid}`}>Change</Link>
             </button>
