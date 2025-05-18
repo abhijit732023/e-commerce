@@ -9,7 +9,7 @@ const Container = ({ children, className = "", style = {} }) => {
         <Header />
       </div>
       {/* Main Content: 80% height */}
-      <main className={`flex-1 overflow-hidden relative z-0 rounded-xl mt-0.5 mb-0.5 ${className}`} style={{ minHeight: 0,height:'83vh' }}>
+      <main className={`flex-1 overflow-y-scroll relative z-0 rounded-xl mt-0.5 mb-0.5 ${className}`} style={{ minHeight: 0,height:'83vh' }}>
         {children}
       </main>
       {/* Bottom Menu: 10% height */}
