@@ -9,7 +9,8 @@ import {
   TermsConditions,
   RefundReturn,
   AboutUs,
-  ContactUs, ResetPassword, ForgotPassword, OrderPage, AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout
+  ContactUs, ResetPassword, ForgotPassword, OrderPage, AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout,
+  AdminOrderPage
 } from './FilesPaths/all_path.js';
 import './index.css'
 
@@ -207,9 +208,16 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/invoice',
+   path: '/invoice',
     element: (
       < Invoice/>
+
+    ),
+  },
+  {
+    path: '/admin/orders',
+    element: (
+      < AdminOrderPage/>
 
     ),
   }

@@ -45,6 +45,7 @@ import ToggleMenu from "../component/toggle_menu.jsx";
 import ReviewSection from "../component/review_component.jsx"; 
 import Loader from "../component/loader.jsx";
 import Invoice from "../component/invoive.jsx";
+import AdminOrderPage from "../pages/admin/admin_allorder.jsx";
 
 export{
     RegisterForm,
@@ -95,7 +96,8 @@ export{
     ToggleMenu,
     ReviewSection,
     Loader,
-    Invoice
+    Invoice,
+    AdminOrderPage
     
     
 

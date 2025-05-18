@@ -43,6 +43,8 @@ const WishlistPage = () => {
     const { _id, _v, createdAt, updateAt, ...orderitem } = item;
     try {
       await axios.post(`${ENV_File.backendURL}/order/add`, orderitem);
+      await axios.delete(`${ENV_File.backendURL}/wishlist/${item._id}`);
+
       setPopup({ show: true, message: "Added to cart successfully!", type: "success" });
       fetchCounts(); // trigger re-render
     } catch (error) {
@@ -79,7 +81,7 @@ const WishlistPage = () => {
       {/* Popup Notification */}
       {popup.show && (
         <div
-          className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-semibold transition-all duration-300
+          className={`absolute top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-semibold transition-all duration-300
             ${popup.type === "success" ? "bg-green-600" : "bg-rose-600"}`}
         >
           {popup.message}
@@ -161,9 +163,8 @@ const WishlistPage = () => {
                     whileTap={{ scale: 0.95 }}
                     disabled={loadingCart === item._id}
                     onClick={() => handleAddToCart(item)}
-                    className={`flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-blue-600 transition-all duration-200 font-semibold ${
-                      loadingCart === item._id ? "opacity-60 cursor-not-allowed" : ""
-                    }`}
+                    className={`flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-blue-600 transition-all duration-200 font-semibold ${loadingCart === item._id ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
                   >
                     <FaShoppingCart />
                     {loadingCart === item._id ? "Adding..." : "Add to Cart"}
@@ -172,9 +173,8 @@ const WishlistPage = () => {
                     whileTap={{ scale: 0.95 }}
                     disabled={removing === item._id}
                     onClick={() => handleRemoveFromWishlist(item)}
-                    className={`flex-1 flex items-center justify-center gap-2 bg-rose-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-rose-600 transition-all duration-200 font-semibold ${
-                      removing === item._id ? "opacity-60 cursor-not-allowed" : ""
-                    }`}
+                    className={`flex-1 flex items-center justify-center gap-2 bg-rose-500 text-white text-sm px-3 py-2 rounded-lg shadow hover:bg-rose-600 transition-all duration-200 font-semibold ${removing === item._id ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
                   >
                     <FaTrash />
                     {removing === item._id ? "Removing..." : "Remove"}

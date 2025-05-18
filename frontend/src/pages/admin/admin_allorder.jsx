@@ -8,13 +8,12 @@ import {
   FaStar,
   FaMapMarkerAlt,
   FaFileDownload,
+  FaUser
 } from "react-icons/fa";
-import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const OrderPage = () => {
-  const { userid } = useParams();
+const AdminOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [ratings, setRatings] = useState({});
   const [addressMap, setAddressMap] = useState({});
@@ -23,30 +22,21 @@ const OrderPage = () => {
     const fetchOrdersAndAddresses = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order`);
-        const paidOrders = response.data.filter(
-          (order) => order.paymentStatus === "paid" && order.userId === userid
-        );
+        const paidOrders = response.data.filter((order) => order.paymentStatus === "paid");
         setOrders(paidOrders);
 
-        // Get unique address IDs
         const uniqueAddressIds = [...new Set(paidOrders.map((order) => order.addressId))];
-
-        // Fetch all addresses in parallel
         const addressRequests = uniqueAddressIds.map((id) =>
           axios.get(`${ENV_File.backendURL}/address/${id}`).then((res) => ({
             id,
             data: res.data,
           }))
         );
-
         const addressResults = await Promise.all(addressRequests);
-
-        // Map addressId to address object
         const addressMapTemp = {};
         addressResults.forEach(({ id, data }) => {
           addressMapTemp[id] = data;
         });
-
         setAddressMap(addressMapTemp);
       } catch (error) {
         console.error("Error fetching orders or addresses:", error);
@@ -54,7 +44,7 @@ const OrderPage = () => {
     };
 
     fetchOrdersAndAddresses();
-  }, [userid]);
+  }, []);
 
   const handleDownloadInvoice = async (order, address) => {
     const tempDiv = document.createElement("div");
@@ -103,7 +93,6 @@ const OrderPage = () => {
       </div>
     `;
     document.body.appendChild(tempDiv);
-
     const canvas = await html2canvas(tempDiv, {
       useCORS: true,
       backgroundColor: "#fff",
@@ -118,21 +107,16 @@ const OrderPage = () => {
 
   const handleRating = (orderId, value) => {
     setRatings((prev) => ({ ...prev, [orderId]: value }));
-    // Optionally: axios.post(`/order/rate`, { orderId, rating: value });
   };
 
   return (
     <Container>
       <div
-        className="sticky overflow-hidden max-w-2xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl pb-10"
-        style={{
-          minHeight: "100vh",
-          maxHeight: "100vh",
-          overflowY: "auto",
-        }}
+        className="sticky overflow-hidden max-w-6xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl pb-10"
+        style={{ minHeight: "100vh", maxHeight: "100vh", overflowY: "auto" }}
       >
         <h1 className="text-3xl font-extrabold mb-8 text-center text-rose-700 tracking-wide flex items-center justify-center gap-2 drop-shadow">
-          <FaBoxOpen className="text-rose-500" /> Your Orders
+          <FaBoxOpen className="text-rose-500" /> All Paid Orders (Admin View)
         </h1>
 
         {orders.length === 0 ? (
@@ -143,19 +127,17 @@ const OrderPage = () => {
         ) : (
           orders.map((order, index) => {
             const address = addressMap[order.addressId];
-
             return (
               <div
                 key={index}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 p-6 mb-10 border border-rose-100 relative overflow-hidden"
               >
-                {/* Decorative Ribbon */}
                 <div className="absolute top-0 left-0 bg-rose-100 text-rose-700 px-3 py-1 rounded-br-2xl text-xs font-bold shadow-sm">
                   Paid
                 </div>
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="w-32 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden border border-rose-100 shadow">
-                    {order.images && order.images.length > 0 ? (
+                    {order.images?.length > 0 ? (
                       <img
                         src={AppwriteService.getFileViewUrl(order.images[0])}
                         alt={order.header}
@@ -167,7 +149,6 @@ const OrderPage = () => {
                       </div>
                     )}
                   </div>
-
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-400 mb-1 truncate">
                       Order ID: <span className="font-semibold break-all">{order._id}</span>
@@ -196,11 +177,16 @@ const OrderPage = () => {
                         <span className="font-medium flex-shrink-0">Method:</span>
                         <span className="truncate">{order.buyingMehtod}</span>
                       </div>
+                      <div className="flex items-center gap-1 min-w-0 col-span-2">
+                        <FaUser className="text-blue-400" />
+                        <span className="truncate text-xs text-gray-500">
+                          User ID: <span className="font-semibold">{order.userId}</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Address Display */}
                 {address ? (
                   <div className="mt-4 p-4 bg-gradient-to-r from-rose-50 via-amber-50 to-white rounded-xl text-sm text-gray-700 border border-rose-100 shadow flex flex-col md:flex-row md:items-center md:gap-6">
                     <div className="flex items-center gap-2 text-gray-600 mb-2 md:mb-0">
@@ -224,8 +210,6 @@ const OrderPage = () => {
                     <FaCheckCircle />
                     Payment: Paid
                   </span>
-
-                  {/* ⭐ Star Rating UI */}
                   <div className="flex gap-1 items-center">
                     <span className="ml-2 text-xs text-gray-500">Rate</span>
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -238,11 +222,9 @@ const OrderPage = () => {
                       />
                     ))}
                   </div>
-
-                  {/* Download Invoice Button */}
                   <button
                     onClick={() => handleDownloadInvoice(order, address)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:scale-105 hover:bg-rose-700 transition-all duration-200"
+                    className="flex items-center gap-2 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200"
                   >
                     <FaFileDownload className="text-lg" />
                     Download Invoice
@@ -257,4 +239,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default AdminOrderPage;

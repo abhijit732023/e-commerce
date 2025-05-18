@@ -42,7 +42,7 @@ Wishlist_route.get("/", async (req, res) => {
 
 // Get order by ID
 Wishlist_route.get("/:id", async (req, res) => {
-  console.log('goo');
+  // console.log('goo');
   
   const id = req.params.id;
 

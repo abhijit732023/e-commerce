@@ -11,11 +11,17 @@ export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
-      const response = await axios.post(`${ENV_File.backendURL}/login`, data);
+      const response = await axios.post(`${ENV_File.backendURL}/login`, {
+        identifier: data.identifier,
+        password: data.password,
+      });
+
       setMessage("Login successful! Redirecting...");
       setIsSuccess(true);
       login(response.data.user);
@@ -24,8 +30,10 @@ export default function LoginForm() {
         navigate("/");
       }, 2000);
     } catch (error) {
-      setMessage("Invalid email or password");
+      setMessage("Invalid email/phone or password");
       setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,11 +61,10 @@ export default function LoginForm() {
               </h2>
               <p className="text-gray-500 text-sm">Login to your account</p>
             </div>
+
             {message && (
               <motion.p
-                className={`text-center mb-4 font-semibold ${
-                  isSuccess ? "text-green-600" : "text-red-500"
-                }`}
+                className={`text-center mb-4 font-semibold ${isSuccess ? "text-green-600" : "text-red-500"}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -70,16 +77,23 @@ export default function LoginForm() {
                 <div className="relative">
                   <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
-                    type="email"
-                    placeholder="Email"
-                    {...register("email", { required: "Email is required" })}
+                    type="text"
+                    placeholder="Email or Phone Number"
+                    {...register("identifier", {
+                      required: "Email or phone number is required",
+                      validate: (value) =>
+                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || // email regex
+                        /^[0-9]{10,15}$/.test(value) ||             // phone regex
+                        "Enter a valid email or phone number",
+                    })}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-rose-400 focus:outline-none bg-gray-50"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                {errors.identifier && (
+                  <p className="text-red-500 text-xs mt-1">{errors.identifier.message}</p>
                 )}
               </div>
+
               <div>
                 <div className="relative">
                   <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -93,25 +107,31 @@ export default function LoginForm() {
                   />
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.password.message}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
                 )}
               </div>
+
               <motion.button
                 type="submit"
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-rose-600 text-white py-3 rounded-lg font-semibold shadow hover:bg-rose-700 transition duration-300"
+                className="w-full bg-rose-600 text-white py-3 rounded-lg font-semibold shadow hover:bg-rose-700 transition duration-300 flex items-center justify-center"
+                disabled={isLoading}
               >
-                Login
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </motion.button>
 
-              {/* Forgot Password Link */}
               <div className="text-sm text-right">
-                <Link
-                  to="/forgot-password"
-                  className="text-gray-600 hover:underline"
-                >
+                <Link to="/forgot-password" className="text-gray-600 hover:underline">
                   Forgot Password?
                 </Link>
               </div>

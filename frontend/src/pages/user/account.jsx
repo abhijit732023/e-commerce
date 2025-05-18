@@ -15,14 +15,14 @@ const AccountPage = () => {
 
     const menuItems = [
         { title: "Orders", Link: `/order/${users}` },
-        { title: "Customer Care", Link: "/customer-care" },
+        { title: "Customer Care", Link: "/contact-us" },
         { title: "Address", Link: "/address" },
         { title: "Notifications", Link: "/notifications" },
-        { title: "How To Return", Link: "/how-to-return" },
-        { title: "Terms & Conditions", Link: "/terms" },
-        { title: "Returns & Refunds Policy", Link: "/returns-policy" },
-        { title: "We Respect Your Privacy", Link: "/privacy-policy" },
-        { title: "Who We Are", Link: "/about-us" },
+        { title: "How To Return", Link: "/refund-and-returns" },
+        { title: "Terms & Conditions", Link: "/terms-and-conditions" },
+        { title: "Returns & Refunds Policy", Link: "/refund-and-returns" },
+        { title: "We Respect Your Privacy", Link: "/" },
+        { title: "Who We Are", Link: "/about-company" },
     ];
 
 
@@ -60,7 +60,7 @@ const AccountPage = () => {
     return (
         <Container>
             {loading && <Loader />}
-            <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen overflow-scroll  shadow-xl flex flex-col">
+            <div className="bg-gradient-to-br h-[] from-amber-50 via-white to-rose-50 min-h-screen overflow-scroll  shadow-xl flex flex-col">
                 {/* Scrollable content */}
                 <div
                     ref={scrollRef}
@@ -116,7 +116,7 @@ const AccountPage = () => {
                     </motion.div>
 
                     {/* Menu Items */}
-                    <div className="bg-white rounded-2xl overflow-scroll  shadow-lg divide-y border border-rose-100">
+                    <div className="bg-white  rounded-2xl overflow-scroll  shadow-lg divide-y border border-rose-100">
                         {menuItems.map((item, index) => (
                             <motion.div
                                 key={index}

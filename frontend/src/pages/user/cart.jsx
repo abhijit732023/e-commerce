@@ -108,6 +108,7 @@ const CartPage = () => {
           setOrder((prev) => prev.filter((item) => item._id !== selectedItemId));
           setShowConfirmModal(false);
           setSelectedItemId(null);
+          fetchCounts()
           // fetchCounts()
         }
       }
@@ -299,9 +300,9 @@ const CartPage = () => {
                     <img
                       src={AppwriteService.getFileViewUrl(item.images[0])}
                       alt="product"
-                      className="w-24 h-32 object-cover rounded-lg border border-rose-100"
+                      className="w-[35%] h-auto object-cover rounded-lg border border-rose-100"
                     />
-                    <div className="ml-4 flex-1">
+                    <div className="ml-4 w-[63%] flex-1">
                       <h2 className="font-semibold text-base text-rose-700">{item.header}</h2>
                       <p className="text-gray-500 text-xs mb-1">{item.description}</p>
                       <div className="text-xs mb-2">
