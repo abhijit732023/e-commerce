@@ -10,7 +10,7 @@ import {
   RefundReturn,
   AboutUs,
   ContactUs, ResetPassword, ForgotPassword, OrderPage, AuthGuard, AccountPage, AddressForm, Wish_List, AuthProvider, PayNow, OrderConfirmation, ProductDetail, CartPage, ProductPage, Product_2, AdminEditForm, AdminProductDetail, AdminProductForm, Home_page, Login, RegisterForm, Logout,
-  AdminOrderPage
+  AdminOrderPage,AdminEditProduct,AdminAuthGuard
 } from './FilesPaths/all_path.js';
 import './index.css'
 
@@ -37,9 +37,9 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: (
-      <AuthGuard>
+      <AdminAuthGuard>
         <AdminProductForm />
-      </AuthGuard>
+      </AdminAuthGuard>
     ),
   },
   {
@@ -62,9 +62,9 @@ const router = createBrowserRouter([
   {
     path: '/admin/add',
     element: (
-      <AuthGuard>
+      <AdminAuthGuard>
         <Product_2 />
-      </AuthGuard>
+      </AdminAuthGuard>
     ),
   },
   {
@@ -207,17 +207,21 @@ const router = createBrowserRouter([
 
     ),
   },
-  {
-   path: '/invoice',
-    element: (
-      < Invoice/>
 
-    ),
-  },
   {
     path: '/admin/orders',
     element: (
-      < AdminOrderPage/>
+<AdminAuthGuard>      
+  < AdminOrderPage/>
+</AdminAuthGuard>
+    ),
+  },
+  {
+    path: '/admin/edit/product',
+    element: (
+     <AdminAuthGuard>
+       < AdminEditProduct/>
+     </AdminAuthGuard>
 
     ),
   }

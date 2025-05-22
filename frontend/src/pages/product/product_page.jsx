@@ -78,7 +78,7 @@ const ProductPage = () => {
   return (
     <Container>
       <motion.div
-        className="flex flex-col h-full w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
+        className="flex pb:10 flex-col h-full w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -153,7 +153,7 @@ const ProductPage = () => {
                         </div>
 
                         {/* Heart Button */}
-                        <motion.button
+                        {/* <motion.button
                           whileTap={{ scale: 0.8, rotate: -15 }}
                           onClick={(e) => {
                             e.preventDefault();
@@ -165,7 +165,7 @@ const ProductPage = () => {
                           <FaHeart
                             className={`transition-colors duration-200 ${isLiked ? "text-rose-600" : "text-gray-300"}`}
                           />
-                        </motion.button>
+                        </motion.button> */}
                       </div>
 
                       <div className="px-3 py-2 md:p-4 w-full">

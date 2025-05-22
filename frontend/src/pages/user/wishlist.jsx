@@ -81,7 +81,7 @@ const WishlistPage = () => {
       {/* Popup Notification */}
       {popup.show && (
         <div
-          className={`absolute top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-semibold transition-all duration-300
+          className={`absolute top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl pb-15 shadow-lg text-white font-semibold transition-all duration-300
             ${popup.type === "success" ? "bg-green-600" : "bg-rose-600"}`}
         >
           {popup.message}

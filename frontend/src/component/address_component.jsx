@@ -112,7 +112,7 @@ const AddressCard = ({ userid, addressid }) => {
 
   return (
     <Container>
-    <div className=" relative  h-full overflow-y-scroll  p-4 min-w-full ">
+    <div className=" relative pb-20 h-full overflow-y-scroll  p-4 min-w-full ">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-rose-700 tracking-wide">Your Addresses</h2>

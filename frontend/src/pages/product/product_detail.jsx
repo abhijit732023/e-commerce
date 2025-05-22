@@ -94,40 +94,50 @@ const ProductDetail = () => {
         }
     };
 
-    const addToCart = async () => {
-        if (!userid) {
-            alert("User ID is not available. Please log in.");
-            return;
-        }
 
-        if (!selectedSize) {
-            alert("Please select a size.");
-            return;
-        }
+const addToCart = async () => {
+    if (!userid) {
+        alert("User ID is not available. Please log in.");
+        return;
+    }
 
-        const cartData = {
-            userId: userid,
-            productId: productId,
-            header: product.header,
-            description: product.description,
-            images: product.images,
-            buyingMehtod: pricingMode === "retail" ? 'Retail' : 'Wholesale',
-            size: selectedSize,
-            price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
-            quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
-            addressId: null,
-        };
+    if (!selectedSize) {
+        alert("Please select a size.");
+        return;
+    }
 
-        try {
-            const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
-            fetchCounts && fetchCounts();
-            alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
-            console.log(res.data);
-        } catch (err) {
-            console.warn('Error adding to cart:', err);
-        }
+    const cartData = {
+        userId: userid,
+        productId: productId,
+        header: product.header,
+        description: product.description,
+        images: product.images,
+        buyingMehtod: pricingMode === "retail" ? 'Retail' : 'Wholesale',
+        size: selectedSize,
+        price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
+        quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
+        addressId: null,
     };
 
+    if (pricingMode === "wholesale") {
+        // WhatsApp message
+        const phone = "918657196476"; // <-- Replace with your WhatsApp number (country code + number, no +)
+        const msg = encodeURIComponent(
+            `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber ||''}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
+        );
+        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+        return;
+    }
+
+    try {
+        const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
+        fetchCounts && fetchCounts();
+        alert(`${product.header} (Retail) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
+        console.log(res.data);
+    } catch (err) {
+        console.warn('Error adding to cart:', err);
+    }
+};
     const addTowishlist = async () => {
         if (!userid) {
             alert("User ID is not available. Please log in.");
@@ -150,6 +160,15 @@ const ProductDetail = () => {
             price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
             quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
         };
+        if (pricingMode === "wholesale") {
+        // WhatsApp message
+        const phone = "918657196476"; // <-- Replace with your WhatsApp number (country code + number, no +)
+        const msg = encodeURIComponent(
+            `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber ||''}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
+        );
+        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+        return;
+    }
 
         try {
             const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
@@ -195,7 +214,7 @@ const ProductDetail = () => {
     if (!product) return <div className="text-center ">Loading...</div>;
     return (
         <Container>
-            <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-3xl shadow-2xl border border-rose-100">
+            <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}

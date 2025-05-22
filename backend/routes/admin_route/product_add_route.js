@@ -48,7 +48,9 @@ Product_add_route.get('/:id', async (req, res) => {
 
 // @desc   Update a product by ID
 // @route  PUT /api/products/:id
-Product_add_route.put('update/:id', async (req, res) => {
+Product_add_route.put('/update/:id', async (req, res) => {
+  console.log(req.body);
+  
   try {
     const updated = await product_add_model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

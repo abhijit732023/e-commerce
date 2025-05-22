@@ -124,7 +124,7 @@ const OrderPage = () => {
   return (
     <Container>
       <div
-        className="sticky overflow-hidden max-w-2xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl pb-10"
+        className="sticky overflow-hidden pb-15 max-w-2xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl "
         style={{
           minHeight: "100vh",
           maxHeight: "100vh",

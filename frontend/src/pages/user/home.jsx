@@ -4,7 +4,7 @@ import {
   Container, BottomMenuBar, SSSpecialCarousel, FeaturedCollection,
   Header, ENV_File, AppwriteService, SecondSection
 } from '../../FilesPaths/all_path';
-import logo from '../../images/logo3.png'
+import logo from '../../images/logo4.png'
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 
@@ -137,7 +137,7 @@ const Home = () => {
           <SSSpecialCarousel products={products} />
         </section>
 
-        <footer className="rounded-t-xl mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
+        <footer className="rounded-t-xl pb-15 mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
           <div className="w-full flex justify-center py-[1vw]">
             <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="SS Collection" />
           </div>

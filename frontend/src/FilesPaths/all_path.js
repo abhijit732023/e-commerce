@@ -46,6 +46,8 @@ import ReviewSection from "../component/review_component.jsx";
 import Loader from "../component/loader.jsx";
 import Invoice from "../component/invoive.jsx";
 import AdminOrderPage from "../pages/admin/admin_allorder.jsx";
+import AdminEditProduct from "../pages/admin/admin_product_edit.jsx";
+import AdminAuthGuard from "../component/admin-auth_check.jsx";
 
 export{
     RegisterForm,
@@ -97,7 +99,9 @@ export{
     ReviewSection,
     Loader,
     Invoice,
-    AdminOrderPage
+    AdminOrderPage,
+    AdminEditProduct,
+    AdminAuthGuard
     
     
 

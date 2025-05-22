@@ -99,13 +99,51 @@ Product_route_2.get('/product/:id', async (req, res) => {
 
 // ✅ PUT /update/:id - Update product
 Product_route_2.put('/update/:id', async (req, res) => {
+  // console.log(req.body);
+  console.log(req.params.id);
+  
+  
   try {
-    const updatedProduct = await Product_model_2.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
-    res.json(updatedProduct);
+    const product = await Product_model_2.find(req.params.id);
+    console.log('proo',product);
+    
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    // Compare each field
+    let isChanged = false;
+    const fields = [
+      "header", "description", "price", "fakePrie", "inStockStatus",
+      "wholeSaleQuantity", "WholeSalePrice", "category", "dateToDeliver",
+      "size", "tags", "color", "images", "discount"
+    ];
+
+    for (const field of fields) {
+      // For arrays, compare as strings
+      if (Array.isArray(product[field]) && Array.isArray(req.body[field])) {
+        if (JSON.stringify(product[field]) !== JSON.stringify(req.body[field])) {
+          isChanged = true;
+          break;
+        }
+      } else if (
+        (product[field] instanceof Date && new Date(product[field]).toISOString() !== new Date(req.body[field]).toISOString()) ||
+        product[field] !== req.body[field]
+      ) {
+        isChanged = true;
+        break;
+      }
+    }
+
+    if (!isChanged) {
+      return res.status(200).json({ message: "No changes detected", product });
+    }
+
+    // Update only if changed
+    const updatedProduct = await Product_model_2.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    res.json({ message: "Product updated", product: updatedProduct });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

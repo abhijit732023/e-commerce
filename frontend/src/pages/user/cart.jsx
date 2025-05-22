@@ -229,9 +229,9 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        className=" h-full" // changed from h-[80vh] to h-[95vh]
+        className=" h-full " // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
+        <div className="max-w-4xl pb-25 h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">
@@ -395,7 +395,7 @@ const CartPage = () => {
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
                   <div
-                    className="relative mt-10 bottom-0 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-20"
+                    className="fixed bottom-[5vh] mt-10 pb-10 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-20"
                     style={{
                       boxShadow: "0 -2px 16px 0 rgba(0,0,0,0.04)",
                       minHeight: "72px",

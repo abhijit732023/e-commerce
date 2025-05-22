@@ -92,7 +92,7 @@ const AccountPage = () => {
                             <div className="flex-1 text-center sm:text-left">
                                 <h2 className="font-semibold text-lg text-gray-800 break-words">{userdata.username}</h2>
                                 <p className="text-sm text-gray-600 break-words">{userdata.email}</p>
-                                <p className="text-sm text-gray-600 break-words">{userdata.phoneNumber || "Phone number"}</p>
+                                <p className="text-sm text-gray-600 break-words">{userdata.mobileNumber || "Phone number"}</p>
                             </div>
                             <div className="w-full flex gap-3  justify-center sm:justify-center lg:justify-end">
                                 <button

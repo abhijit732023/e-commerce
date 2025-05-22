@@ -112,7 +112,7 @@ const AdminOrderPage = () => {
   return (
     <Container>
       <div
-        className="sticky overflow-hidden max-w-6xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl pb-10"
+        className="sticky overflow-hidden max-w-6xl mx-auto p-4 bg-gradient-to-br pb-15 from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl "
         style={{ minHeight: "100vh", maxHeight: "100vh", overflowY: "auto" }}
       >
         <h1 className="text-3xl font-extrabold mb-8 text-center text-rose-700 tracking-wide flex items-center justify-center gap-2 drop-shadow">
