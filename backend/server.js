@@ -29,30 +29,26 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // CORS
 
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "https://e-commerce-lake-gamma-54.vercel.app",
-        "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
-        "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
-        "http://localhost:5173",
-        "http://192.168.182.23:5173",
-      ];
+cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://www.khuwabbysanjal.com",
+      "https://khuwabbysanjal.com",
+      "https://e-commerce-lake-gamma-54.vercel.app",
+      "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
+      "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
+      "http://localhost:5173",
+      "http://192.168.182.23:5173",
+    ];
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+})
 
-      const customDomainPattern = /\.?khuwabbysanjal\.com$/;
-
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        (origin.startsWith("https://") && new URL(origin).hostname.match(customDomainPattern))
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
 );
 
 
