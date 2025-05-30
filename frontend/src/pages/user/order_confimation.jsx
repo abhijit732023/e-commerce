@@ -57,6 +57,9 @@ const OrderPage = () => {
   }, [userid]);
 
   const handleDownloadInvoice = async (order, address) => {
+    if (!window.confirm("Do you want to download the invoice?")) {
+      return;
+    }
     const tempDiv = document.createElement("div");
     tempDiv.style.position = "fixed";
     tempDiv.style.left = "-9999px";
@@ -157,7 +160,7 @@ const OrderPage = () => {
                   <div className="w-32 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden border border-rose-100 shadow">
                     {order.images && order.images.length > 0 ? (
                       <img
-                        src={AppwriteService.getFileViewUrl(order.images[0])}
+                        src={order.images[0]}
                         alt={order.header}
                         className="w-full h-full object-cover"
                       />
@@ -210,9 +213,9 @@ const OrderPage = () => {
                     <div>
                       <div className="font-semibold text-gray-800">{address.data.name}</div>
                       <div className="text-gray-700">
-                        {address.data.street}, {address.data.areaStreet}, {address.data.city}, {address.data.state} - {address.data.pincode}
+                        {address.data.areaStreet}, {address.data.city}, {address.data.state} - {address.data.pincode}
                       </div>
-                      <div className="text-gray-700">Phone: {address.data.phoneNumber}</div>
+                      <div className="text-gray-700 flex"><p className="font-semibold">Phone: </p>{address.data.phoneNumber}</div>
                     </div>
                   </div>
                 ) : (

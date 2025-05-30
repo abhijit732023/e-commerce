@@ -1,220 +1,193 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { ReviewSection, useAuth, AppwriteService, Button, ENV_File, Container, useCartWishlist } from '../../FilesPaths/all_path.js';
+import { useParams } from "react-router-dom";
+import {
+  ReviewSection,
+  useAuth,
+  AppwriteService,
+  Button,
+  ENV_File,
+  Container,
+  useCartWishlist
+} from "../../FilesPaths/all_path.js";
 import axios from "axios";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { motion } from "framer-motion";
-import { FaTag, FaCheckCircle, FaTimesCircle, FaTruck, FaStar } from "react-icons/fa";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaTag,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaTruck,
+} from "react-icons/fa";
+
+// ✅ Success Message Component
+const SuccessMessage = ({ message, onClose }) => (
+  <AnimatePresence>
+    {message && (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4 }}
+        className="fixed top-1/7 left-1/2 transform -translate-x-1/2 z-[9999] bg-green-100 border border-green-400 text-green-800 px-6 py-3 rounded-md shadow-md text-center"
+      >
+        {message}
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
 
 const ProductDetail = () => {
-    const { user } = useAuth();
-    const { productId } = useParams();
-    const { fetchCounts } = useCartWishlist() || {};
+  const { user } = useAuth();
+  const { productId } = useParams();
+  const { fetchCounts } = useCartWishlist() || {};
 
-    const [userid, setuserid] = useState(null);
-    const [product, setProduct] = useState(null);
-    const [selectedSize, setSelectedSize] = useState(null);
-    const [quantity, setQuantity] = useState(1);
-    const [pricingMode, setPricingMode] = useState("retail");
+  const [userid, setuserid] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [pricingMode, setPricingMode] = useState("retail");
 
-    // Review state
-    const [reviews, setReviews] = useState([]);
-    const [reviewText, setReviewText] = useState("");
-    const [reviewRating, setReviewRating] = useState(0);
-    const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-    useEffect(() => {
-        if (user) {
-            setuserid(user._id);
+  useEffect(() => {
+    if (user) setuserid(user._id);
+  }, [user]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(`${ENV_File.backendURL}/admin/${productId}`);
+        setProduct(res.data);
+        if (pricingMode === "wholesale" && res.data.wholeSaleQuantity) {
+          setQuantity(res.data.wholeSaleQuantity);
         }
-    }, [user]);
-
-    useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                const res = await axios.get(`${ENV_File.backendURL}/admin/${productId}`);
-                setProduct(res.data);
-
-                if (pricingMode === "wholesale" && res.data.wholeSaleQuantity) {
-                    setQuantity(res.data.wholeSaleQuantity);
-                }
-            } catch (err) {
-                console.warn(err);
-            }
-        };
-        fetchProduct();
-    }, [productId]);
-
-    // Fetch reviews for this product
-    useEffect(() => {
-        const fetchReviews = async () => {
-            try {
-                const res = await axios.get(`${ENV_File.backendURL}/review/${productId}`);
-                setReviews(res.data || []);
-            } catch (err) {
-                setReviews([]);
-            }
-        };
-        fetchReviews();
-    }, [productId]);
-
-    const handleSizeSelect = (size) => {
-        setSelectedSize(size);
+      } catch (err) {
+        console.warn(err);
+      }
     };
+    fetchProduct();
+  }, [productId]);
 
-    const increaseQuantity = () => {
-        setQuantity((prev) => {
-            if (pricingMode === "wholesale") {
-                return Math.max(prev + 1, product?.wholeSaleQuantity || 1);
-            }
-            return prev + 1;
-        });
-    };
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
 
-    const decreaseQuantity = () => {
-        setQuantity((prev) => {
-            if (pricingMode === "wholesale") {
-                return Math.max(product?.wholeSaleQuantity || 1, prev - 1);
-            }
-            return prev > 1 ? prev - 1 : 1;
-        });
-    };
+  const increaseQuantity = () => {
+    setQuantity((prev) =>
+      pricingMode === "wholesale"
+        ? Math.max(prev + 1, product?.wholeSaleQuantity || 1)
+        : prev + 1
+    );
+  };
 
-    const handlePricingMode = (mode) => {
-        setPricingMode(mode);
-        if (mode === "wholesale" && quantity < product?.wholeSaleQuantity) {
-            setQuantity(product.wholeSaleQuantity || 10);
-        }
-        if (mode === "retail") {
-            setQuantity(1);
-        }
-    };
+  const decreaseQuantity = () => {
+    setQuantity((prev) =>
+      pricingMode === "wholesale"
+        ? Math.max(product?.wholeSaleQuantity || 1, prev - 1)
+        : prev > 1 ? prev - 1 : 1
+    );
+  };
 
-
-const addToCart = async () => {
-    if (!userid) {
-        alert("User ID is not available. Please log in.");
-        return;
+  const handlePricingMode = (mode) => {
+    setPricingMode(mode);
+    if (mode === "wholesale" && quantity < product?.wholeSaleQuantity) {
+      setQuantity(product.wholeSaleQuantity || 10);
     }
-
-    if (!selectedSize) {
-        alert("Please select a size.");
-        return;
+    if (mode === "retail") {
+      setQuantity(1);
     }
+  };
+
+  const showSuccess = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
+  const addToCart = async () => {
+    if (!userid) return alert("Please log in.");
+    if (!selectedSize) return alert("Please select a size.");
 
     const cartData = {
-        userId: userid,
-        productId: productId,
-        header: product.header,
-        description: product.description,
-        images: product.images,
-        buyingMehtod: pricingMode === "retail" ? 'Retail' : 'Wholesale',
-        size: selectedSize,
-        price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
-        quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
-        addressId: null,
+      userId: userid,
+      productId,
+      header: product.header,
+      description: product.description,
+      images: product.images,
+      buyingMehtod: pricingMode === "retail" ? "Retail" : "Wholesale",
+      size: selectedSize,
+      price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
+      quantity:
+        pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
+      addressId: null,
     };
 
     if (pricingMode === "wholesale") {
-        // WhatsApp message
-        const phone = "918657196476"; // <-- Replace with your WhatsApp number (country code + number, no +)
-        const msg = encodeURIComponent(
-            `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber ||''}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
-        );
-        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
-        return;
+      const phone = "918657196476";
+      const msg = encodeURIComponent(
+        `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber || ""}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
+      );
+      window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+      return;
     }
 
     try {
-        const res = await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
-        fetchCounts && fetchCounts();
-        alert(`${product.header} (Retail) - Qty: ${quantity} Size: ${selectedSize} added to cart`);
-        console.log(res.data);
+      await axios.post(`${ENV_File.backendURL}/order/add`, cartData);
+      fetchCounts && fetchCounts();
+      showSuccess("Item added to cart successfully.");
     } catch (err) {
-        console.warn('Error adding to cart:', err);
+      console.warn("Error adding to cart:", err);
     }
-};
-    const addTowishlist = async () => {
-        if (!userid) {
-            alert("User ID is not available. Please log in.");
-            return;
-        }
+  };
 
-        if (!selectedSize) {
-            alert("Please select a size.");
-            return;
-        }
+  const addTowishlist = async () => {
+    if (!userid) return alert("Please log in.");
+    if (!selectedSize) return alert("Please select a size.");
 
-        const wihslistdata = {
-            userId: userid,
-            productId: productId,
-            header: product.header,
-            description: product.description,
-            images: product.images,
-            buyingMehtod: pricingMode === "retail" ? 'Retail' : 'Wholesale',
-            size: selectedSize,
-            price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
-            quantity: pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
-        };
-        if (pricingMode === "wholesale") {
-        // WhatsApp message
-        const phone = "918657196476"; // <-- Replace with your WhatsApp number (country code + number, no +)
-        const msg = encodeURIComponent(
-            `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber ||''}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
-        );
-        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
-        return;
-    }
-
-        try {
-            const res = await axios.post(`${ENV_File.backendURL}/wishlist/add`, wihslistdata);
-            fetchCounts && fetchCounts();
-            alert(`${product.header} (${pricingMode}) - Qty: ${quantity} Size: ${selectedSize} added to wishlist`);
-            console.log(res.data);
-        } catch (err) {
-            console.warn('Error adding to wishlist:', err);
-        }
+    const wishlistData = {
+      userId: userid,
+      productId,
+      header: product.header,
+      description: product.description,
+      images: product.images,
+      buyingMehtod: pricingMode === "retail" ? "Retail" : "Wholesale",
+      size: selectedSize,
+      price: pricingMode === "retail" ? product.price : product.WholeSalePrice,
+      quantity:
+        pricingMode === "retail" ? quantity : product.wholeSaleQuantity,
     };
 
-    // Submit review
-    const handleReviewSubmit = async (e) => {
-        e.preventDefault();
-        if (!user) {
-            alert("Please log in to submit a review.");
-            return;
-        }
-        if (!reviewText.trim() || reviewRating === 0) {
-            alert("Please provide a rating and review text.");
-            return;
-        }
-        setSubmitting(true);
-        try {
-            await axios.post(`${ENV_File.backendURL}/review/add`, {
-                userId: user._id,
-                productId,
-                rating: reviewRating,
-                text: reviewText,
-                name: user.name || "User"
-            });
-            setReviewText("");
-            setReviewRating(0);
-            // Refresh reviews
-            const res = await axios.get(`${ENV_File.backendURL}/review/${productId}`);
-            setReviews(res.data || []);
-        } catch (err) {
-            alert("Failed to submit review.");
-        }
-        setSubmitting(false);
-    };
+    if (pricingMode === "wholesale") {
+      const phone = "918657196476";
+      const msg = encodeURIComponent(
+        `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber || ""}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
+      );
+      window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+      return;
+    }
 
-    if (!product) return <div className="text-center ">Loading...</div>;
-    return (
-        <Container>
-            <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
+    try {
+      await axios.post(`${ENV_File.backendURL}/wishlist/add`, wishlistData);
+      fetchCounts && fetchCounts();
+      showSuccess("Item added to wishlist successfully.");
+    } catch (err) {
+      console.warn("Error adding to wishlist:", err);
+    }
+  };
+
+  if (!product) return <div className="text-center">Loading...</div>;
+
+  return (
+    <>
+      <SuccessMessage message={successMessage} />
+      <Container>
+        {/* Your product detail JSX code continues here... */}
+        {/* Leave it unchanged or paste your existing layout (swiper, product info, buttons) */}
+        {/* Just make sure buttons call addToCart and addTowishlist */}
+         <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -233,7 +206,7 @@ const addToCart = async () => {
                         {product.images?.map((img, i) => (
                             <SwiperSlide key={i}>
                                 <img
-                                    src={AppwriteService.getFileViewUrl(img)}
+                                    src={img}
                                     alt={`product-img-${i}`}
                                     className="w-full h-full lg:h-full lg:w-full md:h-[500px] lg:object-cover object-cover rounded-2xl"
                                 />
@@ -415,7 +388,9 @@ const addToCart = async () => {
                     <ReviewSection productId={productId} userId={userid} />
                 </motion.div>
             </div>
-        </Container>
-    );
-}
+      </Container>
+    </>
+  );
+};
+
 export default ProductDetail;

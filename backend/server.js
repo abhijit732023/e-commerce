@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // ✅ Serve static images
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // CORS
 app.use(
@@ -35,7 +35,7 @@ app.use(
         "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
         "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
         "http://localhost:5173",
-        "http://192.168.0.105:5173",
+        "http://192.168.182.23:5173",
       ];
       if (allowedOrigins.includes(origin) || !origin) {
         callback(null, true);
@@ -50,6 +50,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+
 
 // Routes
 app.use("/", Register_Login_Router);

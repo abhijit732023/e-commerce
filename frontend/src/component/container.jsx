@@ -3,17 +3,31 @@ import { BottomMenuBar, Header } from "../FilesPaths/all_path";
 
 const Container = ({ children, className = "", style = {} }) => {
   return (
-    <div className="h-screen w-full flex flex-col bg-gray-400/20 border-gray-100 overflow-hidden" style={{ ...style }}>
-      {/* Header: 10% height */}
-      <div className="flex-shrink-0 overflow-hidden" style={{ height: "8vh", minHeight: "62px" }}>
+    <div
+      className="h-screen w-full flex flex-col bg-gray-400/20 border-gray-100"
+      style={{ ...style }}
+    >
+      {/* Header: fixed height */}
+      <div
+        className="flex-shrink-0 overflow-hidden"
+        style={{ height: 62 /* fixed px height for consistency */ }}
+      >
         <Header />
       </div>
-      {/* Main Content: 80% height */}
-      <main className={`flex-1 overflow-y-scroll relative z-0 rounded-xl mt-0.5 mb-0.5 ${className}`} style={{ minHeight: 0,height:'83vh' }}>
+
+      {/* Main Content: flex-grow to fill remaining space, scrollable */}
+      <main
+        className={`flex-grow overflow-y-auto relative rounded-xl mt-1 mb-1 ${className}`}
+        style={{ minHeight: 0 }}
+      >
         {children}
       </main>
-      {/* Bottom Menu: 10% height */}
-      <div className="flex-shrink-0 overflow-hidden" style={{ height: "8vh", minHeight: "62px" }}>
+
+      {/* Bottom Menu: fixed height */}
+      <div
+        className="flex-shrink-0 overflow-hidden"
+        style={{ height: 62 /* fixed px height for consistency */ }}
+      >
         <BottomMenuBar />
       </div>
     </div>
@@ -21,6 +35,7 @@ const Container = ({ children, className = "", style = {} }) => {
 };
 
 export default Container;
+
 
 // import React from "react";
 // import { BottomMenuBar,Header} from "../FilesPaths/all_path";

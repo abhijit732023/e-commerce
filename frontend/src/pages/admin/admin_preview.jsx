@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ENV_File, AppwriteService } from "../../FilesPaths/all_path";
-import { Link } from "react-router-dom";
+import { ENV_File, Product_2 } from "../../FilesPaths/all_path";
 
-const AdminProductDetail = () => {
+const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-      console.log('details',response.data);
-      
-      setProducts(response.data);
+      const res = await axios.get(`${ENV_File.backendURL}/add`);
+      setProducts(res.data);
     } catch (err) {
-      console.error("Error fetching product details:", err);
-      setError(err);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching products:", err);
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    if (window.confirm("Delete this product?")) {
+      try {
+        await axios.delete(`${ENV_File.backendURL}/add/delete/${id}`);
+        fetchProducts();
+      } catch (err) {
+        console.error("Error deleting product:", err);
+      }
     }
   };
 
@@ -26,76 +30,83 @@ const AdminProductDetail = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (productId, imageIds) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this product? This action cannot be undone.");
-
-    if (!confirmDelete) return;
-
-    try {
-      imageIds.forEach((id) => AppwriteService.deleteFile(id));
-      await axios.delete(`${ENV_File.backendURL}/admin/delete/${productId}`);
-      fetchProducts();
-    } catch (error) {
-      console.error("Error deleting product or images:", error);
-      alert("Failed to delete product or images.");
-    }
-  };
-
-  if (loading) return <div className="text-center p-4">Loading...</div>;
-  if (error) return <div className="text-red-500 p-4">Error loading products.</div>;
-
   return (
-    <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product) => (
-        <div key={product._id} className="border rounded-lg shadow-md p-4 bg-white flex flex-col justify-between space-y-2 hover:shadow-lg transition-all duration-200">
-          <Link to={`/product/${product._id}`}>
-            <h2 className="text-lg font-semibold text-blue-600 hover:underline mb-1">{product.header}</h2>
+    <div className="p-6 min-h-screen bg-gray-50">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">
+        {editing ? "Edit Product" : "Add Product"}
+      </h2>
 
-            <div className="flex gap-2 overflow-x-auto">
-              {product.images.map((imageId) => (
+      {/* Uncomment below to include Product Form */}
+      {/* <Product_2 product={editing} onSuccess={() => {
+        setEditing(null);
+        fetchProducts();
+      }} /> */}
+
+      <h2 className="text-2xl font-semibold text-gray-800 my-6 border-b pb-2">
+        All Products ({products.length})
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products.map((p) => (
+          <div
+            key={p._id}
+            className="bg-white flex gap-2  rounded-xl shadow hover:shadow-lg transition-shadow p-4 "
+          >
+            <div className="h-40 overflow-hidden rounded-md mb-3">
+              {p.images?.[0] ? (
                 <img
-                  key={imageId}
-                  src={AppwriteService.getFileViewUrl(imageId)}
-                  className="w-24 h-28 object-cover rounded border"
+                  src={p.images[0]}
+                  alt={p.header}
+                  className="w-full h-full object-cover"
                 />
-              ))}
+              ) : (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+                  No Image
+                </div>
+              )}
             </div>
 
-            <div className="text-sm text-gray-700 space-y-1 mt-2">
-              <p><strong>Brand:</strong> {product.brand}</p>
-              <p><strong>Category:</strong> {product.category}</p>
-              <p><strong>Color:</strong> {product.color}</p>
-              <p><strong>Description:</strong> {product.description}</p>
-              <p><strong>Price:</strong> ₹{product.discountedPrice} <span className="line-through text-gray-500">₹{product.originalPrice}</span></p>
-              <p><strong>Discount:</strong> {product.discountPercent}%</p>
-              <p><strong>Rating:</strong> {product.rating}</p>
-              <p><strong>Tags:</strong> {product.tags.join(", ")}</p>
-              <p><strong>Sizes Available:</strong> {product.availableSizes.join(", ")}</p>
-              <p><strong>Quantity:</strong> {product.quantity}</p>
-              <p><strong>In Stock:</strong> {product.inStock ? "Yes" : "No"}</p>
-              <p><strong>Deliver By:</strong> {new Date(product.dateToDeliver).toLocaleDateString('en-GB')}</p>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-700 truncate">
+                {p.header}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1 line-clamp-3">
+                {p.description}
+              </p>
+
+              <div className="mt-2 flex flex-wrap gap-2">
+                <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded">
+                  ₹{p.price}
+                </span>
+                <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded line-through">
+                  ₹{p.fakePrice || p.fakePrie}
+                </span>
+                <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
+                  {p.category || "Uncategorized"}
+                </span>
+              </div>
+
+            <div className="mt-4 flex justify-end gap-4 items-center">
+              <button
+                onClick={() => setEditing(p)}
+                className="text-sm text-white bg-indigo-600 px-3 py-1 rounded hover:bg-indigo-700"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteProduct(p._id)}
+                className="text-sm text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
             </div>
-          </Link>
+            </div>
 
-          <div className="flex justify-between mt-3">
-            <button
-              onClick={() => handleDelete(product._id, product.images)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
-            >
-              Delete
-            </button>
-
-            <Link
-              to={`/admin/edit/${product._id}`}
-              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-sm"
-            >
-              Edit
-            </Link>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AdminProductDetail;
+export default ProductList;

@@ -155,11 +155,12 @@ const CartPage = () => {
 
   // ...existing code...
 
+  const [showAddressConfirmPopup, setShowAddressConfirmPopup] = useState(false);
+
   const payment = async () => {
     if (!AddressId) {
-      if (window.confirm("Please select an address before proceeding to payment.\n\nClick OK to go to your address page.")) {
-        navigate(`/address/${userid}`);
-      }
+      // Replace window.confirm with popup modal
+      setShowAddressConfirmPopup(true);
       return;
     }
 
@@ -195,6 +196,7 @@ const CartPage = () => {
               orderId: order.map((item) => item._id),
             });
             if (resp.data.success) {
+              fetchCounts()
               setTimeout(() => {
                 alert("Redirecting to order page...");
                 navigate(`/order/${userid}`);
@@ -291,17 +293,19 @@ const CartPage = () => {
                 item.paymentStatus === "pending" && (
                   <motion.div
                     key={item._id}
-                    className="flex border border-rose-100 rounded-xl p-3 shadow-md bg-white/90 hover:shadow-lg transition-all duration-300"
+                    className="flex border border-rose-100 rounded-xl p-2 shadow-md bg-white/90 hover:shadow-lg transition-all duration-300"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
+                   <Link to={`/product/${item.productId}`} className="w-[30%]">
                     <img
-                      src={AppwriteService.getFileViewUrl(item.images[0])}
+                      src={item.images[0]}
                       alt="product"
-                      className="w-[35%] h-auto object-cover rounded-lg border border-rose-100"
+                      className=" h-auto object-cover rounded-lg border border-rose-100"
                     />
+                   </Link>
                     <div className="ml-4 w-[63%] flex-1">
                       <h2 className="font-semibold text-base text-rose-700">{item.header}</h2>
                       <p className="text-gray-500 text-xs mb-1">{item.description}</p>
@@ -335,7 +339,7 @@ const CartPage = () => {
                           <p className="text-xs text-gray-500 mt-1">Delivery by {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
                         </div>
                         <button
-                          className="text-red-500 text-sm border mt-4 px-2 py-2 rounded hover:bg-red-50"
+                          className="text-red-500 text-sm border mt-4 mr-2 px-2 py-2 rounded hover:bg-red-50"
                           onClick={() => openRemoveConfirm(item._id)}
                         >
                           🗑️ Remove
@@ -473,6 +477,44 @@ const CartPage = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          {showAddressConfirmPopup && (
+            <motion.div
+              className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="bg-white rounded-xl p-8 w-96 shadow-2xl text-center border border-rose-200"
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 50, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <h2 className="text-lg font-bold mb-4 text-rose-700">Address Required</h2>
+                <p className="text-gray-700 text-sm mb-6">
+                  Please select an address before proceeding to payment.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 shadow-sm"
+                    onClick={() => setShowAddressConfirmPopup(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow-md"
+                    onClick={() => {
+                      setShowAddressConfirmPopup(false);
+                      navigate(`/address/${userid}`);
+                    }}
+                  >
+                    Go to Address Page
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </Container>

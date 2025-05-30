@@ -115,11 +115,13 @@ const WishlistPage = () => {
                 </div>
                 <div className="text-xs text-gray-400 mb-2">Wish ID: {item.productId}</div>
                 <div className="flex items-start gap-4">
+                  <Link to={`/product/${item.productId}`} className="w-[25vw]">
                   <img
-                    src={AppwriteService.getFileViewUrl(item.images[0])}
+                    src={item.images[0]}
                     alt={item.header}
-                    className="w-28 h-36 object-cover rounded-lg border border-rose-100 shadow"
+                    className=" h-auto object-cover rounded-lg border border-rose-100 shadow"
                   />
+                  </Link>
                   <div className="flex-1">
                     <div className="font-semibold text-lg text-gray-800 mb-1 truncate">
                       {item.header}

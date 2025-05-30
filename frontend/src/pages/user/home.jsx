@@ -21,7 +21,7 @@ const Home = () => {
         // Reverse products so newest appear first
         const withURLs = [...response.data].reverse().map(product => ({
           ...product,
-          previewImage: AppwriteService.getFileViewUrl(product.images[0])
+          previewImage: product.images[0]
         }));
         setProducts(withURLs);
         setImageURLs(withURLs.map(p => p.previewImage));
@@ -75,7 +75,7 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="w-full h-full grid  grid-cols-1 md:grid-cols-2 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl overflow-y-auto">
+      <div className="w-full h-full grid  grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl overflow-y-auto">
         <section className="relative w-full h-[90vh] md:h-full rounded-xl overflow-hidden shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
           {/* Background Image Carousel */}
           {imageURLs.map((img, idx) => (

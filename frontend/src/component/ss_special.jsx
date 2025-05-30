@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AppwriteService } from '../FilesPaths/all_path';
+import { Link } from 'react-router-dom';
+
 
 const SSSpecialCarousel = ({ products }) => {
   const scrollRef = useRef(null);
@@ -14,6 +16,7 @@ const SSSpecialCarousel = ({ products }) => {
 
   // Clone products for infinite loop effect
   const clonedProducts = [...products, ...products];
+  
 
   const scrollToNext = () => {
     const container = scrollRef.current;
@@ -115,8 +118,16 @@ const SSSpecialCarousel = ({ products }) => {
             const itemCenter = itemLeft + 273 / 2 + containerRect.left;
             const distance = Math.abs(containerCenter - itemCenter);
             const maxDistance = containerRect.width / 2;
-            // Scale from 0.92 (edge) to 1.08 (center)
-            scale = 0.92 + (1 - Math.min(distance / maxDistance, 1)) * 0.16;
+            // Start scaling when image is 20% into viewport (80% of maxDistance)
+            const startScaleDistance = 0.8 * maxDistance;
+            let t = 0;
+            if (distance < startScaleDistance) {
+              t = 1 - distance / startScaleDistance;
+            } else {
+              t = 0;
+            }
+            const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+            scale = 0.92 + easeOutCubic(t) * 0.16;
           }
           // ------------------------------------------
 
@@ -130,15 +141,16 @@ const SSSpecialCarousel = ({ products }) => {
                 scrollSnapAlign: 'center',
                 scale,
               }}
-              initial={false}
+             viewport={{ once: true, amount: 0.3 }} // Trigger animation when in view
               animate={false}
             >
+              <Link to={'/product'}>
               <img
-                src={AppwriteService.getFileViewUrl(img.images[0])}
+                src={img.images[0]}
                 alt={`SS Special ${i}`}
                 className="w-full h-full object-cover transition-transform duration-700 ease-in-out  group-hover:scale-105"
                 loading="lazy"
-              />
+              /></Link>
               {/* Overlay for product name or badge */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
                 <span className="text-white font-semibold text-lg drop-shadow">

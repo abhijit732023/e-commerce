@@ -11,12 +11,6 @@ import { Link } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-const CATEGORY_OPTIONS = [
-  { label: "All", value: "All" },
-  { label: "Regular", value: "Regular" },
-  { label: "Premium", value: "Premium" },
-  { label: "SS Special", value: "SSspecial" },
-];
 
 const cardVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.97 },
@@ -58,14 +52,15 @@ const ProductPage = () => {
     };
     fetchProducts();
   }, []);
-
+  
+  const categoryOptions = ["All", ...new Set(products.map(p => p.category).filter(Boolean))];
   const toggleLike = (productId) => {
     setLikedProducts((prev) => ({
       ...prev,
       [productId]: !prev[productId],
     }));
   };
-
+  
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     if (category === "All") {
@@ -82,6 +77,8 @@ const ProductPage = () => {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.5 }}
+
       >
         {/* Header */}
         <motion.div
@@ -89,6 +86,8 @@ const ProductPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
+          viewport={{ once: true, amount: 0.5 }}
+
         >
           <div>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-rose-700 drop-shadow mb-1">
@@ -99,22 +98,22 @@ const ProductPage = () => {
             </p>
           </div>
 
-          {/* Filter Buttons */}
-          <div className="flex gap-2 md:gap-3 mt-2 md:mt-0 overflow-x-auto scrollbar-hide">
-            {CATEGORY_OPTIONS.map(({ label, value }) => (
-              <button
-                key={value}
-                onClick={() => handleCategoryChange(value)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
-                  ${selectedCategory === value
-                    ? "bg-rose-600 text-white border-rose-600 shadow-lg"
-                    : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
-                  }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+         <div className="flex gap-2 md:gap-3 mt-2 md:mt-0 overflow-x-auto scrollbar-hide">
+  {categoryOptions.map((value) => (
+    <button
+      key={value}
+      onClick={() => handleCategoryChange(value)}
+      className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
+        ${selectedCategory === value
+          ? "bg-rose-600 text-white border-rose-600 shadow-lg"
+          : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
+        }`}
+    >
+      {value}
+    </button>
+  ))}
+</div>
+
         </motion.div>
 
         {/* Product Grid */}
@@ -127,6 +126,8 @@ const ProductPage = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 30 }}
+                  viewport={{ once: true, amount: 0.5 }}
+
                 >
                   No products found in this category.
                 </motion.div>
@@ -144,6 +145,8 @@ const ProductPage = () => {
                     key={product._id}
                     className="w-full   bg-white border border-rose-100 rounded-2xl shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
                     variants={cardVariants}
+                    viewport={{ once: true, amount: 0.5 }}
+
                   >
                     <Link to={`${product._id}`} className="block h-full w-full">
                       <div className="relative w-full p-2">

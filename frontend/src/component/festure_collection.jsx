@@ -15,7 +15,7 @@ const FeaturedCollection = ({ products }) => {
 
   const getImageUrl = (imgId) => {
     // Use Appwrite service to fetch image URLs if needed
-    return AppwriteService.getFileViewUrl(imgId);
+    return imgId;
   };
 
   // Animation variants for cards

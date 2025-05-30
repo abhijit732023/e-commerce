@@ -1,163 +1,172 @@
-import express from 'express';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import {Product_model_2} from '../../index.js'
-import fs from 'fs';
+import express from "express";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import{ product_add_model} from "../../index.js";
 
-const Product_route_2 = express.Router();
+const router = express.Router();
 
-// Setup __dirname for ES modules
+// Setup __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Image upload directory
-const uploadDir = path.join(__dirname, '..', '..', 'images');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure images directory exists
+const imageStoragePath = path.join(__dirname, "../../images");
+if (!fs.existsSync(imageStoragePath)) {
+  fs.mkdirSync(imageStoragePath, { recursive: true });
 }
 
-// Multer configuration
+// Configure Multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => cb(null, `abhi${Date.now()}-${file.originalname}`),
+  destination: function (req, file, cb) {
+    cb(null, imageStoragePath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
 });
 const upload = multer({ storage });
 
-// ✅ POST /upload - Add new product with images
-Product_route_2.post('/upload', upload.array('images', 5), async (req, res) => {
-  console.log(req.body);
+/*----------------- CREATE PRODUCT ------------------*/
+router.post("/add", upload.array("images", 5), async (req, res) => {
+  console.log('products',req.body);
   
   try {
     const {
       header,
-      brand,
-      originalPrice,
-      discountedPrice,
-      category,
-      color,
-      quantity,
-      availableSizes,
-      tags,
-      dateToDeliver,
-      inStock,
-      isFeatured,
       description,
+      price,
+      fakePrie,
+      inStockStatus,
+      wholeSaleQuantity,
+      WholeSalePrice,
+      category,
+      dateToDeliver,
+      size,
+      tags,
+      color,
     } = req.body;
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: 'No images uploaded' });
-    }
+    const imagePaths = req.files.map(file => "http://localhost:3000/images/" + file.filename);
+    console.log('imagespaths',imagePaths);
+    
 
-    const imageUrls = req.files.map(file => `${req.protocol}://${req.get('host')}/images/${file.filename}`);
-
-    const newProduct = new Product_model_2({
+    const newProduct = new product_add_model({
       header,
-      brand,
-      originalPrice: parseFloat(originalPrice),
-      discountedPrice: parseFloat(discountedPrice),
-      category,
-      color,
-      quantity: parseInt(quantity),
-      availableSizes: Array.isArray(availableSizes) ? availableSizes : availableSizes.split(','),
-      tags: tags.split(',').map(tag => tag.trim()),
-      dateToDeliver: new Date(dateToDeliver),
-      inStock: inStock === 'true',
-      isFeatured: isFeatured === 'true',
       description,
-      images: imageUrls,
+      price,
+      fakePrie,
+      inStockStatus,
+      wholeSaleQuantity,
+      WholeSalePrice,
+      category,
+      dateToDeliver,
+      size: Array.isArray(size) ? size : [size],
+      tags: Array.isArray(tags) ? tags : tags?.split(","),
+      color,
+      images: imagePaths,
     });
 
-    const savedProduct = await newProduct.save();
-    res.status(201).json({ message: '✅ Product created successfully', product: savedProduct });
+    const saved = await newProduct.save();
+    res.status(201).json(saved);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: '❌ Error creating product', error: err.message });
+    console.error("Product creation error:", err);
+    res.status(500).json({ message: "Product creation failed", err });
   }
 });
 
-// ✅ GET /products - Get all products
-Product_route_2.get('/products', async (req, res) => {
+/*----------------- GET ALL PRODUCTS ------------------*/
+router.get("/", async (req, res) => {
   try {
-    const products = await Product_model_2.find();
+    const products = await product_add_model.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
-    res.status(500).json({ message: '❌ Error fetching products', error: err.message });
+    res.status(500).json({ message: "Failed to fetch products", err });
   }
 });
 
-// ✅ GET /product/:id - Get product by ID
-Product_route_2.get('/product/:id', async (req, res) => {
+/*----------------- GET SINGLE PRODUCT ------------------*/
+router.get("/:id", async (req, res) => {
   try {
-    const product = await Product_model_2.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const product = await product_add_model.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
     res.json(product);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error fetching product", err });
   }
 });
 
-// ✅ PUT /update/:id - Update product
-Product_route_2.put('/update/:id', async (req, res) => {
-  // console.log(req.body);
-  console.log(req.params.id);
-  
-  
+/*----------------- UPDATE PRODUCT ------------------*/
+router.put("/update/:id", upload.array("images", 5), async (req, res) => {
   try {
-    const product = await Product_model_2.find(req.params.id);
-    console.log('proo',product);
-    
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const {
+      header,
+      description,
+      price,
+      fakePrie,
+      inStockStatus,
+      wholeSaleQuantity,
+      WholeSalePrice,
+      category,
+      dateToDeliver,
+      size,
+      tags,
+      color,
+    } = req.body;
 
-    // Compare each field
-    let isChanged = false;
-    const fields = [
-      "header", "description", "price", "fakePrie", "inStockStatus",
-      "wholeSaleQuantity", "WholeSalePrice", "category", "dateToDeliver",
-      "size", "tags", "color", "images", "discount"
-    ];
+    const product = await product_add_model.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-    for (const field of fields) {
-      // For arrays, compare as strings
-      if (Array.isArray(product[field]) && Array.isArray(req.body[field])) {
-        if (JSON.stringify(product[field]) !== JSON.stringify(req.body[field])) {
-          isChanged = true;
-          break;
-        }
-      } else if (
-        (product[field] instanceof Date && new Date(product[field]).toISOString() !== new Date(req.body[field]).toISOString()) ||
-        product[field] !== req.body[field]
-      ) {
-        isChanged = true;
-        break;
-      }
+    // If new images are uploaded, delete old images
+    if (req.files && req.files.length > 0) {
+      product.images.forEach(img => {
+        const localPath = path.join(__dirname, "../../", img);
+        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+      });
     }
 
-    if (!isChanged) {
-      return res.status(200).json({ message: "No changes detected", product });
-    }
+    const imagePaths = req.files.map(file => "/images/" + file.filename);
 
-    // Update only if changed
-    const updatedProduct = await Product_model_2.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    res.json({ message: "Product updated", product: updatedProduct });
+    product.header = header;
+    product.description = description;
+    product.price = price;
+    product.fakePrie = fakePrie;
+    product.inStockStatus = inStockStatus;
+    product.wholeSaleQuantity = wholeSaleQuantity;
+    product.WholeSalePrice = WholeSalePrice;
+    product.category = category;
+    product.dateToDeliver = dateToDeliver;
+    product.size = Array.isArray(size) ? size : [size];
+    product.tags = Array.isArray(tags) ? tags : tags?.split(",");
+    product.color = color;
+    if (imagePaths.length > 0) product.images = imagePaths;
+
+    const updated = await product.save();
+    res.json(updated);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: "Failed to update product", err });
   }
 });
 
-// ✅ DELETE /delete/:id - Delete product
-Product_route_2.delete('/delete/:id', async (req, res) => {
+/*----------------- DELETE PRODUCT ------------------*/
+router.delete("/delete/:id", async (req, res) => {
   try {
-    const deletedProduct = await Product_model_2.findByIdAndDelete(req.params.id);
-    if (!deletedProduct) return res.status(404).json({ message: 'Product not found' });
-    res.json({ message: '✅ Product deleted successfully' });
+    const product = await product_add_model.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Delete images from local storage
+    product.images.forEach(img => {
+      const localPath = path.join(__dirname, "../../", img);
+      if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+    });
+
+    await product.deleteOne();
+    res.json({ message: "Product deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error deleting product", err });
   }
 });
 
-export default Product_route_2;
+export default router;

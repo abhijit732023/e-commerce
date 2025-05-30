@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Regular', 'Premium', 'SSspecial']
+      default: 'Regular'
     }, // Category
     dateToDeliver: { type: Date, required: true }, // Delivery
     size: {

@@ -17,7 +17,7 @@ const SwipeImageViewer = ({ images, name }) => {
     {images.map((image, index) => (
       <img
         key={index}
-        src={AppwriteService.getFileViewUrl(image)}
+        src={image}
         alt={`${name} - ${index + 1}`}
         className={`w-full h-full object-cover object-top transition-opacity duration-300 ease-in-out ${index === current ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0`}
       />
