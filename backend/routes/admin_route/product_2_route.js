@@ -49,7 +49,7 @@ router.post("/add", upload.array("images", 5), async (req, res) => {
       color,
     } = req.body;
 
-    const imagePaths = req.files.map(file => "http://localhost:3000/images/" + file.filename);
+    const imagePaths = req.files.map(file => "http://api.khuwabbysanjal.com/images/" + file.filename);
     console.log('imagespaths',imagePaths);
     
 
