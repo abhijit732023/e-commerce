@@ -27,6 +27,7 @@ const app = express();
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // CORS
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -37,7 +38,14 @@ app.use(
         "http://localhost:5173",
         "http://192.168.182.23:5173",
       ];
-      if (allowedOrigins.includes(origin) || !origin) {
+
+      const customDomainPattern = /\.?khuwabbysanjal\.com$/;
+
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        (origin.startsWith("https://") && new URL(origin).hostname.match(customDomainPattern))
+      ) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -46,6 +54,7 @@ app.use(
     credentials: true,
   })
 );
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
