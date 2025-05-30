@@ -235,4 +235,3 @@ export default function ProductForm({ productId }) {
   );
 };
 
-export default ProductForm;
