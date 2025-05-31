@@ -49,7 +49,7 @@ router.post("/add", upload.array("images", 5), async (req, res) => {
       color,
     } = req.body;
 
-    const imagePaths = req.files.map(file => `/images/` + file.filename);
+    const imagePaths = req.files.map(file => `${config.backendURl}/images/` + file.filename);
     console.log('imagespaths',imagePaths);
     
 
