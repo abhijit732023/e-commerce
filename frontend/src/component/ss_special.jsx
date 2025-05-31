@@ -1,193 +1,190 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AppwriteService } from '../FilesPaths/all_path';
 import { Link } from 'react-router-dom';
-
 
 const SSSpecialCarousel = ({ products }) => {
   const scrollRef = useRef(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const interactionTimeout = useRef(null);
-  const autoScrollTimeout = useRef(null);
-  const [scrollX, setScrollX] = useState(0);
+  const autoScrollInterval = useRef(null);
 
-  const scrollAmount = 293; // 273 + 20 for spacing
-  const scrollInterval = 3000;
+  // Constants for sizing and spacing
+  const itemWidth = 273;
+  const itemGap = 24;
+  const scrollStep = itemWidth + itemGap;
+  const autoScrollDelay = 3500;
 
-  // Clone products for infinite loop effect
-  const clonedProducts = [...products, ...products];
-  
+  // Double products for seamless infinite scroll
+  const extendedProducts = [...products, ...products];
 
-  const scrollToNext = () => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const maxScroll = container.scrollWidth - container.clientWidth;
-    const currentScroll = container.scrollLeft;
-
-    let targetScroll = currentScroll + scrollAmount;
-
-    // Length of original products in pixels
-    const originalScrollWidth = (products.length) * (273 + 24); // width + gap
-
-    // If scroll passed the original products length, reset scroll to start of original products
-    if (targetScroll >= originalScrollWidth) {
-      // Reset scroll position instantly to start of original products (without animation)
-      container.scrollTo({
-        left: targetScroll - originalScrollWidth,
-        behavior: 'auto',
-      });
-      // Then scroll smoothly to next position
-      setTimeout(() => {
-        container.scrollTo({
-          left: targetScroll,
-          behavior: 'smooth',
-        });
-      }, 50);
-      return;
-    }
-
-    container.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth',
-    });
-  };
-
+  // Start the auto-scroll interval
   const startAutoScroll = () => {
-    stopAutoScroll();
-    autoScrollTimeout.current = setTimeout(function loop() {
-      if (!isInteracting) {
-        scrollToNext();
-      }
-      autoScrollTimeout.current = setTimeout(loop, scrollInterval);
-    }, scrollInterval);
-  };
+    if (autoScrollInterval.current) return; // avoid multiple intervals
 
-  const stopAutoScroll = () => {
-    clearTimeout(autoScrollTimeout.current);
-  };
-
-  const handleInteraction = () => {
-    setIsInteracting(true);
-    stopAutoScroll();
-
-    clearTimeout(interactionTimeout.current);
-    interactionTimeout.current = setTimeout(() => {
-      setIsInteracting(false);
-      startAutoScroll();
-    }, 3000);
-  };
-
-  // Track scroll position for scaling effect
-  useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
-    const onScroll = () => setScrollX(container.scrollLeft);
-    container.addEventListener('scroll', onScroll);
-    return () => container.removeEventListener('scroll', onScroll);
-  }, []);
 
+    const maxScroll = products.length * scrollStep;
+    let scrollPosition = container.scrollLeft;
+
+    const step = 1; // pixels per frame
+    const fps = 60;
+    const interval = 1000 / fps;
+
+    const smoothScroll = () => {
+      scrollPosition += step;
+      if (scrollPosition >= maxScroll) {
+        scrollPosition -= maxScroll;
+      }
+      container.scrollLeft = scrollPosition;
+      autoScrollInterval.current = requestAnimationFrame(smoothScroll);
+    };
+
+    autoScrollInterval.current = requestAnimationFrame(smoothScroll);
+  };
+
+  // Stop auto-scroll
+  const stopAutoScroll = () => {
+    if (autoScrollInterval.current) {
+      cancelAnimationFrame(autoScrollInterval.current);
+      autoScrollInterval.current = null;
+    }
+  };
+
+  // Handle user interaction: pause auto-scroll, resume after 3s idle
+  const onUserInteract = () => {
+    // If you want to keep pausing on interaction, uncomment below:
+    // setIsInteracting(true);
+    // stopAutoScroll();
+
+    // clearTimeout(interactionTimeout.current);
+    // interactionTimeout.current = setTimeout(() => {
+    //   setIsInteracting(false);
+    //   startAutoScroll();
+    // }, 3000);
+  };
+
+  // On mount: initialize scroll to the start of second half (to allow seamless scroll backward)
   useEffect(() => {
-    interactionTimeout.current = setTimeout(() => {
-      setIsInteracting(false);
-      startAutoScroll();
-    }, 3000);
+    const container = scrollRef.current;
+    if (container) {
+      container.scrollLeft = products.length * scrollStep; // Start at the duplicated half
+    }
+    startAutoScroll();
 
     return () => {
       stopAutoScroll();
       clearTimeout(interactionTimeout.current);
     };
-  }, []);
+  }, [products.length]);
+
+  // Manual scroll by arrows (left or right)
+  const scrollByAmount = (amount) => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const maxScroll = products.length * scrollStep;
+
+    let newScrollLeft = container.scrollLeft + amount;
+
+    // Loop scroll position for seamless effect
+    if (newScrollLeft < 0) {
+      newScrollLeft += maxScroll;
+      container.scrollLeft = newScrollLeft;
+    } else if (newScrollLeft >= maxScroll) {
+      newScrollLeft -= maxScroll;
+      container.scrollLeft = newScrollLeft;
+    }
+
+    container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+  };
 
   return (
-    <section className="rounded-xl bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-2 md:px-10 py-8 shadow-lg ">
-      <div className="flex items-center justify-between  px-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-rose-700  tracking-tight drop-shadow-sm">
+    <section className="relative rounded-xl bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-4 md:px-10 py-10 shadow-xl select-none">
+      <div className="flex items-center justify-between mb-6 px-2">
+        <h2 className="text-3xl font-extrabold text-rose-700 tracking-tight drop-shadow-sm">
           SS Special Picks
         </h2>
-        <span className="text-sm text-amber-600 font-medium bg-amber-100 px-3 py-1 rounded-full shadow-sm hidden md:inline">
+        <span className="text-sm text-amber-700 font-semibold bg-amber-100 px-4 py-1 rounded-full shadow-md hidden md:inline">
           Curated for You
         </span>
       </div>
+
       <div
         ref={scrollRef}
-        className="overflow-x-auto flex space-x-6 overflow-y-hidden  h-full scroll-smooth snap-x snap-mandatory pb-4"
-        onWheel={handleInteraction}
-        onTouchStart={handleInteraction}
-        onMouseDown={handleInteraction}
+        className="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-6 scrollbar-hide"
+        onWheel={onUserInteract}
+        onTouchStart={onUserInteract}
+        onMouseDown={onUserInteract}
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
         }}
       >
-        {clonedProducts.map((img, i) => {
-          // --- SCALE CALCULATION BASED ON CENTER ---
-          let scale = 0.92;
-          const container = scrollRef.current;
-          if (container) {
-            const containerRect = container.getBoundingClientRect();
-            const containerCenter = containerRect.left + containerRect.width / 2;
-            const itemLeft = i * (273 + 24) - scrollX; // 273px width + 24px gap (space-x-6)
-            const itemCenter = itemLeft + 273 / 2 + containerRect.left;
-            const distance = Math.abs(containerCenter - itemCenter);
-            const maxDistance = containerRect.width / 2;
-            // Start scaling when image is 20% into viewport (80% of maxDistance)
-            const startScaleDistance = 0.8 * maxDistance;
-            let t = 0;
-            if (distance < startScaleDistance) {
-              t = 1 - distance / startScaleDistance;
-            } else {
-              t = 0;
-            }
-            const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
-            scale = 0.92 + easeOutCubic(t) * 0.16;
-          }
-          // ------------------------------------------
-
-          return (
-            <motion.div
-              key={i}
-              className="bg-white shadow-xl mt-15 rounded-2xl snap-center overflow-hidden flex-shrink-0 border border-amber-200 hover:shadow-2xl transition-all duration-500 group relative"
-              style={{
-                width: '273px',
-                height: '410px',
-                scrollSnapAlign: 'center',
-                scale,
-              }}
-             viewport={{ once: true, amount: 0.3 }} // Trigger animation when in view
-              animate={false}
-            >
-              <Link to={'/product'}>
+        {extendedProducts.map((item, i) => (
+          <motion.div
+            key={i}
+            className="relative snap-center flex-shrink-0 rounded-3xl shadow-lg border border-amber-300 bg-white cursor-pointer overflow-hidden"
+            style={{ width: itemWidth, height: 420 }}
+            whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(255, 183, 77, 0.6)' }}
+            onClick={() => window.scrollTo(0, 0)}
+          >
+            <Link to="/product" className="block w-full h-full">
               <img
-                src={img.images[0]}
-                alt={`SS Special ${i}`}
-                className="w-full h-full object-cover transition-transform duration-700 ease-in-out  group-hover:scale-105"
+                src={item.images[0]}
+                alt={item.header || `Special Product ${i}`}
                 loading="lazy"
-              /></Link>
-              {/* Overlay for product name or badge */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
-                <span className="text-white font-semibold text-lg drop-shadow">
-                  {img.header || 'Special Product'}
-                </span>
-              </div>
-              {/* Optional: Add a badge for new/featured */}
-              {img.isFeatured && (
-                <span className="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
-                  Featured
-                </span>
-              )}
-            </motion.div>
-          );
-        })}
+                className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+              />
+            </Link>
+
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5 flex flex-col justify-end h-24">
+              <h3 className="text-white font-bold text-lg truncate drop-shadow-lg">
+                {item.header || 'Special Product'}
+              </h3>
+            </div>
+
+            {item.isFeatured && (
+              <span className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
+                Featured
+              </span>
+            )}
+          </motion.div>
+        ))}
       </div>
-      {/* Custom scrollbar hide for webkit */}
-      <style>
-        {`
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-        `}
-      </style>
+
+      {/* Navigation Arrows */}
+      <button
+        aria-label="Scroll Left"
+        onClick={() => {
+          onUserInteract();
+          scrollByAmount(-scrollStep);
+        }}
+        className="hidden md:flex absolute top-1/2 left-3 -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-amber-400 text-white shadow-lg hover:bg-amber-500 transition"
+      >
+        ‹
+      </button>
+      <button
+        aria-label="Scroll Right"
+        onClick={() => {
+          onUserInteract();
+          scrollByAmount(scrollStep);
+        }}
+        className="hidden md:flex absolute top-1/2 right-3 -translate-y-1/2 items-center justify-center w-10 h-10 rounded-full bg-amber-400 text-white shadow-lg hover:bg-amber-500 transition"
+      >
+        ›
+      </button>
+
+      {/* Hide scrollbar */}
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 };
