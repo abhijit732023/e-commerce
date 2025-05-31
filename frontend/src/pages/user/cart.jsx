@@ -399,7 +399,7 @@ const CartPage = () => {
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
                   <div
-                    className="fixed bottom-[5vh] mt-10 pb-10 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-20"
+                    className="relative bottom-[5vh] mt-10 pb-5 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-0"
                     style={{
                       boxShadow: "0 -2px 16px 0 rgba(0,0,0,0.04)",
                       minHeight: "72px",

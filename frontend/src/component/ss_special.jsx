@@ -26,11 +26,24 @@ const SSSpecialCarousel = ({ products }) => {
     const currentScroll = container.scrollLeft;
 
     let targetScroll = currentScroll + scrollAmount;
-    if (targetScroll > maxScroll) {
+
+    // Length of original products in pixels
+    const originalScrollWidth = (products.length) * (273 + 24); // width + gap
+
+    // If scroll passed the original products length, reset scroll to start of original products
+    if (targetScroll >= originalScrollWidth) {
+      // Reset scroll position instantly to start of original products (without animation)
       container.scrollTo({
-        left: 0,
-        behavior: 'smooth',
+        left: targetScroll - originalScrollWidth,
+        behavior: 'auto',
       });
+      // Then scroll smoothly to next position
+      setTimeout(() => {
+        container.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth',
+        });
+      }, 50);
       return;
     }
 

@@ -3,7 +3,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import{ product_add_model} from "../../index.js";
+import{ product_add_model,config} from "../../index.js";
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ router.post("/add", upload.array("images", 5), async (req, res) => {
       color,
     } = req.body;
 
-    const imagePaths = req.files.map(file => "http://api.khuwabbysanjal.com/images/" + file.filename);
+    const imagePaths = req.files.map(file => `${config.backendURl}/images/` + file.filename);
     console.log('imagespaths',imagePaths);
     
 
