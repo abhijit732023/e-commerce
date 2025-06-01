@@ -39,6 +39,7 @@ cors({
       "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
       "http://localhost:5173",
       "http://192.168.182.23:5173",
+      'https://e-commerce-a5cx44bel-abhijit732023s-projects.vercel.app',
     ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
