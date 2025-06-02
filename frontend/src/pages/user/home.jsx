@@ -67,7 +67,7 @@ const Home = () => {
    if (!allImagesLoaded) {
     return (
       <Container>
-        <div className="w-full h-screen flex items-center justify-center bg-white">
+        <div className="w-full h-full flex items-center justify-center bg-white">
         <p className="text-gray-600 text-xl">Loading...</p>
       </div>
       </Container>
