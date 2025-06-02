@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { AppwriteService } from '../FilesPaths/all_path';
+import { AppwriteService,ENV_File } from '../FilesPaths/all_path';
 
 const SwipeImageViewer = ({ images, name }) => {
   const [current, setCurrent] = useState(0);
@@ -17,7 +17,7 @@ const SwipeImageViewer = ({ images, name }) => {
     {images.map((image, index) => (
       <img
         key={index}
-        src={image}
+        src={ENV_File.backendURL+image}
         alt={`${name} - ${index + 1}`}
         className={`w-full h-full object-cover object-top transition-opacity duration-300 ease-in-out ${index === current ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0`}
       />

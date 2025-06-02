@@ -206,7 +206,7 @@ const ProductDetail = () => {
                         {product.images?.map((img, i) => (
                             <SwiperSlide key={i}>
                                 <img
-                                    src={img}
+                                    src={ENV_File.backendURL+img}
                                     alt={`product-img-${i}`}
                                     className="w-full h-full lg:h-full lg:w-full md:h-[500px] lg:object-cover object-cover rounded-2xl"
                                 />

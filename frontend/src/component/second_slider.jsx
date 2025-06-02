@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Link } from 'react-router-dom';
+import { ENV_File } from '../FilesPaths/all_path';
 
 const SwipeableSecondSectionSlider = ({ images }) => {
   const [index, setIndex] = useState(1);
@@ -94,7 +95,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
               }}
             >
               <img
-                src={img}
+                src={ENV_File.backendURL+img}
                 alt={`Slide ${i}`}
                 className="w-full h-full object-cover rounded-xl shadow-lg border border-amber-100 transition-transform duration-700 ease-in-out hover:scale-105"
                 loading="lazy"

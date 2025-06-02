@@ -301,7 +301,7 @@ const CartPage = () => {
                   >
                    <Link to={`/product/${item.productId}`} className="w-[30%]">
                     <img
-                      src={item.images[0]}
+                      src={ENV_File.backendURL+item.images[0]}
                       alt="product"
                       className=" h-auto object-cover rounded-lg border border-rose-100"
                     />

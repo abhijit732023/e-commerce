@@ -15,7 +15,7 @@ const sampleData = {
   WholeSalePrice: 10000,
   category: 'regular',
   dateToDeliver: '',
-  size: [,"S","X"],
+  size: [,"S"],
   tags: 'no',
   color: 'red',
   inStockStatus: 'In Stock',

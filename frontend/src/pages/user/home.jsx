@@ -83,7 +83,7 @@ const Home = () => {
           {imageURLs.map((img, idx) => (
             <img
               key={idx}
-              src={img}
+              src={ENV_File.backendURL+img}
               alt={`Slide ${idx}`}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
               style={{ zIndex: 1 }}

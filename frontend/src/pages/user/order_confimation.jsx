@@ -160,7 +160,7 @@ const OrderPage = () => {
                   <div className="w-32 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden border border-rose-100 shadow">
                     {order.images && order.images.length > 0 ? (
                       <img
-                        src={order.images[0]}
+                        src={ENV_File.backendURL+order.images[0]}
                         alt={order.header}
                         className="w-full h-full object-cover"
                       />

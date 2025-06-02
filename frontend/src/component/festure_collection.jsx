@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppwriteService } from '../FilesPaths/all_path';
+import { AppwriteService, ENV_File } from '../FilesPaths/all_path';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -49,7 +49,7 @@ const FeaturedCollection = ({ products }) => {
                 <Link to={`product/${product._id}`}>
                   {imageUrl ? (
                     <img
-                      src={`${imageUrl}`}
+                      src={ENV_File.backendURL+imageUrl}
                       alt={product.header}
                       className="w-full h-70 md:h-80 object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                       loading="lazy"

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { ENV_File } from '../FilesPaths/all_path';
 
 const SSSpecialCarousel = ({ products }) => {
   const scrollRef = useRef(null);
@@ -131,7 +132,7 @@ const SSSpecialCarousel = ({ products }) => {
           >
             <Link to="/product" className="block w-full h-full">
               <img
-                src={item.images[0]}
+                src={ENV_File.backendURL+item.images[0]}
                 alt={item.header || `Special Product ${i}`}
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"

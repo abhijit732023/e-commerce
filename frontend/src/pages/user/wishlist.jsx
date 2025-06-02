@@ -117,7 +117,7 @@ const WishlistPage = () => {
                 <div className="flex items-start gap-4">
                   <Link to={`/product/${item.productId}`} className="w-[25vw]">
                   <img
-                    src={item.images[0]}
+                    src={ENV_File.backendURL+item.images[0]}
                     alt={item.header}
                     className=" h-auto object-cover rounded-lg border border-rose-100 shadow"
                   />
