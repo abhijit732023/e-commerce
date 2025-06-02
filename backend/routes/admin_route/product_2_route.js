@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Ensure images directory exists
-const imageStoragePath = path.join(__dirname, "../../images");
+const imageStoragePath = "/var/www/your-app/images";
 if (!fs.existsSync(imageStoragePath)) {
   fs.mkdirSync(imageStoragePath, { recursive: true });
 }
@@ -20,13 +20,14 @@ if (!fs.existsSync(imageStoragePath)) {
 // Configure Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, imageStoragePath);
+    cb(null, "/var/www/your-app/images");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
+
 const upload = multer({ storage });
 
 /*----------------- CREATE PRODUCT ------------------*/
