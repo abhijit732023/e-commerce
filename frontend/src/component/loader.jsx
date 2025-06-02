@@ -4,7 +4,7 @@ import 'ldrs/react/Bouncy.css';
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0  flex items-center justify-center bg-rose-100/20 backdrop-blur-sm ">
+    <div className="fixed inset-0  flex items-center justify-center bg-rose-100/20 backdrop-blur-sm  z-10 ">
       <Bouncy
         size="80"
         speed="1.75"

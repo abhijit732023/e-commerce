@@ -10,10 +10,10 @@ const STOCK_STATUSES = ['In Stock', 'Out of Stock'];
 const sampleData = {
   header: 'best',
   description: 'asdfg',
-  price: 120,
-  fakePrie: 150,
+  price: 12000,
+  fakePrie: 15000,
   wholeSaleQuantity: 60,
-  WholeSalePrice: 100,
+  WholeSalePrice: 10000,
   category: 'Regular',
   dateToDeliver: '',
   size: ["S","M"],
@@ -90,7 +90,7 @@ const ProductForm = ({ product }) => {
 
     try {
       if (product?._id) {
-        await axios.put(`${ENV_File}/add/update/${product._id}`, formData);
+        await axios.put(`${ENV_File.backendURL}/add/update/${product._id}`, formData);
       } else {
         await axios.post(`${ENV_File.backendURL}/add/add`, formData);
       }
