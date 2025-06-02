@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // ✅ Serve static images
-app.use("/images", express.static("/var/www/your-app/images"));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // CORS
 
@@ -32,8 +32,8 @@ app.use(
 cors({
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "https://www.khuwabbysanjal.com",
-      "https://khuwabbysanjal.com",
+      "http://www.khuwabbysanjal.com",
+      "http://khuwabbysanjal.com",
       "https://e-commerce-lake-gamma-54.vercel.app",
       "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
       "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
