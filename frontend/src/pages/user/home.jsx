@@ -66,9 +66,11 @@ const Home = () => {
 
    if (!allImagesLoaded) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-white">
+      <Container>
+        <div className="w-full h-screen flex items-center justify-center bg-white">
         <p className="text-gray-600 text-xl">Loading...</p>
       </div>
+      </Container>
     );
   }
 
