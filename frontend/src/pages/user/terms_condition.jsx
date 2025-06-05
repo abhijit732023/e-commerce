@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaGavel, FaShieldAlt, FaSyncAlt, FaInfoCircle, FaLock, FaUndo, FaUserShield } from "react-icons/fa";
+import Container from "../../component/container";
 
 const sections = [
   {
@@ -88,9 +89,10 @@ const sections = [
 
 const TermsConditions = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 px-4 py-12 md:px-20 flex items-center justify-center">
+    <Container>
+          <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50    md:px-20 flex flex-col items-center justify-start overflow-y-auto max-h-screen">
       <motion.div
-        className="max-w-4xl w-full mx-auto bg-white/90 rounded-3xl shadow-2xl border border-rose-100 p-6 md:p-12"
+        className="max-w-4xl w-full mx-auto bg-white/90 rounded-md shadow-2xl border border-pink-200 p-6 md:p-12"
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -111,7 +113,7 @@ const TermsConditions = () => {
             Please read these Terms and Conditions carefully before using our website.
           </p>
         </div>
-        <div className="space-y-8">
+        <div className="space-y-8 pb-20">
           {sections.map((section, idx) => (
             <motion.section
               key={idx}
@@ -130,6 +132,8 @@ const TermsConditions = () => {
         </div>
       </motion.div>
     </div>
+    </Container>
+
   );
 };
 

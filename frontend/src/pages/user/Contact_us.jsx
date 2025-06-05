@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaPaperPlane } from "react-icons/fa";
+import Container from "../../component/container";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -23,9 +24,10 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 px-4 py-12 md:px-0 flex items-center justify-center">
+    <Container>
+      <div className="min-h-full bg-gradient-to-br from-indigo-50 via-white to-pink-50  md:px-0 flex items-center justify-center overflow-y-auto max-h-full">
       <motion.div
-        className="max-w-4xl w-full mx-auto bg-white/90 rounded-3xl shadow-2xl border border-rose-100 p-4  md:p-12"
+        className="max-w-4xl w-full mx-auto bg-white/90 rounded-3xl shadow-2xl border border-pink-200 p-6 md:p-12"
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -39,17 +41,17 @@ const ContactUs = () => {
           >
             <FaEnvelope className="text-white text-3xl" />
           </motion.div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-rose-700 mb-2 tracking-tight text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-rose-700 mb-2 tracking-tight text-center drop-shadow-lg">
             Contact Us
           </h1>
-          <p className="text-center text-gray-600 max-w-xl mb-8">
+          <p className="text-center text-gray-700 max-w-xl mb-8">
             Have a question, feedback, or just want to say hello? We’d love to hear from you.
           </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-10">
           {/* Contact Form */}
-          <div className="flex-1 bg-gray-50 py-8 px-4 rounded-2xl shadow-md border border-rose-100">
+          <div className="flex-1 bg-white py-8 px-6 rounded-3xl shadow-lg border border-pink-200">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -135,6 +137,7 @@ const ContactUs = () => {
         </div>
       </motion.div>
     </div>
+    </Container>
   );
 };
 

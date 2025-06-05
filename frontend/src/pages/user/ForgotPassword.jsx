@@ -16,6 +16,8 @@ export default function ForgotPassword() {
     try {
       const res = await axios.post(`${ENV_File.backendURL}/forgot-password`, { email });
       setMessage(res.data.message);
+      console.log(res.data);
+      
       setIsSuccess(true);
     } catch (err) {
       setMessage(err.response?.data?.message || "Something went wrong.");

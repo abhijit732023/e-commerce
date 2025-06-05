@@ -63,6 +63,16 @@ const ProductForm = ({ product }) => {
   const onSubmit = async (data) => {
     setPopup({ show: false, type: "", message: "" });
 
+    if (!imageFiles || imageFiles.length === 0) {
+      setPopup({
+        show: true,
+        type: "error",
+        message: "Please upload at least one product image.",
+      });
+      setTimeout(() => setPopup({ show: false, type: "", message: "" }), 2500);
+      return;
+    }
+
     const formData = new FormData();
 
     for (let key in data) {
@@ -154,20 +164,22 @@ const ProductForm = ({ product }) => {
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Price</label>
                 <input
-                  {...register("price", { required: true, valueAsNumber: true })}
+                  {...register("price", { required: "Price is required", valueAsNumber: true })}
                   type="number"
                   placeholder="Price"
                   className="w-full border border-rose-200 rounded-lg p-2 bg-amber-50"
                 />
+                {errors.price && <p className="text-rose-500 text-xs mt-1">Price is required</p>}
               </div>
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Fake Price (MRP)</label>
                 <input
-                  {...register("fakePrie", { required: true, valueAsNumber: true })}
+                  {...register("fakePrie", { required: "Fake Price is required", valueAsNumber: true })}
                   type="number"
                   placeholder="Fake Price"
                   className="w-full border border-rose-200 rounded-lg p-2 bg-amber-50"
                 />
+                {errors.fakePrie && <p className="text-rose-500 text-xs mt-1">Fake Price is required</p>}
               </div>
             </div>
 
@@ -189,18 +201,20 @@ const ProductForm = ({ product }) => {
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-sm text-amber-700">Wholesale Quantity</label>
                 <input
-                  {...register("wholeSaleQuantity", { required: true, valueAsNumber: true })}
+                  {...register("wholeSaleQuantity", { required: "Wholesale Quantity is required", valueAsNumber: true })}
                   type="number"
                   className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50"
                 />
+                {errors.wholeSaleQuantity && <p className="text-rose-500 text-xs mt-1">Wholesale Quantity is required</p>}
               </div>
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-amber-700">Wholesale Price</label>
                 <input
-                  {...register("WholeSalePrice", { required: true, valueAsNumber: true })}
+                  {...register("WholeSalePrice", { required: "Wholesale Price is required", valueAsNumber: true })}
                   type="number"
                   className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50"
                 />
+                {errors.WholeSalePrice && <p className="text-rose-500 text-xs mt-1">Wholesale Price is required</p>}
               </div>
             </div>
 
@@ -208,49 +222,54 @@ const ProductForm = ({ product }) => {
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Category</label>
                 <input
-                  {...register("category", { required: true })}
+                  {...register("category", { required: "Category is required" })}
                   className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50"
                 />
+                {errors.category && <p className="text-rose-500 text-xs mt-1">Category is required</p>}
               </div>
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Stock Status</label>
                 <select
-                  {...register("inStockStatus", { required: true })}
+                  {...register("inStockStatus", { required: "Stock Status is required" })}
                   className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50"
                 >
                   {STOCK_STATUSES.map((status) => (
                     <option key={status} value={status}>{status}</option>
                   ))}
                 </select>
+                {errors.inStockStatus && <p className="text-rose-500 text-xs mt-1">Stock Status is required</p>}
               </div>
             </div>
 
             <div>
               <label className="block font-semibold mb-1 text-amber-700">Delivery Date</label>
               <input
-                {...register("dateToDeliver", { required: true })}
+                {...register("dateToDeliver", { required: "Delivery Date is required" })}
                 type="date"
                 className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50"
               />
+              {errors.dateToDeliver && <p className="text-rose-500 text-xs mt-1">Delivery Date is required</p>}
             </div>
 
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Tags</label>
                 <input
-                  {...register("tags")}
+                  {...register("tags", { required: "Tags is required" })}
                   type="text"
                   placeholder="e.g. summer, casual, trending"
                   className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50"
                 />
+                {errors.tags && <p className="text-rose-500 text-xs mt-1">Tags is required</p>}
               </div>
               <div className="flex-1">
                 <label className="block font-semibold mb-1 text-rose-600">Color</label>
                 <input
-                  {...register("color")}
+                  {...register("color", { required: "Color is required" })}
                   type="text"
                   className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50"
                 />
+                {errors.color && <p className="text-rose-500 text-xs mt-1">Color is required</p>}
               </div>
             </div>
 

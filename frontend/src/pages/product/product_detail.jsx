@@ -128,7 +128,7 @@ const ProductDetail = () => {
     if (pricingMode === "wholesale") {
       const phone = "918657196476";
       const msg = encodeURIComponent(
-        `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${product.wholeSaleQuantity}\nPrice: ₹${product.WholeSalePrice}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber || ""}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
+        `Wholesale Order Request:\n\nProduct: ${product.header}\nQuantity: ${quantity}\nUser: ${user?.username || "User"}\nPhone: ${user?.mobileNumber || ""}\nEmail:${user?.email || ""}\n\nPlease confirm the order.`
       );
       window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
       return;

@@ -27,7 +27,12 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50 MB per file
+  }
+});
 
 /*----------------- CREATE PRODUCT ------------------*/
 router.post("/add", upload.array("images", 5), async (req, res) => {

@@ -9,7 +9,7 @@ const Container = ({ children, className = "", style = {} }) => {
     >
       {/* Header: fixed height */}
       <div
-        className="flex-shrink-0 overflow-hidden"
+        className="flex-shrink-0 mb-1 overflow-hidden"
         style={{ height: 62 /* fixed px height for consistency */ }}
       >
         <Header />

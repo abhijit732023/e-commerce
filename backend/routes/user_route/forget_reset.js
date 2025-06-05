@@ -4,13 +4,15 @@ import nodemailer from "nodemailer";
 import {config,user_register_model} from'../../index.js'
 //
 export const forgotPassword = async (req, res) => {
+  console.log(req.body);
+  
   const { email } = req.body;
   try {
     const user = await user_register_model.findOne({ email });
     if (!user)
       return res.status(404).json({ message: "User not found." });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, config.screteCode, {
       expiresIn: "5m",
     });
 
@@ -42,6 +44,8 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
+  console.log(req.body);
+  
   const { token } = req.params;
   const { password } = req.body;
 
