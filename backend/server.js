@@ -32,8 +32,8 @@ app.use(
 cors({
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "http://www.khuwabbysanjal.com",
-      "http://khuwabbysanjal.com",
+      "https://www.khuwabbysanjal.com",
+      "https://khuwabbysanjal.com",
       "https://e-commerce-lake-gamma-54.vercel.app",
       "https://e-commerce-j60o8juz0-abhijit732023s-projects.vercel.app",
       "https://e-commerce-git-main-abhijit732023s-projects.vercel.app",
