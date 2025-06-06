@@ -42,7 +42,7 @@ const Header = () => {
         </div>
       )}
       {/* Header */}
-      <header className="bg-white h-[8vh] fixed  w-full flex justify-between items-center px-6 py-3 rounded-b-2xl shadow-lg top-0 border-b border-rose-100 z-20">
+      <header className="bg-white h-[8vh] fixed  w-full flex justify-between items-center px-6 py-3 rounded-b-xl  top-0 border-b border-rose-100 z-20">
         {/* Menu Icon */}
         <motion.button
           whileTap={{ scale: 0.85 }}

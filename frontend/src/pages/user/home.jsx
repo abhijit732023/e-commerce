@@ -78,7 +78,7 @@ const Home = () => {
   return (
     <Container>
       <div className="w-full h-full grid  grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl overflow-y-auto">
-        <section className="relative w-full h-[90vh] md:h-full rounded-xl overflow-hidden shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
+        <section className="relative w-full min-h-[90vh] md:h-full rounded-xl shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
           {/* Background Image Carousel */}
           {imageURLs.map((img, idx) => (
             <img
@@ -139,7 +139,7 @@ const Home = () => {
           <SSSpecialCarousel products={products} />
         </section>
 
-        <footer className="rounded-t-xl pb-15 mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
+        <footer className="rounded-t-xl pb-6 mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
           <div className="w-full flex justify-center py-[1vw]">
             <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="SS Collection" />
           </div>
