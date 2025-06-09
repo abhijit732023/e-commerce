@@ -27,11 +27,17 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
+<<<<<<< HEAD
+const upload = multer({ storage,
+limits: {
+    fileSize: 50 * 1024 * 1024, }
+=======
 const upload = multer({
   storage,
   limits: {
     fileSize: 50 * 1024 * 1024, // 50 MB per file
   }
+>>>>>>> a7f4610351c00484cfca041bcc10c72cee0253e5
 });
 
 /*----------------- CREATE PRODUCT ------------------*/
