@@ -1,30 +1,37 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  Container, BottomMenuBar, SSSpecialCarousel, FeaturedCollection,
-  Header, ENV_File, AppwriteService, SecondSection
+  Container,
+  BottomMenuBar,
+  SSSpecialCarousel,
+  FeaturedCollection,
+  Header,
+  ENV_File,
+  AppwriteService,
+  SecondSection
 } from '../../FilesPaths/all_path';
-import logo from '../../images/logo4.png'
+import logo from '../../images/logo4.png';
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const [imageURLs, setImageURLs] = useState([]);
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const preloadedImagesRef = useRef([]);
+  const imageURLsRef = useRef([]);
+
+  // Fetch products and extract preview image URLs
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-        // Reverse products so newest appear first
-        const withURLs = [...response.data].reverse().map(product => ({
+        const reversed = [...response.data].reverse().map(product => ({
           ...product,
           previewImage: product.images[0]
         }));
-        setProducts(withURLs);
-        setImageURLs(withURLs.map(p => p.previewImage));
+        setProducts(reversed);
+        imageURLsRef.current = reversed.map(p => p.previewImage);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
@@ -32,87 +39,98 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  const secondSectionImages = useMemo(
-    () => (products && Array.isArray(products) ? products.map(p => p.previewImage).filter(Boolean) : []),
-    [products]
-  );
+  // Preload and store images once
   useEffect(() => {
-    if (imageURLs.length === 0) return;
+    if (imageURLsRef.current.length === 0) return;
 
     const preloadImages = async () => {
-      await Promise.all(
-        imageURLs.map(
-          src => new Promise(resolve => {
-            const img = new Image();
-            img.src = src;
-            img.onload = resolve;
-            img.onerror = resolve;
-          })
-        )
-      );
+      preloadedImagesRef.current = [];
+
+      const promises = imageURLsRef.current.map((src) => {
+        return new Promise(resolve => {
+          const img = new Image();
+          img.src = ENV_File.backendURL + src;
+          img.onload = () => {
+            preloadedImagesRef.current.push(img);
+            resolve();
+          };
+          img.onerror = resolve;
+        });
+      });
+
+      await Promise.all(promises);
       setAllImagesLoaded(true);
     };
 
     preloadImages();
-  }, [imageURLs]);
+  }, [products]);
 
+  // Auto-rotate images
   useEffect(() => {
-    if (!allImagesLoaded || imageURLs.length === 0) return;
+    if (!allImagesLoaded || preloadedImagesRef.current.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentImageIndex(prev => (prev + 1) % imageURLs.length);
+      setCurrentImageIndex(prev => (prev + 1) % preloadedImagesRef.current.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [allImagesLoaded, imageURLs]);
+  }, [allImagesLoaded]);
 
-   if (!allImagesLoaded) {
+  const secondSectionImages = useMemo(
+    () => (products ? products.map(p => p.previewImage).filter(Boolean) : []),
+    [products]
+  );
+
+  if (!allImagesLoaded) {
     return (
       <Container>
         <div className="w-full h-full flex items-center justify-center bg-white">
-        <p className="text-gray-600 text-xl">Loading...</p>
-      </div>
+          <p className="text-gray-600 text-xl">Loading...</p>
+        </div>
       </Container>
     );
   }
 
-
   return (
     <Container>
-      <div className="w-full h-full grid  grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl overflow-y-auto">
-        <section className="relative w-full min-h-[90vh] md:h-full rounded-xl shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
-          {/* Background Image Carousel */}
-          {imageURLs.map((img, idx) => (
+      <div className="grid h-[84vh] grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-md  shadow-xl overflow-y-auto">
+
+        {/* Hero Section */}
+        <section className="relative h-[85vh] md:h-full rounded-xl shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
+          {preloadedImagesRef.current.map((img, idx) => (
             <img
               key={idx}
-              src={ENV_File.backendURL+img}
+              src={img.src}
               alt={`Slide ${idx}`}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
               style={{ zIndex: 1 }}
             />
           ))}
-          {/* Overlay */}
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-black/50 to-black/60 flex flex-col justify-center items-center text-center px-[4vw]">
             <h1 className="text-[7vw] md:text-[3.5vw] font-extrabold text-white tracking-wide leading-tight mb-[2vw] drop-shadow-lg">
-              Welcome to<br /> <span className="text-rose-200 text-[8vw] md:text-[3vw]">SS Collection</span>
+              Welcome to<br />
+              <span className="text-rose-200 text-[8vw] md:text-[3vw]">SS Collection</span>
             </h1>
             <p className="text-[4vw] md:text-[1.5vw] text-white/90 max-w-[90vw] md:max-w-[40vw] mb-[2vw] font-medium drop-shadow animate-fade-in">
               Discover powerful experiences crafted for your unique style.
             </p>
             <Link
               to={"/product"}
-              className="inline-block mt-[2vw] px-[6vw] py-[2vw] md:px-[2vw] md:py-[1vw] bg-rose-600 text-white font-bold rounded-full shadow-lg hover:bg-rose-700 transition-all duration-200 text-[4vw] md:text-lg"
+              className="inline-block mt-1 px-[6vw] py-[2vw] md:px-[2vw] md:py-[1vw] bg-rose-600 text-white font-bold rounded-full shadow-lg hover:bg-rose-700 transition-all duration-200 text-[4vw] md:text-lg"
             >
               Shop Now
             </Link>
           </div>
-          {/* Decorative Gradient Border */}
           <div className="absolute inset-0 pointer-events-none rounded-3xl border-4 border-transparent bg-gradient-to-br from-rose-200/40 via-amber-100/30 to-white/0"></div>
         </section>
 
-        <section className="mt-[0.5vh] h-full">
+        {/* Second Section Image Strip */}
+        <section className="mt-0.5 h-full">
           <SecondSection images={secondSectionImages} />
         </section>
 
-        <section className="mt-[1vw] rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50 py-[4vw] px-[1vw] md:px-0 flex flex-col items-center shadow-2xl shadow-black/30">
+        {/* Video Section */}
+        <section className="mt-[1vw] rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50 py-[4vw] md:px-0 flex flex-col items-center shadow-2xl shadow-black/30">
           <h2 className="text-[7vw] md:text-5xl font-extrabold text-rose-700 text-center mb-[4vw] tracking-tight drop-shadow">
             Experience Our Vibe
           </h2>
@@ -131,16 +149,19 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Featured Collection */}
         <section className="mt-[1vw]">
           <FeaturedCollection products={products} />
         </section>
 
+        {/* Special Carousel Section */}
         <section className="mt-[1vw]">
           <SSSpecialCarousel products={products} />
         </section>
 
-        <footer className="rounded-t-xl pb-6 mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
-          <div className="w-full flex justify-center py-[1vw]">
+        {/* Footer */}
+        <footer className="rounded-t-xl pb-16 mt-[0.5vw] bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-[4vw] px-[2vw] text-center shadow-2xl border-t border-rose-100">
+          <div className="w-full flex justify-center py-[1vh]">
             <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="SS Collection" />
           </div>
           <p className="text-[3vw] md:text-lg text-gray-600 max-w-[90vw] md:max-w-2xl mx-auto mt-[1vw] mb-[2vw] font-medium">

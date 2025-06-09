@@ -87,7 +87,7 @@ const WishlistPage = () => {
           {popup.message}
         </div>
       )}
-      <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-screen px-4 py-6 text-sm rounded-2xl shadow-xl">
+      <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-[84vh] px-4 py-6 text-sm rounded-2xl shadow-xl">
         <div className="flex items-center gap-3 pb-4">
           <FaHeart className="text-2xl text-rose-600 drop-shadow" />
           <h2 className="font-semibold text-2xl text-rose-700">Your Wishlist</h2>

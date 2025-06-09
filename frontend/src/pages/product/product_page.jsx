@@ -73,7 +73,7 @@ const ProductPage = () => {
   return (
     <Container>
       <motion.div
-        className="flex pb:10 flex-col h-full w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
+        className="flex pb:10   flex-col h-[84vh] mt-0.5 w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -117,8 +117,8 @@ const ProductPage = () => {
         </motion.div>
 
         {/* Product Grid */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="flex-1 overflow-y-auto pb-15">
+          <div className="grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-6 md:gap-6">
             <AnimatePresence>
               {filteredProducts.length === 0 && (
                 <motion.div
@@ -143,7 +143,7 @@ const ProductPage = () => {
                 return (
                   <motion.div
                     key={product._id}
-                    className="w-full   bg-white border border-rose-100 rounded-2xl shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
+                    className="w-full  bg-white border border-rose-100 rounded-lg shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
                     variants={cardVariants}
                     viewport={{ once: true, amount: 0.5 }}
 
@@ -151,7 +151,7 @@ const ProductPage = () => {
                     <Link to={`${product._id}`} className="block h-full w-full">
                       <div className="relative w-full p-2">
                         {/* Image Viewer */}
-                        <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
+                        <div className="aspect-[3/4] w-full overflow-hidden rounded-lg">
                           <SwipeImageViewer images={product.images} name={product.name} />
                         </div>
 

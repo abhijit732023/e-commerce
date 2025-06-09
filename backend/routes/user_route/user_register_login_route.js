@@ -108,6 +108,27 @@ Register_Login_Router.post("/login", async (req, res) => {
 
 
 
+// UPDATE PROFILE ROUTE
+// routes/user.js
+Register_Login_Router.put("/update/:id", async (req, res) => {
+  console.log(req.body);
+  
+    try {
+        const updatedUser = await user_register_model.findByIdAndUpdate(
+            req.params.id,
+            {
+                username: req.body.username,
+                email: req.body.email,
+                mobileNumber: req.body.mobileNumber,
+            },
+            { new: true }
+        );
+        res.json({ updatedUser });
+    } catch (err) {
+        res.status(500).json({ message: "Update failed", error: err });
+    }
+});
+
 
 
 

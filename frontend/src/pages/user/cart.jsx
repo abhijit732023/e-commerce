@@ -231,9 +231,9 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        className=" h-full " // changed from h-[80vh] to h-[95vh]
+        className=" h-[84vh] rounded-md  mt-0.5" // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl pb-15 h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
+        <div className="max-w-4xl pb-15 h-full overflow-scroll rounded-md mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">

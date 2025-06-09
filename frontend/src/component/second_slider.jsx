@@ -56,7 +56,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   });
 
   return (
-    <section className="relative w-full bg-gradient-to-br from-rose-50 via-white to-amber-50 flex flex-col justify-end items-center overflow-hidden rounded-xl shadow-lg border border-rose-100 py-4 md:py-8">
+    <section className="relative w-full bg-gradient-to-br from-rose-50 via-white to-amber-50 flex flex-col justify-end items-center overflow-hidden rounded-xl shadow-md border border-rose-100 py-4 md:py-8">
       {/* Heading */}
       <div className="w-full flex justify-center z-20 pt-4 pb-2 md:pb-4">
         <h2

@@ -187,7 +187,7 @@ const ProductDetail = () => {
         {/* Your product detail JSX code continues here... */}
         {/* Leave it unchanged or paste your existing layout (swiper, product info, buttons) */}
         {/* Just make sure buttons call addToCart and addTowishlist */}
-         <div className="mt-0.5 overflow-scroll pb-30 max-w-6xl z-0 h-full overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
+         <div className="mt-0.5 h-[84vh] overflow-scroll pb-30 max-w-6xl z-0  overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -208,7 +208,7 @@ const ProductDetail = () => {
                                 <img
                                     src={ENV_File.backendURL+img}
                                     alt={`product-img-${i}`}
-                                    className="w-full h-full lg:h-full lg:w-full md:h-[500px] lg:object-cover object-cover rounded-2xl"
+                                    className="w-full h-full relative lg:h-full lg:w-full md:h-[500px] lg:object-cover object-cover rounded-2xl"
                                 />
                             </SwiperSlide>
                         ))}
@@ -269,8 +269,7 @@ const ProductDetail = () => {
                             </>
                         ) : (
                             <>
-                                <p className="text-2xl font-bold text-green-600">₹{product.WholeSalePrice}</p>
-                                <p className="text-sm text-gray-500">Min Qty: {product.wholeSaleQuantity}</p>
+                                <p className="text-sm font-bold text-green-600">the wholesale price are semsitive and can only be mentioned via request ,select the amount you to order and add to cart, you will be redirected to whatapp</p>
                             </>
                         )}
                     </div>

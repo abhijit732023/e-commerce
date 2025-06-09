@@ -58,6 +58,16 @@ router.post("/add", upload.array("images", 5), async (req, res) => {
     console.log('imagespaths',imagePaths);
     
 
+    // Validate and sanitize size array
+    let sanitizedSize = [];
+    if (size) {
+      if (Array.isArray(size)) {
+        sanitizedSize = size.filter(s => s && ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'CUSTOM-SIZE'].includes(s));
+      } else if (typeof size === 'string' && ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'CUSTOM-SIZE'].includes(size)) {
+        sanitizedSize = [size];
+      }
+    }
+
     const newProduct = new product_add_model({
       header,
       description,
@@ -68,7 +78,7 @@ router.post("/add", upload.array("images", 5), async (req, res) => {
       WholeSalePrice,
       category,
       dateToDeliver,
-      size: Array.isArray(size) ? size : [size],
+      size: sanitizedSize,
       tags: Array.isArray(tags) ? tags : tags?.split(","),
       color,
       images: imagePaths,

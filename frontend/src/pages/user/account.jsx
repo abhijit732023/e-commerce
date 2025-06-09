@@ -1,22 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, warning } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { useAuth, Container, Loader } from "../../FilesPaths/all_path";
+import { useAuth, Container, Loader, ENV_File } from "../../FilesPaths/all_path";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AccountPage = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, login } = useAuth();
     const [users, setUser] = useState('');
     const [userdata, setUserData] = useState('');
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        mobileNumber: ''
+    });
+
     const navigate = useNavigate();
     const scrollRef = useRef(null);
 
     const menuItems = [
         { title: "Orders", Link: `/order/${users}` },
         { title: "Customer Care", Link: "/contact-us" },
-        { title: "Address", Link: "/address" },
+        { title: "Address", Link: `/address/${users}` },
         { title: "Notifications", Link: "/notifications" },
         { title: "How To Return", Link: "/refund-and-returns" },
         { title: "Terms & Conditions", Link: "/terms-and-conditions" },
@@ -25,23 +32,25 @@ const AccountPage = () => {
         { title: "Who We Are", Link: "/about-company" },
     ];
 
-
+    useEffect(() => {
+        if (user) {
+            setUser(user._id);
+            setUserData(user);
+            setFormData({
+                username: user.username || '',
+                email: user.email || '',
+                mobileNumber: user.mobileNumber || ''
+            });
+        }
+    }, [user]);
 
     const handlelogout = () => {
         const confirmed = window.confirm("Are you sure you want to logout?");
         if (confirmed) {
             logout();
         }
-    }
+    };
 
-    useEffect(() => {
-        if (user) {
-            setUser(user._id);
-            setUserData(user);
-        }
-    }, [user]);
-
-    // Loader navigation handler for menu items
     const handleMenuClick = (path) => {
         setLoading(true);
         setTimeout(() => {
@@ -50,7 +59,69 @@ const AccountPage = () => {
         }, 1000);
     };
 
-    // Optional: Scroll to top on mount
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validation
+        if (!formData.username.trim()) {
+            alert("Username is required");
+            return;
+        }
+        if (!formData.email.trim()) {
+            alert("Email is required");
+            return;
+        }
+        // Simple email regex validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert("Please enter a valid email address");
+            return;
+        }
+        if (!formData.mobileNumber.trim()) {
+            alert("Mobile number is required");
+            return;
+        }
+        // Mobile number validation: digits only, length 10-15
+        const mobileRegex = /^\d{10,15}$/;
+        if (!mobileRegex.test(formData.mobileNumber)) {
+            alert("Please enter a 10 digit valid mobile number ");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await axios.put(
+                `${ENV_File.backendURL}/update/${users}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                alert("Profile updated successfully");
+                setUserData(response.data.updatedUser || formData);
+                login(response.data.updatedUser || formData);
+                console.log("Updated userdata:", response.data.updatedUser || formData);
+                setEditMode(false);
+            } else {
+                alert(response.data.message || "Update failed");
+            }
+        } catch (error) {
+            console.error(error);
+            alert(error.response?.data?.message || "Something went wrong");
+        }
+
+        setLoading(false);
+    };
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = 0;
@@ -60,11 +131,10 @@ const AccountPage = () => {
     return (
         <Container>
             {loading && <Loader />}
-            <div className="bg-gradient-to-br h-[] from-amber-50 via-white to-rose-50 min-h-screen overflow-scroll  shadow-xl flex flex-col">
-                {/* Scrollable content */}
+            <div className="bg-gradient-to-br  from-amber-50 via-white to-rose-50 overflow-scroll shadow-xl flex flex-col" style={{ height: "84vh" }}>
                 <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto p-4 overflow-scroll pb-30 flex flex-col"
+                    className="flex-1 overflow-y-auto p-4 pb-30 flex flex-col"
                     style={{
                         maxHeight: "calc(100vh - 2rem)",
                         minHeight: "400px",
@@ -76,10 +146,10 @@ const AccountPage = () => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
-                        My Account
+                        Account
                     </motion.h1>
 
-                    {/* Profile Section */}
+                    {/* Profile Card */}
                     <motion.div
                         className="bg-white p-6 rounded-2xl flex flex-col mb-6 shadow-lg border border-rose-100"
                         initial={{ opacity: 0, x: -20 }}
@@ -94,11 +164,10 @@ const AccountPage = () => {
                                 <p className="text-sm text-gray-600 break-words">{userdata.email}</p>
                                 <p className="text-sm text-gray-600 break-words">{userdata.mobileNumber || "Phone number"}</p>
                             </div>
-                            <div className="w-full flex gap-3  justify-center sm:justify-center lg:justify-end">
+                            <div className="w-full flex gap-3 justify-center sm:justify-center lg:justify-end">
                                 <button
-                                    onClick={() => handlelogout()}
-                                    className=" sm:mt-0  bg-gradient-to-r from-rose-500 via-amber-400 to-rose-400 text-white px-5 py-2 rounded-full font-semibold shadow hover:from-rose-600 hover:to-amber-500 hover:scale-105 transition-all duration-200 flex items-center gap-2"
-                                    style={{ alignSelf: "flex-start" }}
+                                    onClick={handlelogout}
+                                    className="bg-gradient-to-r from-rose-500 via-amber-400 to-rose-400 text-white px-5 py-2 rounded-full font-semibold shadow hover:from-rose-600 hover:to-amber-500 hover:scale-105 transition-all duration-200 flex items-center gap-2"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
@@ -106,17 +175,79 @@ const AccountPage = () => {
                                     Logout
                                 </button>
                                 <button
-                                    className="  text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition border border-blue-200 px-6 py-2 rounded-full shadow self-start"
+                                    onClick={() => setEditMode(true)}
+                                    className="text-blue-500 text-sm font-medium hover:underline hover:text-blue-700 transition border border-blue-200 px-6 py-2 rounded-full shadow self-start"
                                 >
                                     Edit Profile
                                 </button>
-
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Menu Items */}
-                    <div className="bg-white  rounded-2xl overflow-scroll  shadow-lg divide-y border border-rose-100">
+                    {/* Edit Form */}
+                    {editMode && (
+                        <motion.form
+                            onSubmit={handleSubmit}
+                            className="bg-white p-6 rounded-2xl shadow-lg border border-rose-100 mb-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            <h3 className="text-lg font-semibold mb-4 text-rose-700">Edit Profile</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Username</label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm focus:ring-rose-500 focus:border-rose-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm focus:ring-rose-500 focus:border-rose-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                                    <input
+                                        type="number"
+                                        name="mobileNumber"
+                                        value={formData.mobileNumber}
+                                        onChange={handleChange}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm focus:ring-rose-500 focus:border-rose-500"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex gap-4 mt-6">
+                                <button
+                                    type="submit"
+                                    className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600"
+                                >
+                                    Save Changes
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setEditMode(false)}
+                                    className="text-gray-500 hover:underline"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.form>
+                    )}
+
+                    {/* Menu List */}
+                    <div className="bg-white rounded-2xl shadow-lg divide-y border border-rose-100">
                         {menuItems.map((item, index) => (
                             <motion.div
                                 key={index}
@@ -132,9 +263,6 @@ const AccountPage = () => {
                                 >
                                     <div>
                                         <p className="font-medium text-gray-800 group-hover:text-rose-700 transition">{item.title}</p>
-                                        {item.description && (
-                                            <p className="text-xs text-gray-500">{item.description}</p>
-                                        )}
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-rose-600 transition" />
                                 </button>
@@ -142,14 +270,11 @@ const AccountPage = () => {
                         ))}
                     </div>
 
-                    {/* Logout Button at the very end of scrollable content */}
+                    {/* Footer */}
                     <div className="mt-8 flex flex-col items-center">
-
                         <p className="text-xs text-gray-400 mt-2">Version 9.21.0 Build 3457</p>
                     </div>
                 </div>
-
-
             </div>
         </Container>
     );
