@@ -56,6 +56,29 @@ const OrderPage = () => {
     fetchOrdersAndAddresses();
   }, [userid]);
 
+  const handleCancelOrder = async (orderId) => {
+    const confirmed = window.confirm("Are you sure you want to cancel this order?");
+    if (!confirmed) return;
+
+    try {
+      const response = await axios.put(`${ENV_File.backendURL}/order/cancel/${orderId}`);
+      if (response.status === 200) {
+        alert("Order cancelled successfully");
+        // Update orders state to remove or update the cancelled order
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, paymentStatus: "cancelled" } : order
+          )
+        );
+      } else {
+        alert(response.data.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert(error.response?.data?.message || "Something went wrong while cancelling the order");
+    }
+  };
+
   const handleDownloadInvoice = async (order, address) => {
     if (!window.confirm("Do you want to download the invoice?")) {
       return;
@@ -242,19 +265,29 @@ const OrderPage = () => {
                     ))}
                   </div>
 
-                  {/* Download Invoice Button */}
+                {/* Download Invoice Button */}
+                <div className="flex items-center justify-between w-full gap-2 text-sm">
                   <button
                     onClick={() => handleDownloadInvoice(order, address)}
                     className="flex items-center gap-2 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:scale-105 hover:bg-rose-700 transition-all duration-200"
                   >
-                    <FaFileDownload className="text-lg" />
-                    Download Invoice
+                    <FaFileDownload className="text-sm" />
+                     Invoice
                   </button>
+                  {order.paymentStatus !== "cancelled" && (
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow transition-all duration-200"
+                    >
+                      Cancel Order
+                    </button>
+                  )}
                 </div>
               </div>
-            );
-          })
-        )}
+            </div>
+          );
+        })
+      )}
       </div>
     </Container>
   );
