@@ -38,6 +38,8 @@ const ProductPage = () => {
   const [likedProducts, setLikedProducts] = useState({});
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [hasAnimated, setHasAnimated] = useState(false); // NEW
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,13 +48,14 @@ const ProductPage = () => {
         const reversed = [...response.data].reverse();
         setProducts(reversed);
         setFilteredProducts(reversed);
+        setHasAnimated(true); // Set animation state to true after fetching products
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
     fetchProducts();
   }, []);
-  
+
   const categoryOptions = ["All", ...new Set(products.map(p => p.category).filter(Boolean))];
   const toggleLike = (productId) => {
     setLikedProducts((prev) => ({
@@ -60,7 +63,7 @@ const ProductPage = () => {
       [productId]: !prev[productId],
     }));
   };
-  
+
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     if (category === "All") {
@@ -98,21 +101,21 @@ const ProductPage = () => {
             </p>
           </div>
 
-         <div className="flex gap-2 md:gap-3 mt-2 md:mt-0 overflow-x-auto scrollbar-hide">
-  {categoryOptions.map((value) => (
-    <button
-      key={value}
-      onClick={() => handleCategoryChange(value)}
-      className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
+          <div className="flex gap-2 md:gap-3 mt-2 md:mt-0 overflow-x-auto scrollbar-hide">
+            {categoryOptions.map((value) => (
+              <button
+                key={value}
+                onClick={() => handleCategoryChange(value)}
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
         ${selectedCategory === value
-          ? "bg-rose-600 text-white border-rose-600 shadow-lg"
-          : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
-        }`}
-    >
-      {value}
-    </button>
-  ))}
-</div>
+                    ? "bg-rose-600 text-white border-rose-600 shadow-lg"
+                    : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
+                  }`}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
 
         </motion.div>
 
@@ -145,6 +148,8 @@ const ProductPage = () => {
                     key={product._id}
                     className="w-full  bg-white border border-rose-100 rounded-lg shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
                     variants={cardVariants}
+                    initial={hasAnimated ? false : "hidden"} // animate only once
+
                     viewport={{ once: true, amount: 0.5 }}
 
                   >

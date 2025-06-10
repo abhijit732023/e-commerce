@@ -91,7 +91,7 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="grid h-[84vh] grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-md  shadow-xl overflow-y-auto">
+      <div className="grid h-[84vh] grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-sm  shadow-xl overflow-y-auto">
 
         {/* Hero Section */}
         <section className="relative h-[85vh] md:h-full rounded-xl shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50">
@@ -130,18 +130,17 @@ const Home = () => {
         </section>
 
         {/* Video Section */}
-        <section className="mt-[1vw] rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50 py-[4vw] md:px-0 flex flex-col items-center shadow-2xl shadow-black/30">
-          <h2 className="text-[7vw] md:text-5xl font-extrabold text-rose-700 text-center mb-[4vw] tracking-tight drop-shadow">
+        <section className="mt-[1vw] rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50  md:px-0 flex flex-col items-center shadow-2xl shadow-black/30">
+          <h2 className="text-[7vw] md:text-5xl font-extrabold text-rose-700 text-center pt-15 mb-[4vw] tracking-tight drop-shadow">
             Experience Our Vibe
           </h2>
-          <div className="w-full max-w-[95vw] md:max-w-4xl rounded-sm overflow-hidden shadow-2xl border border-rose-100">
+          <div className="w-full max-w-full md:max-w-4xl  overflow-hidden shadow-2xl border border-rose-100">
             <video
               src="/videos/video.mp4"
               autoPlay
               loop
               muted
-              playsInline
-              className="w-full h-[30vh] md:h-[480px] object-cover"
+              className="w-full h-[30vh] md:h-[480px] rounded-b-sm object-cover"
               poster="/images/video-poster.jpg"
             >
               Sorry, your browser doesn't support embedded videos.

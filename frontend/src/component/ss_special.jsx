@@ -73,14 +73,14 @@ const SSSpecialCarousel = ({ products }) => {
 
   return (
     <section
-      className="relative rounded-xl bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-4 md:px-10 py-10 shadow-md select-none"
+      className="relative rounded-sm bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-4 md:px-10 shadow-md select-none"
       onMouseEnter={handleUserInteract}
       onMouseLeave={handleUserInteract}
       onTouchStart={handleUserInteract}
       onWheel={handleUserInteract}
     >
       <div className="flex items-center justify-between mb-3 px-2">
-        <h2 className="text-3xl font-extrabold text-rose-700 tracking-tight drop-shadow-sm">
+        <h2 className="text-3xl font-extrabold pt-10 w-full text-center text-rose-700 tracking-tight drop-shadow-sm">
           SS Special Picks
         </h2>
         <span className="text-sm text-amber-700 font-semibold bg-amber-100 px-4 py-1 rounded-full shadow-md hidden md:inline">
@@ -90,13 +90,13 @@ const SSSpecialCarousel = ({ products }) => {
 
       <div
         ref={scrollRef}
-        className="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-6 scrollbar-hide"
+        className="flex space-x-6 overflow-x-auto scroll-smooth snap-x snap-mandatory  scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {extendedProducts.map((item, i) => (
           <motion.div
             key={i}
-            className="relative snap-center flex-shrink-0 rounded-lg mt-5 shadow-lg border border-amber-300 bg-white cursor-pointer overflow-hidden"
+            className="relative snap-center flex-shrink-0 rounded-sm mt-5 shadow-lg border border-amber-300 bg-white cursor-pointer overflow-hidden"
             style={{ width: itemWidth, height: 420 }}
             whileHover={{ scale: 1.05 }}
             onMouseEnter={handleUserInteract}
@@ -111,11 +111,11 @@ const SSSpecialCarousel = ({ products }) => {
               />
             </Link>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5 flex flex-col justify-end h-24">
+            {/* <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5 flex flex-col justify-end h-24">
               <h3 className="text-white font-bold text-lg truncate drop-shadow-lg">
                 {item.header || 'Special Product'}
               </h3>
-            </div>
+            </div> */}
 
             {item.isFeatured && (
               <span className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
