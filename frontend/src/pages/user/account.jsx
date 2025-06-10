@@ -81,13 +81,14 @@ const AccountPage = () => {
             alert("Please enter a valid email address");
             return;
         }
-        if (!formData.mobileNumber.trim()) {
+        const mobileNumberStr = String(formData.mobileNumber || '');
+        if (!mobileNumberStr.trim()) {
             alert("Mobile number is required");
             return;
         }
         // Mobile number validation: digits only, length 10-15
         const mobileRegex = /^\d{10,15}$/;
-        if (!mobileRegex.test(formData.mobileNumber)) {
+        if (!mobileRegex.test(mobileNumberStr)) {
             alert("Please enter a 10 digit valid mobile number ");
             return;
         }
@@ -219,7 +220,7 @@ const AccountPage = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="mobileNumber"
                                         value={formData.mobileNumber}
                                         onChange={handleChange}
