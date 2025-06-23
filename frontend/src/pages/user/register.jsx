@@ -39,7 +39,7 @@ export default function RegisterForm() {
 
   return (
     <Container>
-      <div className="min-h-[83vh] flex flex-col bg-gradient-to-b from-rose-50 via-white to-amber-50">
+      <div className="min-h-[84vh] flex flex-col bg-gradient-to-b from-rose-50 via-white to-amber-50">
         <div className="flex-grow flex items-center justify-center px-2">
           <motion.div
             className="w-full max-w-xs sm:max-w-md md:max-w-lg bg-white px-4  py-6 sm:p-8 rounded-2xl shadow-2xl border border-rose-100"
@@ -49,12 +49,12 @@ export default function RegisterForm() {
           >
             <div className="flex flex-col items-center mb-6">
               <motion.div
-                className="bg-gradient-to-br from-rose-500 via-amber-400 to-rose-300 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-lg mb-2"
+                className="bg-gradient-to-br from-rose-500 via-amber-400 to-rose-300 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-lg mb-2"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <FaUserPlus className="text-white text-2xl sm:text-3xl" />
+                <FaUserPlus className="text-white text-xl sm:text-2xl" />
               </motion.div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-rose-700 mb-1 tracking-wide text-center">
                 Join SS Collection
@@ -129,7 +129,8 @@ export default function RegisterForm() {
               </div>
 
               {/* Password */}
-              <div>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="password"
                   placeholder="Password"
@@ -169,7 +170,7 @@ export default function RegisterForm() {
           </motion.div>
         </div>
 
-        <footer className="bg-gray-800 text-white py-4 pb-8 mt-8 rounded-t-2xl shadow-inner text-center text-xs sm:text-sm">
+        <footer className="bg-gray-800 text-white py-4 pb-4 mt-8 rounded-t-2xl shadow-inner text-center text-xs sm:text-sm">
           <p>© 2025 SS Collection. All rights reserved.</p>
         </footer>
       </div>
