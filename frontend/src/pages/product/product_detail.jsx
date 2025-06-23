@@ -178,7 +178,20 @@ const ProductDetail = () => {
     }
   };
 
-  if (!product) return <div className="text-center">Loading...</div>;
+  if (!product) return 
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
+        {[...Array(8)].map((_, idx) => (
+          <div
+            key={idx}
+            className="bg-white/70 rounded-2xl shadow-lg p-4 animate-pulse flex flex-col"
+          >
+            <div className="h-40 bg-gray-200/50 rounded-xl mb-4 shadow-inner"></div>
+            <div className="h-5 bg-gray-200/50 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-200/50 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-200/50 rounded w-1/3"></div>
+          </div>
+        ))}
+      </div>;
 
   return (
     <>

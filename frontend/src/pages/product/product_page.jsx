@@ -124,16 +124,27 @@ const ProductPage = () => {
           <div className="grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-6 md:gap-6">
             <AnimatePresence>
               {filteredProducts.length === 0 && (
-                <motion.div
-                  className="col-span-full text-center text-gray-400 text-base md:text-lg font-semibold py-12"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 30 }}
-                  viewport={{ once: true, amount: 0.5 }}
+                // <motion.div
+                //   className="col-span-full text-center text-gray-400 text-base md:text-lg font-semibold py-12"
+                //   initial={{ opacity: 0, y: 30 }}
+                //   animate={{ opacity: 1, y: 0 }}
+                //   exit={{ opacity: 0, y: 30 }}
+                //   viewport={{ once: true, amount: 0.5 }}
 
-                >
-                  No products found in this category.
-                </motion.div>
+                // >
+                //   No products found in this category.
+                // </motion.div>
+                  [...Array(8)].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white/70 rounded-2xl shadow-lg p-4 animate-pulse flex flex-col"
+                    >
+                      <div className="h-40 bg-gray-200/50 rounded-xl mb-4 shadow-inner"></div>
+                      <div className="h-5 bg-gray-200/50 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-gray-200/50 rounded w-1/2 mb-2"></div>
+                      <div className="h-4 bg-gray-200/50 rounded w-1/3"></div>
+                    </div>
+                  ))
               )}
 
               {filteredProducts.map((product) => {
