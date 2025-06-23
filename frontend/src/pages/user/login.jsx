@@ -118,7 +118,7 @@ export default function LoginForm() {
                     {...register("terms", { required: "Accept the terms and conditions" })}
                     className="form-checkbox accent-rose-500"
                   />
-                  I accept the <a href="/terms" className="text-rose-600 underline" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+                  I accept the <Link to="/terms-and-conditions" className="text-rose-600 underline" target="_blank" rel="noopener noreferrer">Terms and Conditions</Link>
                 </label>
                 {errors.terms && (
                   <p className="text-red-500 text-xs mt-1">{errors.terms.message}</p>
