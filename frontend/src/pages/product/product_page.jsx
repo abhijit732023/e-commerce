@@ -106,7 +106,7 @@ const ProductPage = () => {
               <button
                 key={value}
                 onClick={() => handleCategoryChange(value)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
+                className={`whitespace-nowrap px-4 py-1.5 mb-4 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
         ${selectedCategory === value
                     ? "bg-rose-600 text-white border-rose-600 shadow-lg"
                     : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"

@@ -42,7 +42,7 @@ const FAQ = () => {
     <Container>
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50  md:px-20 overflow-y-auto">
         <motion.div
-          className="max-w-3xl w-full mx-auto h-screen pb-20 bg-white/90 rounded-3xl shadow-2xl border border-rose-100 p-6 md:p-12"
+          className="max-w-3xl w-full mx-auto h-screen pb-20 bg-white/90  shadow-2xl border border-rose-100 p-6 md:p-12"
           initial={{ opacity: 0, y: 40, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
