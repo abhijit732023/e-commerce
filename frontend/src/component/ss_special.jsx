@@ -83,9 +83,9 @@ const SSSpecialCarousel = ({ products }) => {
         <h2 className="text-3xl font-extrabold pt-10 w-full text-center text-rose-700 tracking-tight drop-shadow-sm">
           SS Special Picks
         </h2>
-        <span className="text-sm text-amber-700 font-semibold bg-amber-100 px-4 py-1 rounded-full shadow-md hidden md:inline">
+        {/* <span className="text-sm text-amber-700 font-semibold bg-amber-100 px-4 py-1 rounded-full shadow-md hidden md:inline">
           Curated for You
-        </span>
+        </span> */}
       </div>
 
       <div

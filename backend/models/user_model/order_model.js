@@ -58,9 +58,19 @@ const OrderSchema = new mongoose.Schema(
     },
     cancelReason: {
       type: String,
-      enum: ["default", "1", "2", "3", "4", "5", "6", "7"],
+      enum: [
+        "default",
+        "Received damaged product",
+        "Product not as described",
+        "Wrong item delivered",
+        "Poor quality",
+        "Arrived late",
+        "Size/fit issue",
+        "Changed my mind"
+      ],
       default: "default"
     }
+
   },
   { timestamps: true }
 );

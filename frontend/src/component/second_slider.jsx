@@ -136,20 +136,20 @@ const SwipeableSecondSectionSlider = ({ images }) => {
       </Link>
 
       {/* Dots */}
-      <div className="absolute bottom-[3vh] left-1/2 transform -translate-x-1/2 flex gap-2 md:gap-3">
+      <div className="absolute bottom-[3vh] left-1/2 transform -translate-x-1/2 flex gap-3 md:gap-3">
         {images.map((_, i) => (
           <button
             key={i}
             onClick={() => handleUserInteraction(() => setIndex(i + 1))}
             className={`rounded-full border-2 border-rose-300/20 transition-all duration-300 ${
               i + 1 === index
-                ? 'bg-rose-700 border-rose-700 shadow-lg scale-150'
+                ? 'bg-rose-700 border-rose-700 shadow-lg scale-130'
                 : 'bg-white hover:bg-rose-200'
             }`}
             aria-label={`Go to slide ${i + 1}`}
             style={{
-              width: 'clamp(8px, 1.2vw, 16px)',
-              height: 'clamp(8px, 1.2vw, 16px)',
+              width: 'clamp(2px, 6px, 8px)',
+              height: 'clamp(2px, 6px, 8px)',
             }}
           />
         ))}

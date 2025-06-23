@@ -303,7 +303,7 @@ const CartPage = () => {
                     <img
                       src={ENV_File.backendURL+item.images[0]}
                       alt="product"
-                      className=" h-auto object-cover rounded-lg border border-rose-100"
+                      className=" h-full object-cover rounded-lg border border-rose-100"
                     />
                    </Link>
                     <div className="ml-4 w-[63%] flex-1">

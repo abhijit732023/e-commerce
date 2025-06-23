@@ -7,29 +7,21 @@ const Container = ({ children, className = "", style = {} }) => {
       className="h-screen w-full flex flex-col bg-gray-400/20 border-gray-100"
       style={{ ...style }}
     >
-      {/* Header: fixed height */}
-      <div
-        className="flex-shrink-0 mb-1 overflow-hidden"
-        style={{ height: 62 /* fixed px height for consistency */ }}
-      >
+      {/* Header: 8% height */}
+      <div className="overflow-hidden" style={{ height: "8vh" }}>
         <Header />
       </div>
 
-      {/* Main Content: flex-grow to fill remaining space, scrollable */}
+      {/* Main Content: 86% height */}
       <main
-        className={`flex-grow overflow-y-auto relative rounded-md mt-0.5 mb-0.5 ${className}`}
-        style={{ minHeight: 0, display: "flex", flexDirection: "column" }}
+        className={`overflow-auto relative rounded-md ${className}`}
+        style={{ height: "86vh" }}
       >
-        <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-          {children}
-        </div>
+        {children}
       </main>
 
-      {/* Bottom Menu: fixed height */}
-      <div
-        className="flex-shrink-0 overflow-hidden"
-        style={{ height: 62 /* fixed px height for consistency */ }}
-      >
+      {/* Bottom Menu: 8% height */}
+      <div className="overflow-hidden" style={{ height: "8vh" }}>
         <BottomMenuBar />
       </div>
     </div>
@@ -37,20 +29,3 @@ const Container = ({ children, className = "", style = {} }) => {
 };
 
 export default Container;
-
-
-// import React from "react";
-// import { BottomMenuBar,Header} from "../FilesPaths/all_path";
-// const Container = ({ children, className = "h-screen w-full border-gray-100 bg-gray-400/20 overflow-hidden ", style = {} }) => {
-//     return (
-//     <div className="overflow-hidden">
-//       <Header/>
-//       <div className={`relative ${className} z-0`} style={style}>
-//       {children}
-//        </div>
-//       <BottomMenuBar/>
-//     </div>
-//     );
-//   };
-
-// export default Container;
