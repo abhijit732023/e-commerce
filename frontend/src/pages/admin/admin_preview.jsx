@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ENV_File, Product_2, Container } from "../../FilesPaths/all_path";
+import { Link } from "react-router-dom";
+
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -90,12 +92,12 @@ const ProductList = () => {
                 </div>
 
                 <div className="mt-6 flex justify-end gap-5 items-center">
-                  <button
-                    onClick={() => setEditing(p)}
+                  <Link
+                    to={`/admin/edit/${p._id}`}
                     className="text-sm text-white bg-rose-600 px-4 py-2 rounded-xl hover:bg-rose-700 shadow-md transition"
                   >
                     Edit
-                  </button>
+                  </Link>
                   <button
                     onClick={() => deleteProduct(p._id)}
                     className="text-sm text-white bg-red-500 px-4 py-2 rounded-xl hover:bg-red-600 shadow-md transition"

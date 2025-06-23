@@ -105,6 +105,8 @@ router.get("/", async (req, res) => {
 
 /*----------------- GET SINGLE PRODUCT ------------------*/
 router.get("/:id", async (req, res) => {
+  console.log("hello");
+  
   try {
     const product = await product_add_model.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });

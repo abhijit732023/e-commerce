@@ -81,13 +81,13 @@ const WishlistPage = () => {
       {/* Popup Notification */}
       {popup.show && (
         <div
-          className={`absolute top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl pb-15 shadow-lg text-white font-semibold transition-all duration-300
+          className={`absolute top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-md pb-15 shadow-lg text-white font-semibold transition-all duration-300
             ${popup.type === "success" ? "bg-green-600" : "bg-rose-600"}`}
         >
           {popup.message}
         </div>
       )}
-      <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-[84vh] px-4 py-6 text-sm rounded-2xl shadow-xl">
+      <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 min-h-[84vh] px-4 py-6 text-sm rounded-md shadow-xl">
         <div className="flex items-center gap-3 pb-4">
           <FaHeart className="text-2xl text-rose-600 drop-shadow" />
           <h2 className="font-semibold text-2xl text-rose-700">Your Wishlist</h2>

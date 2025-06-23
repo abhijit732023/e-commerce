@@ -73,7 +73,7 @@ const SSSpecialCarousel = ({ products }) => {
 
   return (
     <section
-      className="relative rounded-sm bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-4 md:px-10 shadow-md select-none"
+      className="relative rounded-sm bg-gradient-to-br from-rose-50 via-white to-amber-50 border border-rose-200/40 px-4 md:px-10 pb-8 shadow-md select-none"
       onMouseEnter={handleUserInteract}
       onMouseLeave={handleUserInteract}
       onTouchStart={handleUserInteract}

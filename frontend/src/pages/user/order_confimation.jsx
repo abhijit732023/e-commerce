@@ -173,7 +173,7 @@ const OrderPage = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 p-6 mb-10 border border-rose-100 relative overflow-hidden"
+                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 p-6 mb-10 border border-rose-100 relative overflow-auto"
               >
                 {/* Decorative Ribbon */}
                 <div className="absolute top-0 left-0 bg-rose-100 text-rose-700 px-3 py-1 rounded-br-2xl text-xs font-bold shadow-sm">
@@ -194,15 +194,15 @@ const OrderPage = () => {
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-full ">
                     <div className="text-xs text-gray-400 mb-1 truncate">
                       Order ID: <span className="font-semibold break-all">{order._id}</span>
                     </div>
                     <h2 className="text-xl font-bold text-rose-700 mt-1 mb-1 truncate">{order.header}</h2>
                     <p className="text-sm text-gray-600 mb-2 break-words line-clamp-2">{order.description}</p>
 
-                    <div className="grid grid-cols-2 text-sm gap-y-1 text-gray-700 mb-2">
-                      <div className="flex items-center gap-1 min-w-0">
+                    <div className="grid grid-cols-2 justify-between text-sm gap-y-1 text-gray-700 mb-2">
+                      <div className="flex  items-center gap-1 min-w-0">
                         <FaRupeeSign className="text-green-600 flex-shrink-0" />
                         <span className="truncate">
                           Price: <span className="font-semibold">₹{order.price.toFixed(2)}</span>

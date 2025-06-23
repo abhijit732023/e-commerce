@@ -231,9 +231,9 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        className=" h-[84vh] rounded-md  mt-0.5" // changed from h-[80vh] to h-[95vh]
+        className=" h-[84vh] rounded-md  " // changed from h-[80vh] to h-[95vh]
       >
-        <div className="max-w-4xl pb-15 h-full overflow-scroll rounded-md mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
+        <div className="max-w-4xl pb-15 h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
           <div className="border-b pb-2 mb-4 flex justify-between items-center">
             <p className="font-semibold text-rose-700 flex items-center gap-2 w-full">
@@ -278,9 +278,9 @@ const CartPage = () => {
           )}
 
           {/* Cashback Banner */}
-          <div className="bg-gradient-to-r from-rose-100 via-amber-100 to-white border border-rose-200 text-rose-700 p-3 rounded-lg mb-4 text-center text-xs font-semibold shadow-sm">
+          {/* <div className="bg-gradient-to-r from-rose-100 via-amber-100 to-white border border-rose-200 text-rose-700 p-3 rounded-lg mb-4 text-center text-xs font-semibold shadow-sm">
             🎉 REDEEM 100% OF YOUR EARNED CASHBACK. KEEP SHOPPING, KEEP EARNING 15% CASHBACK!
-          </div>
+          </div> */}
 
           {/* Cart Items */}
           <div className="space-y-6">
@@ -355,16 +355,16 @@ const CartPage = () => {
           {/* Coupon and Savings */}
           {order.length > 0 && (
             <>
-              <div className="border-t mt-6 pt-4 flex items-center justify-between">
+              {/* <div className="border-t mt-6 pt-4 flex items-center justify-between">
                 <p className="text-sm font-medium">Apply coupon</p>
                 <button className="text-blue-600 text-sm font-semibold hover:underline">Select</button>
               </div>
 
               <div className="text-xs text-green-700 bg-green-50 p-2 mt-2 rounded">
                 🎁 You are earning ₹122 SuperCash! Will be credited 15 days after delivery.
-              </div>
+              </div> */}
 
-              <div className="border-t mt-4 pt-4">
+              {/* <div className="border-t mt-4 pt-4">
                 <h3 className="font-semibold mb-2 text-sm">Redemption Options</h3>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center gap-2">
@@ -376,7 +376,7 @@ const CartPage = () => {
                     <span>You are eligible to use ₹75.20 of ₹75.20</span>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Order Details */}
               <div className="border-t mt-6 pt-4 pb-10">
@@ -399,7 +399,7 @@ const CartPage = () => {
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>
                   <div
-                    className="relative bottom-[5vh] mt-20 pb-5 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-0"
+                    className="absolute bottom-0 mt-20 pb-5 left-0 right-0 bg-white p-4 border-t flex justify-between items-center w-full max-w-4xl mx-auto z-0"
                     style={{
                       boxShadow: "0 -2px 16px 0 rgba(0,0,0,0.04)",
                       minHeight: "72px",

@@ -17,7 +17,7 @@ const Container = ({ children, className = "", style = {} }) => {
 
       {/* Main Content: flex-grow to fill remaining space, scrollable */}
       <main
-        className={`flex-grow overflow-y-auto relative rounded-xl mt-1 mb-1 ${className}`}
+        className={`flex-grow overflow-y-auto relative rounded-xl mt-0.5 mb-0.5 ${className}`}
         style={{ minHeight: 0, display: "flex", flexDirection: "column" }}
       >
         <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>

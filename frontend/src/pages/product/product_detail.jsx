@@ -187,7 +187,7 @@ const ProductDetail = () => {
         {/* Your product detail JSX code continues here... */}
         {/* Leave it unchanged or paste your existing layout (swiper, product info, buttons) */}
         {/* Just make sure buttons call addToCart and addTowishlist */}
-         <div className="mt-0.5 h-[84vh] overflow-scroll pb-30 max-w-6xl z-0  overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-xl shadow-2xl border border-rose-100">
+         <div className=" h-[84vh] overflow-scroll pb-30 max-w-6xl z-0  overflow-y-auto  mx-auto p-3 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-md shadow-2xl border border-rose-100">
                 {/* Swiper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}

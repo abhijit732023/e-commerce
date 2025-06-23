@@ -44,14 +44,14 @@ const FeaturedCollection = ({ products }) => {
             const imageUrl = imgId ? getImageUrl(imgId) : '';
 
             return (
-              <motion.div
+              <div
                 key={product._id}
                 className="bg-white border-amber-200 shadow-xl rounded-sm overflow-hidden relative group border hover:border-rose-300 transition-all duration-300"
                 variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                whileHover="hover"
-                viewport={{ once: true, amount: 0.3 }}
+                // initial="hidden"
+                // whileInView="visible"
+                // whileHover="hover"
+                // viewport={{ once: true, amount: 0.3 }}
               >
                 <Link to={`/product/${product._id}`}>
                   {imageUrl ? (
@@ -74,7 +74,7 @@ const FeaturedCollection = ({ products }) => {
                     </p>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             );
           })
         ) : (

@@ -40,9 +40,9 @@ export default function LoginForm() {
   return (
     <Container>
       <div className="h-full flex flex-col bg-gradient-to-b from-rose-50 via-white to-amber-50">
-        <main className="h-full flex-grow flex items-center justify-center px-4 py-10 md:py-0">
+        <main className="h-full flex-grow flex items-center justify-center px-4 py-8 md:py-0">
           <motion.div
-            className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-rose-100"
+            className="w-full max-w-sm bg-white shadow-2xl rounded-2xl p-4 sm:p-6 border border-rose-100"
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
@@ -72,7 +72,7 @@ export default function LoginForm() {
               </motion.p>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 sm:space-y-1">
               <div>
                 <div className="relative">
                   <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -108,6 +108,20 @@ export default function LoginForm() {
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-xs sm:text-sm">
+                  <input
+                    type="checkbox"
+                    {...register("terms", { required: "Accept the terms and conditions" })}
+                    className="form-checkbox accent-rose-500"
+                  />
+                  I accept the <a href="/terms" className="text-rose-600 underline" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+                </label>
+                {errors.terms && (
+                  <p className="text-red-500 text-xs mt-1">{errors.terms.message}</p>
                 )}
               </div>
 

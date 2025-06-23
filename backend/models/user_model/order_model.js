@@ -26,8 +26,8 @@ const OrderSchema = new mongoose.Schema(
     },
     buyingMehtod: {
       type: String,
-      enum: ['Retail','Wholesale'],
-      default:'Retail',
+      enum: ['Retail', 'Wholesale'],
+      default: 'Retail',
     },
     size: {
       type: String,
@@ -47,9 +47,19 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       default: 'pending',
     },
-    addressId:{
+    addressId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
+    },
+    cancelOrder: {
+      type: String,
+      enum: ["yes", "no"],
+      default: "no"
+    },
+    cancelReason: {
+      type: String,
+      enum: ["default", "1", "2", "3", "4", "5", "6", "7"],
+      default: "default"
     }
   },
   { timestamps: true }

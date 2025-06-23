@@ -39,10 +39,10 @@ export default function RegisterForm() {
 
   return (
     <Container>
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-rose-50 via-white to-amber-50">
+      <div className="min-h-[83vh] flex flex-col bg-gradient-to-b from-rose-50 via-white to-amber-50">
         <div className="flex-grow flex items-center justify-center px-2">
           <motion.div
-            className="w-full max-w-xs sm:max-w-md md:max-w-lg bg-white p-6 sm:p-8 rounded-2xl shadow-2xl border border-rose-100"
+            className="w-full max-w-xs sm:max-w-md md:max-w-lg bg-white px-4  py-6 sm:p-8 rounded-2xl shadow-2xl border border-rose-100"
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
@@ -66,9 +66,8 @@ export default function RegisterForm() {
 
             {message && (
               <motion.p
-                className={`text-center mb-4 font-semibold ${
-                  isSuccess ? "text-green-600" : "text-red-500"
-                } text-sm sm:text-base`}
+                className={`text-center mb-4 font-semibold ${isSuccess ? "text-green-600" : "text-red-500"
+                  } text-sm sm:text-base`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -76,7 +75,7 @@ export default function RegisterForm() {
               </motion.p>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-3">
               {/* Username */}
               <div>
                 <div className="relative">
@@ -131,18 +130,20 @@ export default function RegisterForm() {
 
               {/* Password */}
               <div>
-                <div className="relative">
-                  <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: { value: 8, message: "Password must be at least 8 characters" },
-                    })}
-                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-rose-400 focus:outline-none bg-gray-50 text-sm sm:text-base"
-                  />
-                </div>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: { value: 8, message: "Password must be at least 8 characters" },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/,
+                      message:
+                        "Password must contain at least 1 uppercase, lowercase characters, numbers, and at least 1 special character",
+                    },
+                  })}
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-rose-400 focus:outline-none bg-gray-50 text-sm sm:text-base"
+                />
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
                 )}

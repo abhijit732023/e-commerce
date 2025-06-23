@@ -5,7 +5,6 @@ import Login from "../pages/user/login";
 import ENV_File from "../../config/config.js";
 import Home_page from "../pages/user/home.jsx";
 import Navbar from "../component/navbar.jsx";
-import AdminProductForm from '../pages/admin/admin_product.jsx'
 import AppwriteService from "../../appwrite/appwrite.js";
 import AdminProductDetail from "../pages/admin/admin_preview.jsx";
 import AdminEditForm from "../pages/admin/admin_edit.jsx";
@@ -48,6 +47,7 @@ import Invoice from "../component/invoive.jsx";
 import AdminOrderPage from "../pages/admin/admin_allorder.jsx";
 import AdminEditProduct from "../pages/admin/admin_product_edit.jsx";
 import AdminAuthGuard from "../component/admin-auth_check.jsx";
+import AdminProductEditList from "../pages/admin/admin_product_edit.jsx";
 
 export{
     RegisterForm,
@@ -57,7 +57,6 @@ export{
     ENV_File,
     Home_page,
     Navbar,
-    AdminProductForm,
     AppwriteService,
     AdminProductDetail,
     AdminEditForm,
@@ -101,7 +100,8 @@ export{
     Invoice,
     AdminOrderPage,
     AdminEditProduct,
-    AdminAuthGuard
+    AdminAuthGuard,
+    AdminProductEditList
     
     
 

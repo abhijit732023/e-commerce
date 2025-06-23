@@ -44,17 +44,19 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  console.log(req.body);
+  console.log('gott something',req.body);
   
   const { token } = req.params;
   const { password } = req.body;
+  console.log('token',token);
+  
 
   try {
     const decoded = jwt.verify(token, config.screteCode);
     console.log('decoded',decoded);
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    await user_register_model.findByIdAndUpdate(decoded.userId, { password: hashedPassword });
+    await user_register_model.findByIdAndUpdate(decoded.id, { password: hashedPassword });
     res.json({ message: "Password has been reset successfully." });
     console.log("Password reset successfully");
     

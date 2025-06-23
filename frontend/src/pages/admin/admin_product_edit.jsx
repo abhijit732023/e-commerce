@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { AppwriteService, ENV_File } from "../../FilesPaths/all_path";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AdminProductEditList = () => {
+  const{productId}= useParams();
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [form, setForm] = useState({});
@@ -18,8 +19,10 @@ const AdminProductEditList = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${ENV_File.backendURL}/admin/product/detail`);
-        setProducts(res.data.reverse());
+        const res = await axios.get(`${ENV_File.backendURL}/add/${productId}`);
+        // setProducts(res.data.reverse());
+        console.log('resdata',res.data);
+        
       } catch (err) {
         setMessage("Failed to load products.");
       }
@@ -92,7 +95,7 @@ const handleSubmit = async (e) => {
     
 
     // Update product in backend
-    const res = await axios.put(`${ENV_File.backendURL}/admin/update/${form._id}`, updatedForm);
+    const res = await axios.put(`${ENV_File.backendURL}/add/update/${form._id}`, updatedForm);
     console.log('hey upadte',res.data);
 
     setMessage("Product updated successfully!");
@@ -174,187 +177,219 @@ const handleSubmit = async (e) => {
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-3xl overflow-auto bg-white rounded-3xl shadow-2xl p-10 border border-rose-300 pb-25">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block font-extrabold mb-2 text-rose-600">Title</label>
-              <input
-                name="header"
-                value={form.header || ""}
-                onChange={handleChange}
-                className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-extrabold mb-2 text-rose-600">Description</label>
-              <textarea
-                name="description"
-                value={form.description || ""}
-                onChange={handleChange}
-                className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                rows={4}
-                required
-              />
-            </div>
-            <div className="flex gap-6">
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Price</label>
-                <input
-                  name="price"
-                  type="number"
-                  value={form.price || ""}
-                  onChange={handleChange}
-                  className="w-full border border-amber-300 rounded-xl p-3 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  required
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Fake Price</label>
-                <input
-                  name="fakePrie"
-                  type="number"
-                  value={form.fakePrie || ""}
-                  onChange={handleChange}
-                  className="w-full border border-amber-300 rounded-xl p-3 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  required
-                />
-              </div>
-            </div>
-            <div className="flex gap-6">
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-amber-700">Wholesale Quantity</label>
-                <input
-                  name="wholeSaleQuantity"
-                  type="number"
-                  value={form.wholeSaleQuantity || ""}
-                  onChange={handleChange}
-                  className="w-full border border-amber-300 rounded-xl p-3 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  required
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-amber-700">Wholesale Price</label>
-                <input
-                  name="WholeSalePrice"
-                  type="number"
-                  value={form.WholeSalePrice || ""}
-                  onChange={handleChange}
-                  className="w-full border border-amber-300 rounded-xl p-3 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  required
-                />
-              </div>
-            </div>
-            <div className="flex gap-6">
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Category</label>
-                <select
-                  name="category"
-                  value={form.category || ""}
-                  onChange={handleChange}
-                  className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                >
-                  <option value="Regular">Regular</option>
-                  <option value="Premium">Premium</option>
-                  <option value="SSspecial">SSspecial</option>
-                </select>
-              </div>
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Stock Status</label>
-                <select
-                  name="inStockStatus"
-                  value={form.inStockStatus || ""}
-                  onChange={handleChange}
-                  className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                >
-                  <option value="In Stock">In Stock</option>
-                  <option value="Out of Stock">Out of Stock</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block font-extrabold mb-2 text-amber-700">Delivery Date</label>
-              <input
-                name="dateToDeliver"
-                type="date"
-                value={form.dateToDeliver ? form.dateToDeliver.slice(0, 10) : ""}
-                onChange={handleChange}
-                className="w-full border border-amber-300 rounded-xl p-3 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                required
-              />
-            </div>
-            <div className="flex gap-6">
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Tags</label>
-                <input
-                  name="tags"
-                  value={Array.isArray(form.tags) ? form.tags.join(", ") : form.tags || ""}
-                  onChange={handleChange}
-                  placeholder="e.g. summer, casual, trending"
-                  className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block font-extrabold mb-2 text-rose-600">Color</label>
-                <input
-                  name="color"
-                  value={form.color || ""}
-                  onChange={handleChange}
-                  placeholder="Color"
-                  className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-                />
-              </div>
-            </div>
-            {/* Images Section */}
-            <div>
-              <label className="block font-extrabold mb-2 text-rose-600">Product Images</label>
-              <input
-                type="file"
-                multiple
-                onChange={handleImageChange}
-                className="w-full border border-rose-300 rounded-xl p-3 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
-              />
-              <div className="flex flex-wrap gap-3 mt-3">
-                {/* Show existing images */}
-                {form.images && Array.isArray(form.images) && form.images.map((img, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-block bg-amber-100 text-rose-700 px-4 py-1 rounded-full text-sm font-semibold"
-                  >
-                    {typeof img === "string" ? img : img?.name}
-                  </span>
-                ))}
-                {/* Show new images to be uploaded */}
-                {imageFiles &&
-                  Array.from(imageFiles).map((file, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-block bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold"
-                    >
-                      {file.name}
-                    </span>
-                  ))}
-              </div>
-            </div>
-            <div className="flex gap-6">
-              <button
-                type="button"
-                className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition"
-                onClick={() => setEditingProduct(null)}
-                disabled={saving}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={`flex-1 bg-gradient-to-r from-rose-600 via-amber-500 to-rose-500 hover:from-rose-700 hover:to-amber-600 transition text-white py-3 rounded-xl font-bold text-lg shadow-lg ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
-                disabled={saving}
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </form>
-        </div>
+<div className="w-full max-w-3xl overflow-auto bg-white rounded-3xl shadow-2xl p-10 border border-rose-300 pb-25">
+  <form onSubmit={handleSubmit} className="space-y-6">
+    <div>
+      <label className="block font-extrabold mb-2 text-rose-600">Title</label>
+      <input
+        name="header"
+        value={form.header || ""}
+        onChange={handleChange}
+        className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        required
+      />
+    </div>
+    <div>
+      <label className="block font-extrabold mb-2 text-rose-600">Description</label>
+      <textarea
+        name="description"
+        value={form.description || ""}
+        onChange={handleChange}
+        className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        rows={4}
+        required
+      />
+    </div>
+    <div className="flex gap-4">
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Price</label>
+        <input
+          name="price"
+          type="number"
+          value={form.price || ""}
+          onChange={handleChange}
+          className="w-full border border-rose-200 rounded-lg p-2 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          required
+        />
+      </div>
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Fake Price (MRP)</label>
+        <input
+          name="fakePrie"
+          type="number"
+          value={form.fakePrie || ""}
+          onChange={handleChange}
+          className="w-full border border-rose-200 rounded-lg p-2 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          required
+        />
+      </div>
+    </div>
+    <div>
+      <label className="block font-semibold mb-1 text-rose-600">Discount (%)</label>
+      <input
+        type="number"
+        value={
+          form.fakePrie && form.price
+            ? Math.round(((Number(form.fakePrie) - Number(form.price)) / Number(form.fakePrie)) * 100)
+            : ""
+        }
+        disabled
+        className="w-full border border-rose-200 rounded-lg p-2 bg-gray-100 text-gray-500"
+      />
+    </div>
+    <div className="flex gap-4">
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-sm text-amber-700">Wholesale Quantity</label>
+        <input
+          name="wholeSaleQuantity"
+          type="number"
+          value={form.wholeSaleQuantity || ""}
+          onChange={handleChange}
+          className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          required
+        />
+      </div>
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-amber-700">Wholesale Price</label>
+        <input
+          name="WholeSalePrice"
+          type="number"
+          value={form.WholeSalePrice || ""}
+          onChange={handleChange}
+          className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          required
+        />
+      </div>
+    </div>
+    <div className="flex gap-4">
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Category</label>
+        <select
+          name="category"
+          value={form.category || ""}
+          onChange={handleChange}
+          className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        >
+          <option value="Regular">Regular</option>
+          <option value="Premium">Premium</option>
+          <option value="SSspecial">SSspecial</option>
+        </select>
+      </div>
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Stock Status</label>
+        <select
+          name="inStockStatus"
+          value={form.inStockStatus || ""}
+          onChange={handleChange}
+          className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        >
+          <option value="In Stock">In Stock</option>
+          <option value="Out of Stock">Out of Stock</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <label className="block font-semibold mb-1 text-amber-700">Delivery Date</label>
+      <input
+        name="dateToDeliver"
+        type="date"
+        value={form.dateToDeliver ? form.dateToDeliver.slice(0, 10) : ""}
+        onChange={handleChange}
+        className="w-full border border-amber-200 rounded-lg p-2 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        required
+      />
+    </div>
+    <div className="flex gap-4">
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Tags</label>
+        <input
+          name="tags"
+          value={Array.isArray(form.tags) ? form.tags.join(", ") : form.tags || ""}
+          onChange={handleChange}
+          placeholder="e.g. summer, casual, trending"
+          className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        />
+      </div>
+      <div className="flex-1">
+        <label className="block font-semibold mb-1 text-rose-600">Color</label>
+        <input
+          name="color"
+          value={form.color || ""}
+          onChange={handleChange}
+          placeholder="Color"
+          className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+        />
+      </div>
+    </div>
+    {/* Sizes Section */}
+    <div>
+      <label className="block font-semibold mb-1 text-amber-700">Sizes</label>
+      <div className="flex flex-wrap gap-4">
+        {["XS", "S", "M", "L", "XL", "XXL", "XXXL", "CUSTOM-SIZE"].map((size) => (
+          <label key={size} className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="size"
+              value={size}
+              checked={Array.isArray(form.size) && form.size.includes(size)}
+              onChange={handleChange}
+              className="form-checkbox accent-rose-500"
+            />
+            <span className="text-sm text-rose-700">{size}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+    {/* Images Section */}
+    <div>
+      <label className="block font-semibold mb-1 text-rose-600">Product Images</label>
+      <input
+        type="file"
+        multiple
+        onChange={handleImageChange}
+        className="w-full border border-rose-200 rounded-lg p-2 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-400"
+      />
+      <div className="flex flex-wrap gap-3 mt-3">
+        {/* Show existing images */}
+        {form.images && Array.isArray(form.images) && form.images.map((img, idx) => (
+          <span
+            key={idx}
+            className="inline-block bg-amber-100 text-rose-700 px-4 py-1 rounded-full text-sm font-semibold"
+          >
+            {typeof img === "string" ? img : img?.name}
+          </span>
+        ))}
+        {/* Show new images to be uploaded */}
+        {imageFiles &&
+          Array.from(imageFiles).map((file, idx) => (
+            <span
+              key={idx}
+              className="inline-block bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold"
+            >
+              {file.name}
+            </span>
+          ))}
+      </div>
+    </div>
+    <div className="flex gap-6">
+      <button
+        type="button"
+        className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition"
+        onClick={() => setEditingProduct(null)}
+        disabled={saving}
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className={`flex-1 bg-gradient-to-r from-rose-600 via-amber-500 to-rose-500 hover:from-rose-700 hover:to-amber-600 transition text-white py-3 rounded-xl font-bold text-lg shadow-lg ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
+        disabled={saving}
+      >
+        {saving ? "Saving..." : "Save Changes"}
+      </button>
+    </div>
+  </form>
+</div>
       )}
     </div>
   );
