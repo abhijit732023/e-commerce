@@ -15,13 +15,13 @@ const Container = ({ children, className = "", style = {} }) => {
       {/* Main Content: 86% height */}
       <main
         className={`overflow-auto relative rounded-md ${className}`}
-        style={{ height: "86vh" }}
+        style={{ height: "84vh" }}
       >
         {children}
       </main>
 
       {/* Bottom Menu: 8% height */}
-      <div className="overflow-hidden" style={{ height: "8vh" }}>
+      <div className="overflow-hidden" style={{ height: "10vh" }}>
         <BottomMenuBar />
       </div>
     </div>

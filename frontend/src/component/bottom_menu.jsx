@@ -53,13 +53,13 @@ const BottomMenuBar = () => {
       {loading && (
           <Loader />
       )}
-      <div className="rounded-t-2xl h-[8vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-20 ">
-        <div className="flex justify-around items-center h-full max-h-20 text-gray-600 text-sm">
+      <div className="rounded-t-2xl h-[10vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-20 ">
+        <div className="flex justify-around items-center h-full max-h-full text-gray-600 text-sm">
           {menuItems.map((item, index) => (
             <button
               key={index}
               onClick={() => handleMenuClick(item.path)}
-              className={`relative flex flex-col items-center transition duration-200 ${
+              className={`relative flex flex-col  items-center transition duration-200 ${
                 isActive(item.path) ? 'text-rose-600' : 'text-gray-600'
               }`}
               disabled={loading}
