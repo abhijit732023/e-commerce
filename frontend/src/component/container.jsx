@@ -6,7 +6,8 @@ const Container = ({ children, className = "", style = {} }) => {
     <div
       className="w-full flex flex-col bg-gray-400/20 border-gray-100"
       style={{
-        height: "100dvh", // Use device viewport height (mobile-safe)
+        height: "100dvh", // mobile-safe height
+        paddingBottom: "10%", // prevent content from hiding under BottomMenu
         ...style,
       }}
     >
@@ -15,16 +16,18 @@ const Container = ({ children, className = "", style = {} }) => {
         <Header />
       </div>
 
-      {/* Main Content: 82% */}
+      {/* Main Content */}
       <main
         className={`flex-grow overflow-auto relative rounded-md ${className}`}
-        style={{ height: "82%" }}
       >
         {children}
       </main>
 
-      {/* Bottom Menu: 10% */}
-      <div className="flex-none z-10" style={{ height: "10%" }}>
+      {/* Fixed Bottom Menu */}
+      <div
+        className="fixed bottom-0 left-0 w-full z-10"
+        style={{ height: "10%" }}
+      >
         <BottomMenuBar />
       </div>
     </div>
