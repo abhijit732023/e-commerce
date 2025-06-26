@@ -390,11 +390,11 @@ const CartPage = () => {
                     <span>Bag Savings</span>
                     <span>-₹{savings.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between pb-30">
                     <span>Delivery Fee</span>
                     <span>₹{deliveryFee}</span>
                   </div>
-                  <div className="flex justify-between font-bold border-t pt-2">
+                  <div className="flex justify-between font-bold border-t pt-2 ">
                     <span>Amount Payable</span>
                     <span>₹{amountPayable.toFixed(2)}</span>
                   </div>

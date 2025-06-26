@@ -53,7 +53,7 @@ const BottomMenuBar = () => {
       {loading && (
           <Loader />
       )}
-      <div className="rounded-t-2xl h-[10vh] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-20 ">
+      <div className="rounded-t-2xl h-[10%] fixed bottom-0 w-full border-2 border-b-white border-rose-200/70 bg-white shadow-md z-20 ">
         <div className="flex justify-around items-center h-full max-h-full text-gray-600 text-sm">
           {menuItems.map((item, index) => (
             <button

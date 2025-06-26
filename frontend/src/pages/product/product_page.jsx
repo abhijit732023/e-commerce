@@ -76,7 +76,7 @@ const ProductPage = () => {
   return (
     <Container>
       <motion.div
-        className="flex pb:10   flex-col h-[84vh]  w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
+        className="flex pb:10   flex-col h-[82vh]  w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
