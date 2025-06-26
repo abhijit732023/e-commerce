@@ -231,7 +231,7 @@ const CartPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 50 }}
         transition={{ duration: 0.7, ease: "easeInOut" }}
-        className=" h-[84vh] rounded-md  " // changed from h-[80vh] to h-[95vh]
+        className=" h-full rounded-md  " // changed from h-[80vh] to h-[95vh]
       >
         <div className="max-w-4xl pb-15 h-full overflow-scroll  mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50  shadow-xl text-sm font-sans ">
           {/* Address Bar */}
@@ -303,7 +303,7 @@ const CartPage = () => {
                     <img
                       src={ENV_File.backendURL+item.images[0]}
                       alt="product"
-                      className=" h-full object-cover rounded-lg border border-rose-100"
+                      className=" h-auto object-cover rounded-lg border border-rose-100"
                     />
                    </Link>
                     <div className="ml-4 w-[63%] flex-1">

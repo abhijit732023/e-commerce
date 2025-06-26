@@ -18,13 +18,13 @@ const Container = ({ children, className = "", style = {} }) => {
       {/* Main Content: 82% */}
       <main
         className={`flex-grow overflow-auto relative rounded-md ${className}`}
-        style={{ height: "82%" }}
+        style={{ height: "80%" }}
       >
         {children}
       </main>
 
       {/* Bottom Menu: 10% */}
-      <div className="flex-none z-10" style={{ height: "9%" }}>
+      <div className="flex-none z-10" style={{ height: "10%" }}>
         <BottomMenuBar />
       </div>
     </div>

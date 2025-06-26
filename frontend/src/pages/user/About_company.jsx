@@ -10,10 +10,10 @@ const AboutUs = () => {
         {/* Heading */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-extrabold text-gray-900 mb-6 drop-shadow-lg">
-            About SS Collection
+            About Khuwab Collection
           </h1>
           <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
-            At SS Collection, fashion meets comfort and quality. We are a home-grown clothing brand dedicated to providing stylish, affordable, and high-quality apparel for everyone.
+            At Khuwab Collection, fashion meets comfort and quality. We are a home-grown clothing brand dedicated to providing stylish, affordable, and high-quality apparel for everyone.
           </p>
         </div>
 
@@ -23,7 +23,7 @@ const AboutUs = () => {
           <div className="flex justify-center">
             <img
               src={logo}
-              alt="SS Collection Store"
+              alt="Khuwab Collection Store"
               className="rounded-3xl w-3/4 md:w-2/3 object-contain "
             />
           </div>
@@ -41,7 +41,7 @@ const AboutUs = () => {
               Our Mission
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
-              We aim to empower individuals by helping them express themselves through fashion. SS Collection blends creativity with quality to bring you outfits you'll love to wear again and again.
+              We aim to empower individuals by helping them express themselves through fashion. Khuwab Collection blends creativity with quality to bring you outfits you'll love to wear again and again.
             </p>
           </div>
         </div>

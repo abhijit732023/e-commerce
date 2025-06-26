@@ -26,7 +26,7 @@ const RefundReturn = () => {
               Refund & Return Policy
             </h1>
             <p className="text-center text-gray-500 max-w-xl">
-              At SS Collection, your satisfaction is our top priority. Here’s everything you need to know about our easy and transparent return & refund process.
+              At Khuwab Collection, your satisfaction is our top priority. Here’s everything you need to know about our easy and transparent return & refund process.
             </p>
           </div>
 

@@ -8,7 +8,7 @@ const sections = [
     icon: <FaGavel className="text-rose-600 text-xl" />,
     title: "1. Acceptance of Terms",
     content:
-      "By accessing or using our website (SS Collection), you agree to comply with and be bound by these Terms & Conditions. If you do not agree, please do not use our website.",
+      "By accessing or using our website (Khuwab Collection), you agree to comply with and be bound by these Terms & Conditions. If you do not agree, please do not use our website.",
   },
   {
     icon: <FaShieldAlt className="text-amber-500 text-xl" />,
@@ -32,7 +32,7 @@ const sections = [
     icon: <FaLock className="text-rose-400 text-xl" />,
     title: "5. Intellectual Property",
     content:
-      "All content on this site, including logos, designs, images, and text, is the property of SS Collection and protected by copyright laws. Unauthorized use is strictly prohibited.",
+      "All content on this site, including logos, designs, images, and text, is the property of Khuwab Collection and protected by copyright laws. Unauthorized use is strictly prohibited.",
   },
   {
     icon: <FaUndo className="text-blue-400 text-xl" />,
@@ -64,7 +64,7 @@ const sections = [
     icon: <FaShieldAlt className="text-amber-400 text-xl" />,
     title: "8. Limitation of Liability",
     content:
-      "SS Collection is not liable for any indirect, incidental, or consequential damages resulting from the use of our website or products.",
+      "Khuwab Collection is not liable for any indirect, incidental, or consequential damages resulting from the use of our website or products.",
   },
   {
     icon: <FaSyncAlt className="text-blue-500 text-xl" />,

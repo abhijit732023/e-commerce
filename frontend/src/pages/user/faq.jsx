@@ -5,9 +5,9 @@ import { Container } from "../../FilesPaths/all_path";
 
 const faqs = [
   {
-    question: "What is SS Collection?",
+    question: "What is Khuwab Collection?",
     answer:
-      "SS Collection is a modern clothing brand offering stylish, high-quality, and affordable fashion for men, women, and kids.",
+      "Khuwab Collection is a modern clothing brand offering stylish, high-quality, and affordable fashion for men, women, and kids.",
   },
   {
     question: "Do you offer Cash on Delivery?",
@@ -60,7 +60,7 @@ const FAQ = () => {
               Frequently Asked Questions
             </h1>
             <p className="text-center text-gray-500 max-w-xl">
-              Find answers to the most common questions about shopping, delivery, returns, and more at SS Collection.
+              Find answers to the most common questions about shopping, delivery, returns, and more at Khuwab Collection.
             </p>
           </div>
           <div className="space-y-4">

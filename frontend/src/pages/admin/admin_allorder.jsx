@@ -112,7 +112,7 @@ const AdminOrderPage = () => {
   return (
     <Container>
       <div
-        className="sticky overflow-hidden max-w-6xl mx-auto p-4 bg-gradient-to-br pb-15 from-amber-50 via-white to-rose-50 rounded-2xl shadow-2xl "
+        className="sticky overflow-hidden max-w-6xl mx-auto p-4 bg-gradient-to-br pb-15 from-amber-50 via-white to-rose-50  shadow-2xl "
         style={{ minHeight: "100vh", maxHeight: "100vh", overflowY: "auto" }}
       >
         <h1 className="text-3xl font-extrabold mb-8 text-center text-rose-700 tracking-wide flex items-center justify-center gap-2 drop-shadow">
@@ -139,7 +139,7 @@ const AdminOrderPage = () => {
                   <div className="w-32 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden border border-rose-100 shadow">
                     {order.images?.length > 0 ? (
                       <img
-                        src={AppwriteService.getFileViewUrl(order.images[0])}
+                        src={ENV_File.backendURL+order.images[0]}
                         alt={order.header}
                         className="w-full h-full object-cover"
                       />

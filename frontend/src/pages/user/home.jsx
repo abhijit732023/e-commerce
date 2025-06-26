@@ -118,7 +118,7 @@ const Home = () => {
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-black/50 to-black/60 flex flex-col justify-center items-center text-center px-[4vw]">
             <h1 className="text-[7vw] md:text-4xl lg:text-5xl font-extrabold text-white tracking-wide leading-tight mb-[2vw] drop-shadow-lg">
               Welcome to<br />
-              <span className="text-rose-200 text-[8vw] md:text-5xl lg:text-6xl">SS Collection</span>
+              <span className="text-rose-200 text-[8vw] md:text-5xl lg:text-6xl">Khuwab Collection</span>
             </h1>
             <p className="text-[4vw] md:text-xl lg:text-2xl text-white/90 max-w-[90vw] md:max-w-[40vw] mb-[2vw] font-medium drop-shadow animate-fade-in">
               Discover powerful experiences crafted for your unique style.
@@ -170,10 +170,10 @@ const Home = () => {
         {/* Footer */}
         <footer className="rounded-t-xl pb-16  bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-8 px-4 md:px-8 text-center shadow-2xl border-t border-rose-100">
           <div className="w-full flex justify-center py-4">
-            <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="SS Collection" />
+            <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="Khuwab Collection" />
           </div>
           <p className="text-[3vw] md:text-lg text-gray-600 max-w-[90vw] md:max-w-2xl mx-auto mt-2 mb-4 font-medium">
-            <span className="font-semibold text-rose-700">Innovative & Artistic:</span> SS Collection celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
+            <span className="font-semibold text-rose-700">Innovative & Artistic:</span> Khuwab Collection celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
           </p>
           <div className="flex justify-center space-x-6 mt-4">
             <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-pink-500 transition-colors duration-200">
@@ -187,7 +187,7 @@ const Home = () => {
             </a>
           </div>
           <p className="text-xs text-gray-500 mt-8 tracking-wide">
-            © 2025 <span className="font-semibold text-rose-700">SS Collection</span>. All rights reserved.
+            <span className="font-semibold text-rose-700">Khuwab Collection<span className='text-xl'>&trade; </span></span>. All rights reserved.
           </p>
         </footer>
       </div>
