@@ -4,24 +4,27 @@ import { BottomMenuBar, Header } from "../FilesPaths/all_path";
 const Container = ({ children, className = "", style = {} }) => {
   return (
     <div
-      className="h-screen w-full flex flex-col bg-gray-400/20 border-gray-100"
-      style={{ ...style }}
+      className="w-full flex flex-col bg-gray-400/20 border-gray-100"
+      style={{
+        height: "100dvh", // Use device viewport height (mobile-safe)
+        ...style,
+      }}
     >
-      {/* Header: 8% height */}
-      <div className="overflow-hidden" style={{ height: "8%" }}>
+      {/* Header: 8% */}
+      <div className="flex-none" style={{ height: "8%" }}>
         <Header />
       </div>
 
-      {/* Main Content: 86% height */}
+      {/* Main Content: 82% */}
       <main
-        className={`overflow-auto relative rounded-md ${className}`}
+        className={`flex-grow overflow-auto relative rounded-md ${className}`}
         style={{ height: "82%" }}
       >
         {children}
       </main>
 
-      {/* Bottom Menu: 8% height */}
-      <div className="overflow-hidden" style={{ height: "10%" }}>
+      {/* Bottom Menu: 10% */}
+      <div className="flex-none z-10" style={{ height: "10%" }}>
         <BottomMenuBar />
       </div>
     </div>
