@@ -24,7 +24,7 @@ const Container = ({ children, className = "", style = {} }) => {
       </main>
 
       {/* Bottom Menu: 10% */}
-      <div className="flex-none z-10" style={{ height: "10%" }}>
+      <div className="flex-none z-10" style={{ height: "9%" }}>
         <BottomMenuBar />
       </div>
     </div>
