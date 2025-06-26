@@ -11,7 +11,6 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   const [hasAutoPlayedOnce, setHasAutoPlayedOnce] = useState(false);
   const [initialPlayDone, setInitialPlayDone] = useState(false);
   const [pageFullyLoaded, setPageFullyLoaded] = useState(false);
-  
 
   const timeoutRef = useRef(null);
   const interactionTimeoutRef = useRef(null);
@@ -81,7 +80,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
   });
 
   return (
-    <section className="relative w-full bg-gradient-to-br from-rose-50 via-white to-amber-50 flex flex-col justify-end items-center overflow-hidden rounded-xl shadow-md border border-rose-100  md:py-8">
+    <section className="relative w-full bg-gradient-to-br from-rose-50 via-white to-amber-50 flex flex-col justify-end items-center overflow-hidden rounded-xl border border-rose-100 md:py-8">
       {/* Heading */}
       <div className="w-full flex justify-center z-20 pt-15 pb-4 md:pb-4">
         <h2
@@ -100,7 +99,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
       {/* Slider Container */}
       <Link to="/product/" className="w-full flex-1 flex items-end">
         <div
-          className={`flex w-full transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`flex w-full ${loaded ? 'opacity-100' : 'opacity-0'}`}
           style={{
             transform: `translateX(-${index * 100}%)`,
             transition: transitioning ? 'transform 0.6s ease-in-out' : 'none',
@@ -122,7 +121,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
               <img
                 src={ENV_File.backendURL + img}
                 alt={`Slide ${i}`}
-                className="w-full h-full object-cover rounded-sm shadow-lg border border-amber-100 transition-transform duration-700 ease-in-out hover:scale-105"
+                className="w-full h-full object-cover lg:object-contain rounded-sm border border-amber-100"
                 loading="lazy"
                 onLoad={() => {
                   if (i === fullImages.length - 1) {
@@ -141,9 +140,9 @@ const SwipeableSecondSectionSlider = ({ images }) => {
           <button
             key={i}
             onClick={() => handleUserInteraction(() => setIndex(i + 1))}
-            className={`rounded-full border-2 border-rose-300/20 transition-all duration-300 ${
+            className={`rounded-full border-2 border-rose-300/20 ${
               i + 1 === index
-                ? 'bg-rose-700 border-rose-700 shadow-lg scale-130'
+                ? 'bg-rose-700 border-rose-700'
                 : 'bg-white hover:bg-rose-200'
             }`}
             aria-label={`Go to slide ${i + 1}`}
@@ -158,7 +157,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
       {/* Arrows */}
       <button
         onClick={() => handleUserInteraction(() => setIndex(index - 1))}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2 md:p-3 transition-all duration-200"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 hover:bg-rose-100 text-rose-700 rounded-full border border-rose-200 p-2 md:p-3"
         aria-label="Previous Slide"
         style={{ width: 'clamp(28px, 4vw, 48px)', height: 'clamp(28px, 4vw, 48px)' }}
       >
@@ -169,7 +168,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
 
       <button
         onClick={() => handleUserInteraction(() => setIndex(index + 1))}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 hover:bg-rose-100 text-rose-700 rounded-full shadow p-2 md:p-3 transition-all duration-200"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 hover:bg-rose-100 text-rose-700 rounded-full border border-rose-200 p-2 md:p-3"
         aria-label="Next Slide"
         style={{ width: 'clamp(28px, 4vw, 48px)', height: 'clamp(28px, 4vw, 48px)' }}
       >

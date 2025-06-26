@@ -40,7 +40,7 @@ export default function PayNow() {
         key: `${ENV_File.razor_key_id}`,
         amount: orderData.amount,
         currency: "INR",
-        name: "E-Shop Checkout",
+        name: "Khuwab Collection",
         description: `Pay ₹${amount} to complete your purchase`,
         order_id: orderData.id,
         handler: async function (response) {

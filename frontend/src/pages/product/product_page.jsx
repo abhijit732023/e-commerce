@@ -1,45 +1,16 @@
 import React, { useEffect, useState } from "react";
 import {
-  useAuth,
   SwipeImageViewer,
-  AppwriteService,
   ENV_File,
   Container,
 } from "../../FilesPaths/all_path";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { FaHeart } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.97 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
-  hover: {
-    scale: 1.045,
-    boxShadow: "0 8px 32px 0 rgba(255, 72, 66, 0.13)",
-    transition: { type: "spring", stiffness: 260, damping: 18 },
-  },
-  exit: {
-    opacity: 0,
-    y: 40,
-    scale: 0.97,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-  },
-};
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
-  const [likedProducts, setLikedProducts] = useState({});
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [hasAnimated, setHasAnimated] = useState(false); // NEW
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,7 +19,6 @@ const ProductPage = () => {
         const reversed = [...response.data].reverse();
         setProducts(reversed);
         setFilteredProducts(reversed);
-        setHasAnimated(true); // Set animation state to true after fetching products
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -57,12 +27,6 @@ const ProductPage = () => {
   }, []);
 
   const categoryOptions = ["All", ...new Set(products.map(p => p.category).filter(Boolean))];
-  const toggleLike = (productId) => {
-    setLikedProducts((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
@@ -75,25 +39,11 @@ const ProductPage = () => {
 
   return (
     <Container>
-      <motion.div
-        className="flex pb:10   flex-col h-[82vh]  w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50 shadow-xl"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.5 }}
-
-      >
+      <div className="flex flex-col min-h-screen w-full px-2 sm:px-4 md:px-6 py-4 md:py-6 bg-gradient-to-br from-amber-50 via-white to-rose-50">
         {/* Header */}
-        <motion.div
-          className="flex flex-col md:flex-row md:items-center md:justify-between  gap-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          viewport={{ once: true, amount: 0.5 }}
-
-        >
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-rose-700 drop-shadow mb-1">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-rose-700 mb-1">
               Shop Bridal Collection
             </h2>
             <p className="text-gray-500 text-sm md:text-base font-medium">
@@ -106,9 +56,9 @@ const ProductPage = () => {
               <button
                 key={value}
                 onClick={() => handleCategoryChange(value)}
-                className={`whitespace-nowrap px-4 py-1.5 mb-4 rounded-full font-semibold border text-xs md:text-base transition-all duration-200 shadow-sm
-        ${selectedCategory === value
-                    ? "bg-rose-600 text-white border-rose-600 shadow-lg"
+                className={`whitespace-nowrap px-4 py-1.5 mb-4 rounded-full font-semibold border text-xs md:text-base
+                  ${selectedCategory === value
+                    ? "bg-rose-600 text-white border-rose-600"
                     : "bg-white text-rose-700 border-rose-200 hover:bg-rose-50 hover:border-rose-400"
                   }`}
               >
@@ -116,75 +66,41 @@ const ProductPage = () => {
               </button>
             ))}
           </div>
-
-        </motion.div>
+        </div>
 
         {/* Product Grid */}
-        <div className="flex-1 overflow-y-auto pb-15">
-          <div className="grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-6 md:gap-6">
-            <AnimatePresence>
-              {filteredProducts.length === 0 && (
-                // <motion.div
-                //   className="col-span-full text-center text-gray-400 text-base md:text-lg font-semibold py-12"
-                //   initial={{ opacity: 0, y: 30 }}
-                //   animate={{ opacity: 1, y: 0 }}
-                //   exit={{ opacity: 0, y: 30 }}
-                //   viewport={{ once: true, amount: 0.5 }}
-
-                // >
-                //   No products found in this category.
-                // </motion.div>
-                  [...Array(8)].map((_, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white/70 rounded-2xl shadow-lg p-4 animate-pulse flex flex-col"
-                    >
-                      <div className="h-40 bg-gray-200/50 rounded-xl mb-4 shadow-inner"></div>
-                      <div className="h-5 bg-gray-200/50 rounded w-3/4 mb-2"></div>
-                      <div className="h-4 bg-gray-200/50 rounded w-1/2 mb-2"></div>
-                      <div className="h-4 bg-gray-200/50 rounded w-1/3"></div>
-                    </div>
-                  ))
-              )}
-
-              {filteredProducts.map((product) => {
+        <div className="flex-1">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 gap-y-6 md:gap-6">
+            {filteredProducts.length === 0 ? (
+              [...Array(8)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white/70 rounded-2xl border border-rose-100 p-4 flex flex-col"
+                >
+                  <div className="h-40 bg-gray-200/50 rounded-xl mb-4"></div>
+                  <div className="h-5 bg-gray-200/50 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200/50 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-200/50 rounded w-1/3"></div>
+                </div>
+              ))
+            ) : (
+              filteredProducts.map((product) => {
                 const discount =
                   product.fakePrie && product.fakePrie > 0
                     ? Math.round(((product.fakePrie - product.price) / product.fakePrie) * 100)
                     : 0;
-                const isLiked = likedProducts[product._id];
 
                 return (
-                  <motion.div
+                  <div
                     key={product._id}
-                    className="w-full  bg-white border border-rose-100 rounded-lg shadow-lg transition-all duration-300 relative group hover:shadow-2xl hover:-translate-y-1"
-                    variants={cardVariants}
-                    initial={hasAnimated ? false : "hidden"} // animate only once
-
-                    viewport={{ once: true, amount: 0.5 }}
-
+                    className="w-full bg-white border border-rose-100 rounded-lg"
                   >
                     <Link to={`${product._id}`} className="block h-full w-full">
                       <div className="relative w-full p-2">
                         {/* Image Viewer */}
                         <div className="aspect-[3/4] w-full overflow-hidden rounded-lg">
-                          <SwipeImageViewer images={product.images} name={product.name} />
+                          <SwipeImageViewer images={product.images} name={product.name} loading="lazy" />
                         </div>
-
-                        {/* Heart Button */}
-                        {/* <motion.button
-                          whileTap={{ scale: 0.8, rotate: -15 }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            toggleLike(product._id);
-                          }}
-                          className="absolute top-1.5 right-1.5 md:top-2 md:right-2 text-base md:text-xl bg-white/90 rounded-full p-2 shadow-md hover:bg-rose-100 transition"
-                          aria-label="Like"
-                        >
-                          <FaHeart
-                            className={`transition-colors duration-200 ${isLiked ? "text-rose-600" : "text-gray-300"}`}
-                          />
-                        </motion.button> */}
                       </div>
 
                       <div className="px-3 py-2 md:p-4 w-full">
@@ -212,18 +128,18 @@ const ProductPage = () => {
 
                       {/* Badge */}
                       {product.category === "SSspecial" && (
-                        <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                        <span className="absolute top-2 left-2 bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded">
                           SS Special
                         </span>
                       )}
                     </Link>
-                  </motion.div>
+                  </div>
                 );
-              })}
-            </AnimatePresence>
+              })
+            )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </Container>
   );
 };

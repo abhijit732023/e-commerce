@@ -2,12 +2,10 @@ import axios from 'axios';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Container,
-  BottomMenuBar,
   SSSpecialCarousel,
   FeaturedCollection,
   Header,
   ENV_File,
-  AppwriteService,
   SecondSection
 } from '../../FilesPaths/all_path';
 import logo from '../../images/logo4.png';
@@ -48,7 +46,7 @@ const Home = () => {
 
       const promises = imageURLsRef.current.map((src) => {
         return new Promise(resolve => {
-          const img = new Image();
+          const img = new window.Image();
           img.src = ENV_File.backendURL + src;
           img.onload = () => {
             preloadedImagesRef.current.push(img);
@@ -86,9 +84,9 @@ const Home = () => {
           {[...Array(10)].map((_, idx) => (
             <div
               key={idx}
-              className="bg-white/70 rounded-2xl shadow-lg p-4 animate-pulse flex flex-col"
+              className="bg-white/70 rounded-2xl border border-rose-100 p-4 flex flex-col"
             >
-              <div className="h-40 md:h-48 bg-gray-200/50 rounded-xl mb-4 shadow-inner"></div>
+              <div className="h-40 md:h-48 bg-gray-200/50 rounded-xl mb-4"></div>
               <div className="h-5 bg-gray-200/50 rounded w-3/4 mb-2"></div>
               <div className="h-4 bg-gray-200/50 rounded w-1/2 mb-2"></div>
               <div className="h-4 bg-gray-200/50 rounded w-1/3"></div>
@@ -101,18 +99,19 @@ const Home = () => {
 
   return (
     <Container>
-      <div className="grid min-h-[85vh] grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-sm shadow-xl overflow-y-auto ">
+      <div className="grid min-h-[85vh] grid-cols-1 md:grid-cols-1 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-sm shadow-xl overflow-y-auto">
         {/* Hero Section */}
-        <section className="relative h-[100vh] md:h-[60vh] lg:h-[70vh] rounded-xl shadow-2xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50 mb-0.5">
+        <section className="relative h-[100vh] md:h-[60vh] lg:h-[100vh]  rounded-xl border border-rose-100 bg-gradient-to-br from-rose-50 via-white to-amber-50 mb-0.5">
           {preloadedImagesRef.current.map((img, idx) => (
             <img
               key={idx}
               src={img.src}
               alt={`Slide ${idx}`}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              className={`absolute inset-0 w-full h-full object-cover lg:object-contain transition-opacity duration-1000 ${
                 idx === currentImageIndex ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ zIndex: 1 }}
+              loading="lazy"
             />
           ))}
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-black/50 to-black/60 flex flex-col justify-center items-center text-center px-[4vw]">
@@ -120,12 +119,12 @@ const Home = () => {
               Welcome to<br />
               <span className="text-rose-200 text-[8vw] md:text-5xl lg:text-6xl">Khuwab Collection</span>
             </h1>
-            <p className="text-[4vw] md:text-xl lg:text-2xl text-white/90 max-w-[90vw] md:max-w-[40vw] mb-[2vw] font-medium drop-shadow animate-fade-in">
+            <p className="text-[4vw] md:text-xl lg:text-2xl text-white/90 max-w-[90vw] md:max-w-[40vw] mb-[2vw] font-medium">
               Discover powerful experiences crafted for your unique style.
             </p>
             <Link
               to={"/product"}
-              className="inline-block mt-1 px-[6vw] py-[2vw] md:px-8 md:py-3 bg-rose-600 text-white font-bold rounded-full shadow-lg hover:bg-rose-700 transition-all duration-200 text-[4vw] md:text-lg"
+              className="inline-block mt-1 px-[6vw] py-[2vw] md:px-8 md:py-3 bg-rose-600 text-white font-bold rounded-full hover:bg-rose-700 transition-colors duration-200 text-[4vw] md:text-lg"
             >
               Shop Now
             </Link>
@@ -139,11 +138,11 @@ const Home = () => {
         </section>
 
         {/* Video Section */}
-        <section className="mt-1 rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50 md:px-0 flex flex-col items-center shadow-2xl shadow-black/30">
-          <h2 className="text-[7vw] md:text-4xl lg:text-5xl font-extrabold text-rose-700 text-center pt-8 mb-8 tracking-tight drop-shadow">
+        <section className="mt-1 rounded-xl w-full bg-gradient-to-br from-amber-50 via-white to-rose-50 md:px-0 flex flex-col items-center">
+          <h2 className="text-[7vw] md:text-4xl lg:text-5xl font-extrabold text-rose-700 text-center pt-8 mb-8 tracking-tight">
             Experience Our Vibe
           </h2>
-          <div className="w-full max-w-full md:max-w-full overflow-hidden shadow-2xl border border-rose-100">
+          <div className="w-full max-w-full md:max-w-full overflow-hidden border border-rose-100">
             <video
               src="/videos/video.mp4"
               autoPlay
@@ -168,9 +167,9 @@ const Home = () => {
         </section>
 
         {/* Footer */}
-        <footer className="rounded-t-xl pb-16  bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-8 px-4 md:px-8 text-center shadow-2xl border-t border-rose-100">
+        <footer className="rounded-t-xl pb-16 bg-gradient-to-br from-rose-50 via-white to-amber-50 text-gray-800 py-8 px-4 md:px-8 text-center border-t border-rose-100">
           <div className="w-full flex justify-center py-4">
-            <img src={logo} className="w-[30vw] md:w-40 drop-shadow-lg rounded-xl" alt="Khuwab Collection" />
+            <img src={logo} className="w-[30vw] md:w-40 rounded-xl" alt="Khuwab Collection" loading="lazy" />
           </div>
           <p className="text-[3vw] md:text-lg text-gray-600 max-w-[90vw] md:max-w-2xl mx-auto mt-2 mb-4 font-medium">
             <span className="font-semibold text-rose-700">Innovative & Artistic:</span> Khuwab Collection celebrates the rich crafts of India. We design for the modern Indian woman who blends international style with ethnic elegance.
