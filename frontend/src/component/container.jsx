@@ -8,20 +8,20 @@ const Container = ({ children, className = "", style = {} }) => {
       style={{ ...style }}
     >
       {/* Header: 8% height */}
-      <div className="overflow-hidden" style={{ height: "8vh" }}>
+      <div className="overflow-hidden" style={{ height: "8%" }}>
         <Header />
       </div>
 
       {/* Main Content: 86% height */}
       <main
         className={`overflow-auto relative rounded-md ${className}`}
-        style={{ height: "84vh" }}
+        style={{ height: "82%" }}
       >
         {children}
       </main>
 
       {/* Bottom Menu: 8% height */}
-      <div className="overflow-hidden" style={{ height: "10vh" }}>
+      <div className="overflow-hidden" style={{ height: "10%" }}>
         <BottomMenuBar />
       </div>
     </div>
