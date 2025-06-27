@@ -30,18 +30,20 @@ const OrderPage = () => {
   const [addressMap, setAddressMap] = useState({});
   const [showCancelOptions, setShowCancelOptions] = useState({});
   const [selectedCancelReason, setSelectedCancelReason] = useState({});
+  const [pendingCancelOrderId, setPendingCancelOrderId] = useState(null); // Track which order is being cancelled
 
   useEffect(() => {
     const fetchOrdersAndAddresses = async () => {
       try {
         const response = await axios.get(`${ENV_File.backendURL}/order`);
-        const paidOrders = response.data.filter(
-          (order) => order.paymentStatus === "paid" && order.userId === userid
+        // Show all orders for this user, not just paid
+        const userOrders = response.data.filter(
+          (order) => order.userId === userid
         );
-        setOrders(paidOrders);
+        setOrders(userOrders);
 
         // Get unique address IDs
-        const uniqueAddressIds = [...new Set(paidOrders.map((order) => order.addressId))];
+        const uniqueAddressIds = [...new Set(userOrders.map((order) => order.addressId))];
 
         // Fetch all addresses in parallel
         const addressRequests = uniqueAddressIds.map((id) =>
@@ -73,27 +75,31 @@ const OrderPage = () => {
       ...prev,
       [orderId]: !prev[orderId],
     }));
+    setPendingCancelOrderId(orderId); // Set which order is being cancelled
   };
 
-  const handleConfirmCancel = async (orderId) => {
-    const reason = selectedCancelReason[orderId];
+  // Cancel function as requested
+  const cancelOrder = async (orderId, reason) => {
     if (!reason) {
       alert("Please select a reason for cancellation.");
       return;
     }
     try {
-      const response = await axios.put(`${ENV_File.backendURL}/order/cancel/${orderId}`, {
-        cancelOrder: "yes",
-        cancelReason: reason,
+      const response = await axios.post(`${ENV_File.backendURL}/order/cancel`, {
+        orderId,
+        reason,
       });
       if (response.status === 200) {
-        // Optionally show a popup here
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
-            order._id === orderId ? { ...order, paymentStatus: "cancelled" } : order
+            order._id === orderId
+              ? { ...order, paymentStatus: "cancelled", cancelOrder: "yes", cancelReason: reason }
+              : order
           )
         );
         setShowCancelOptions((prev) => ({ ...prev, [orderId]: false }));
+        setPendingCancelOrderId(null); // Reset after cancel
+        alert("Order cancelled successfully.");
       } else {
         alert(response.data.message || "Failed to cancel order");
       }
@@ -171,7 +177,7 @@ const OrderPage = () => {
     // Optionally: axios.post(`/order/rate`, { orderId, rating: value });
   };
 
-   return (
+  return (
     <Container>
       <div
         className="sticky overflow-hidden pb-15 max-w-2xl mx-auto p-4 bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-md shadow-2xl "
@@ -191,22 +197,30 @@ const OrderPage = () => {
             No paid orders found.
           </div>
         ) : (
-          orders.map((order, index) => {
-            const address = addressMap[order.addressId];
+        [...orders]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .map((order, index) => {
+      const address = addressMap[order.addressId];
+
+            // Determine status text
+            let statusText = "Paid";
+            if (order.paymentStatus === "cancelled") {
+              statusText = "Cancelled";
+            } else if (order.cancelOrder === "yes") {
+              statusText = "Cancellation in Progress";
+            } else if (pendingCancelOrderId === order._id) {
+              statusText = "Cancelling...";
+            }
 
             return (
               <React.Fragment key={index}>
-                {/* Cancel Reason Dropdown ABOVE the order card */}
-                
-
                 {/* Order Card */}
                 <div
-                  className="bg-white rounded-2xl mb-10 shadow-lg hover:shadow-2xl transition duration-300 p-4  border border-rose-100 relative overflow-auto"
+                  className={`bg-white rounded-2xl mb-10 shadow-lg hover:shadow-2xl transition duration-300 p-4 border border-rose-100 relative overflow-auto ${pendingCancelOrderId === order._id ? "ring-2 ring-rose-500" : ""
+                    }`}
                 >
-                  {/* ...existing order card content... */}
-                  {/* Decorative Ribbon */}
-                  <div className="absolute top-0 left-0 bg-rose-100 text-rose-700 px-3 py-1 rounded-br-2xl text-xs font-bold shadow-sm">
-                    Paid
+                  <div className={`absolute top-0 left-0 ${statusText === 'Paid' ? 'bg-green-300 text-green-900' : 'bg-rose-100 text-rose-700'} px-3 py-1 rounded-br-2xl text-xs font-bold shadow-sm`}>
+                    {statusText}
                   </div>
                   <div className="flex flex-col md:flex-row items-center gap-6">
                     <div className="w-32 h-40 bg-cover bg-no-repeat flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden border border-rose-100 shadow">
@@ -287,22 +301,24 @@ const OrderPage = () => {
                         <FaStar
                           key={star}
                           onClick={() => handleRating(order._id, star)}
-                          className={`cursor-pointer transition-all duration-150 ${
-                            ratings[order._id] >= star ? "text-yellow-400 scale-110" : "text-gray-300"
-                          }`}
+                          className={`cursor-pointer transition-all duration-150 ${ratings[order._id] >= star ? "text-yellow-400 scale-110" : "text-gray-300"
+                            }`}
                         />
                       ))}
                     </div>
 
                     {/* Download Invoice Button */}
                     <div className="flex items-center justify-between w-full gap-2 text-sm">
-                      <button
-                        onClick={() => handleDownloadInvoice(order, address)}
-                        className="flex items-center gap-2 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:scale-105 hover:bg-rose-700 transition-all duration-200"
-                      >
-                        <FaFileDownload className="text-sm" />
-                        Invoice
-                      </button>
+                      {/* Only show Invoice button if order is NOT cancelled */}
+                      {order.paymentStatus !== "cancelled" && (
+                        <button
+                          onClick={() => handleDownloadInvoice(order, address)}
+                          className="flex items-center gap-2 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:scale-105 hover:bg-rose-700 transition-all duration-200"
+                        >
+                          <FaFileDownload className="text-sm" />
+                          Invoice
+                        </button>
+                      )}
                       {order.paymentStatus !== "cancelled" && (
                         <div className="flex flex-col gap-2 w-full max-w-xs">
                           <button
@@ -315,36 +331,42 @@ const OrderPage = () => {
                       )}
                     </div>
                   </div>
-                {showCancelOptions[order._id] && (
-                  <div className="mb-4 mt-4 bg-rose-50 border border-rose-200 rounded-lg p-3 shadow">
-                    <label className="block text-sm font-semibold mb-2 text-rose-700">
-                      Select a reason to cancel your order:
-                    </label>
-                    <select
-                      className="w-full border border-rose-300 rounded p-2 mb-2"
-                      value={selectedCancelReason[order._id] || ""}
-                      onChange={e =>
-                        setSelectedCancelReason(prev => ({
-                          ...prev,
-                          [order._id]: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value="">-- Select Reason --</option>
-                      {CANCEL_REASONS.map((reason, idx) => (
-                        <option key={idx} value={reason}>
-                          {reason}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2 rounded font-semibold transition"
-                      onClick={() => handleConfirmCancel(order._id)}
-                    >
-                      Confirm Cancel
-                    </button>
-                  </div>
-                )}
+                  {showCancelOptions[order._id] && (
+                    <div className="mb-4 mt-4 bg-rose-50 border border-rose-200 rounded-lg p-3 shadow">
+                      <label className="block text-sm font-semibold mb-2 text-rose-700">
+                        Select a reason to cancel your order:
+                      </label>
+                      <select
+                        className="w-full border border-rose-300 rounded p-2 mb-2"
+                        value={selectedCancelReason[order._id] || ""}
+                        onChange={e =>
+                          setSelectedCancelReason(prev => ({
+                            ...prev,
+                            [order._id]: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value="">-- Select Reason --</option>
+                        {CANCEL_REASONS.map((reason, idx) => (
+                          <option key={idx} value={reason}>
+                            {reason}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2 rounded font-semibold transition"
+                        onClick={() => cancelOrder(order._id, selectedCancelReason[order._id])}
+                      >
+                        Confirm Cancel
+                      </button>
+                      {/* Show which order is being cancelled */}
+                      {pendingCancelOrderId === order._id && (
+                        <div className="mt-2 text-xs text-rose-700 font-semibold text-center">
+                          Cancelling Order ID: {order._id}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </React.Fragment>
             );

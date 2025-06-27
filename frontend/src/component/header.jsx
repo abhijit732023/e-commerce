@@ -49,7 +49,7 @@ const Header = () => {
           className="focus:outline-none"
           onClick={() => setMenuOpen(true)}
         >
-          <FaBars className="text-2xl text-rose-700 hover:text-rose-900 transition" />
+          <FaBars className="text-2xl  text-rose-700 hover:text-rose-900 transition" />
         </motion.button>
 
         <span

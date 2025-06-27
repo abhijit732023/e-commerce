@@ -4,7 +4,7 @@ import Register_Login_Router from "./routes/user_route/user_register_login_route
 import product_add_model from "./models/admin_model/product_add_model.js";
 import Product_add_route from "./routes/admin_route/product_add_route.js";
 import Product_route_2 from "./routes/admin_route/product_2_route.js";
-import Product_model_2 from './models/admin_model/product_model_2.js'
+// import Product_model_2 from './models/admin_model/product_model_2.js'
 import Order from './models/user_model/order_model.js'
 import Order_route from "./routes/user_route/order_route.js";
 import Payment_route from "./routes/user_route/payment_route.js";
@@ -21,7 +21,7 @@ export{
     product_add_model,
     Product_add_route,
     Product_route_2,
-    Product_model_2,
+    // Product_model_2,
     Order,
     Order_route,
     Payment_route,

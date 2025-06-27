@@ -5,66 +5,49 @@ import { ENV_File } from '../FilesPaths/all_path';
 
 const SwipeableSecondSectionSlider = ({ images }) => {
   const [index, setIndex] = useState(1);
-  const [isInteracting, setIsInteracting] = useState(false);
   const [transitioning, setTransitioning] = useState(true);
   const [loaded, setLoaded] = useState(false);
-  const [hasAutoPlayedOnce, setHasAutoPlayedOnce] = useState(false);
-  const [initialPlayDone, setInitialPlayDone] = useState(false);
-  const [pageFullyLoaded, setPageFullyLoaded] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
 
   const timeoutRef = useRef(null);
   const interactionTimeoutRef = useRef(null);
 
+  // Add first and last image for infinite effect
   const fullImages = [images[images.length - 1], ...images, images[0]];
 
+  // Set loaded state on mount
   useEffect(() => {
     setLoaded(true);
   }, []);
 
+  // Autoplay effect
   useEffect(() => {
-    const onLoad = () => {
-      setPageFullyLoaded(true);
-    };
-    window.addEventListener('load', onLoad);
-    return () => {
-      window.removeEventListener('load', onLoad);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isInteracting && !hasAutoPlayedOnce && !pageFullyLoaded) {
-      timeoutRef.current = setTimeout(() => {
-        setIndex((prev) => {
-          const next = prev + 1;
-          if (next === fullImages.length - 1) {
-            setHasAutoPlayedOnce(true);
-          }
-          return next;
-        });
-      }, 4000);
-    }
+    if (isInteracting) return;
+    timeoutRef.current = setTimeout(() => {
+      setIndex((prev) => prev + 1);
+    }, 4000);
     return () => clearTimeout(timeoutRef.current);
-  }, [index, isInteracting, hasAutoPlayedOnce, pageFullyLoaded]);
+  }, [index, isInteracting]);
 
+  // Handle infinite loop effect
   const handleTransitionEnd = () => {
     if (index === fullImages.length - 1) {
       setTransitioning(false);
       setIndex(1);
-      if (!initialPlayDone) {
-        setInitialPlayDone(true);
-      }
     } else if (index === 0) {
       setTransitioning(false);
       setIndex(fullImages.length - 2);
     }
   };
 
+  // Re-enable transition after jump
   useEffect(() => {
-    if (!transitioning && !initialPlayDone) {
+    if (!transitioning) {
       setTimeout(() => setTransitioning(true), 50);
     }
-  }, [transitioning, initialPlayDone]);
+  }, [transitioning]);
 
+  // Handle user interaction (pause autoplay)
   const handleUserInteraction = (action) => {
     clearTimeout(timeoutRef.current);
     clearTimeout(interactionTimeoutRef.current);
@@ -73,6 +56,7 @@ const SwipeableSecondSectionSlider = ({ images }) => {
     interactionTimeoutRef.current = setTimeout(() => setIsInteracting(false), 3000);
   };
 
+  // Swipe handlers
   const handlers = useSwipeable({
     onSwipedLeft: () => handleUserInteraction(() => setIndex((prev) => prev + 1)),
     onSwipedRight: () => handleUserInteraction(() => setIndex((prev) => prev - 1)),
@@ -123,11 +107,6 @@ const SwipeableSecondSectionSlider = ({ images }) => {
                 alt={`Slide ${i}`}
                 className="w-full h-full object-cover lg:object-contain rounded-sm border border-amber-100"
                 loading="lazy"
-                onLoad={() => {
-                  if (i === fullImages.length - 1) {
-                    setLoaded(true);
-                  }
-                }}
               />
             </div>
           ))}

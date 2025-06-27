@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ENV_File } from '../FilesPaths/all_path';
 
-const SSSpecialCarousel = ({ products }) => {
+const SSSpecialCarousel = ({ products = [] }) => {
   const scrollRef = useRef(null);
   const intervalRef = useRef(null);
   const interactionTimeout = useRef(null);
@@ -10,7 +10,9 @@ const SSSpecialCarousel = ({ products }) => {
   const itemWidth = 273;
   const itemGap = 24;
   const scrollStep = itemWidth + itemGap;
-  const extendedProducts = [...products, ...products];
+
+  // ✅ Avoid re-creating this on each render
+  const extendedProducts = useMemo(() => [...products, ...products], [products]);
 
   const startAutoSlide = () => {
     if (intervalRef.current) return;
@@ -22,8 +24,9 @@ const SSSpecialCarousel = ({ products }) => {
       const maxScroll = products.length * scrollStep;
       let newScrollLeft = container.scrollLeft + scrollStep;
 
-      if (newScrollLeft >= maxScroll) {
-        newScrollLeft = newScrollLeft - maxScroll;
+      if (newScrollLeft >= maxScroll * 2) {
+        // Reset to middle for seamless loop
+        newScrollLeft = maxScroll;
       }
 
       container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
@@ -47,7 +50,10 @@ const SSSpecialCarousel = ({ products }) => {
 
   useEffect(() => {
     const container = scrollRef.current;
-    if (container) container.scrollLeft = products.length * scrollStep;
+    if (container && products.length) {
+      // Center initial scroll to avoid visible start
+      container.scrollLeft = products.length * scrollStep;
+    }
 
     startAutoSlide();
 
@@ -55,8 +61,7 @@ const SSSpecialCarousel = ({ products }) => {
       stopAutoSlide();
       clearTimeout(interactionTimeout.current);
     };
-    // eslint-disable-next-line
-  }, [products.length]);
+  }, []); // ❗️Empty dependency array ensures this only runs once
 
   const scrollByAmount = (amount) => {
     const container = scrollRef.current;
@@ -65,8 +70,11 @@ const SSSpecialCarousel = ({ products }) => {
     const maxScroll = products.length * scrollStep;
     let newScrollLeft = container.scrollLeft + amount;
 
-    if (newScrollLeft < 0) newScrollLeft += maxScroll;
-    if (newScrollLeft >= maxScroll) newScrollLeft -= maxScroll;
+    if (newScrollLeft < 0) {
+      newScrollLeft = container.scrollLeft + maxScroll;
+    } else if (newScrollLeft >= maxScroll * 2) {
+      newScrollLeft = maxScroll;
+    }
 
     container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
   };
@@ -81,7 +89,7 @@ const SSSpecialCarousel = ({ products }) => {
     >
       <div className="flex items-center justify-between mb-3 px-2">
         <h2 className="text-3xl font-extrabold pt-10 w-full text-center text-rose-700 tracking-tight">
-          SS Special Picks
+          Khuwab Special 
         </h2>
       </div>
 
@@ -92,16 +100,16 @@ const SSSpecialCarousel = ({ products }) => {
       >
         {extendedProducts.map((item, i) => (
           <div
-            key={i}
+            key={`${item._id || i}-${i}`}
             className="relative snap-center flex-shrink-0 rounded-sm mt-5 border border-amber-300 bg-white cursor-pointer overflow-hidden"
             style={{ width: itemWidth, height: 420 }}
             onMouseEnter={handleUserInteract}
             onTouchStart={handleUserInteract}
           >
-            <Link to="/product" className="block w-full h-full">
+            <Link to={`/product/${item._id}`} className="block w-full h-full">
               <img
-                src={ENV_File.backendURL + item.images[0]}
-                alt={item.header || `Special Product ${i}`}
+                src={item?.images?.[0] ? ENV_File.backendURL + item.images[0] : "/fallback.jpg"}
+                alt={item.header || `Product ${i}`}
                 loading="lazy"
                 className="w-full h-full object-cover"
               />
